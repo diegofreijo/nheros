@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using heros.fieldsens.structs;
+using NHeros.src.util;
+using System.Collections.Generic;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,9 +16,6 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-
-
 	/// <summary>
 	/// A flow function computes which of the finitely many D-type values are reachable
 	/// from the current source values. Typically there will be one such function
@@ -97,11 +96,11 @@ namespace heros.fieldsens
 			{
 				return false;
 			}
-			if (!(obj is FlowFunction_ConstrainedFact))
+			if (!(obj is FlowFunction_ConstrainedFact<FieldRef, D, Stmt, Method>))
 			{
 				return false;
 			}
-			FlowFunction_ConstrainedFact other = (FlowFunction_ConstrainedFact) obj;
+			var other = (FlowFunction_ConstrainedFact<FieldRef, D, Stmt, Method>) obj;
 			if (constraint == null)
 			{
 				if (other.constraint != null)
@@ -163,7 +162,7 @@ namespace heros.fieldsens
 		{
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + ((fieldRef == default(FieldRef)) ? 0 : fieldRef.GetHashCode());
+			result = prime * result + (Utils.IsDefault(fieldRef) ? 0 : fieldRef.GetHashCode());
 			return result;
 		}
 
@@ -177,14 +176,14 @@ namespace heros.fieldsens
 			{
 				return false;
 			}
-			if (!(obj is FlowFunction_WriteFieldConstraint))
+			if (!(obj is FlowFunction_WriteFieldConstraint<FieldRef>))
 			{
 				return false;
 			}
-			FlowFunction_WriteFieldConstraint other = (FlowFunction_WriteFieldConstraint) obj;
-			if (fieldRef == default(FieldRef))
+			var other = (FlowFunction_WriteFieldConstraint<FieldRef>) obj;
+			if (Utils.IsDefault(fieldRef))
 			{
-				if (other.fieldRef != default(FieldRef))
+				if (Utils.IsDefault(other.fieldRef))
 				{
 					return false;
 				}
@@ -226,7 +225,7 @@ namespace heros.fieldsens
 		{
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + ((fieldRef == default(FieldRef)) ? 0 : fieldRef.GetHashCode());
+			result = prime * result + (Utils.IsDefault(fieldRef) ? 0 : fieldRef.GetHashCode());
 			return result;
 		}
 
@@ -240,14 +239,14 @@ namespace heros.fieldsens
 			{
 				return false;
 			}
-			if (!(obj is FlowFunction_ReadFieldConstraint))
+			if (!(obj is FlowFunction_ReadFieldConstraint<FieldRef>))
 			{
 				return false;
 			}
-			FlowFunction_ReadFieldConstraint other = (FlowFunction_ReadFieldConstraint) obj;
-			if (fieldRef == default(FieldRef))
+			var other = (FlowFunction_ReadFieldConstraint<FieldRef>) obj;
+			if (Utils.IsDefault(fieldRef))
 			{
-				if (other.fieldRef != default(FieldRef))
+				if (Utils.IsDefault(other.fieldRef))
 				{
 					return false;
 				}

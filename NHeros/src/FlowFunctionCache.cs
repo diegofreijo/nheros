@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using NHeros.src.util;
+using System.Runtime.Caching;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2012 Eric Bodden.
 /// All rights reserved. This program and the accompanying materials
@@ -12,146 +14,61 @@
 /// </summary>
 namespace heros
 {
-	using CacheBuilder = com.google.common.cache.CacheBuilder;
-	using CacheLoader = com.google.common.cache.CacheLoader;
-	using LoadingCache = com.google.common.cache.LoadingCache;
-	using Logger = org.slf4j.Logger;
-	using LoggerFactory = org.slf4j.LoggerFactory;
-
 	public class FlowFunctionCache<N, D, M> : FlowFunctions<N, D, M>
 	{
-
 		protected internal readonly FlowFunctions<N, D, M> @delegate;
 
-		protected internal readonly LoadingCache<NNKey, FlowFunction<D>> normalCache;
+		private readonly LoadingCache<NNKey, FlowFunction<D>> normalCache;
+        private readonly LoadingCache<CallKey, FlowFunction<D>> callCache;
+        private readonly LoadingCache<ReturnKey, FlowFunction<D>> returnCache;
+        private readonly LoadingCache<NNKey, FlowFunction<D>> callToReturnCache;
 
-		protected internal readonly LoadingCache<CallKey, FlowFunction<D>> callCache;
+		//private readonly Logger logger = LoggerFactory.getLogger(this.GetType());
 
-		protected internal readonly LoadingCache<ReturnKey, FlowFunction<D>> returnCache;
-
-		protected internal readonly LoadingCache<NNKey, FlowFunction<D>> callToReturnCache;
-
-		private readonly Logger logger = LoggerFactory.getLogger(this.GetType());
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public FlowFunctionCache(final FlowFunctions<N, D, M> delegate, @SuppressWarnings("rawtypes") com.google.common.cache.CacheBuilder builder)
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-		public FlowFunctionCache(FlowFunctions<N, D, M> @delegate, CacheBuilder builder)
+		public FlowFunctionCache(FlowFunctions<N, D, M> @delegate)
 		{
 			this.@delegate = @delegate;
 
-			normalCache = builder.build(new CacheLoaderAnonymousInnerClass(this, @delegate));
+			normalCache = new LoadingCache<NNKey, FlowFunction<D>>(
+                (NNKey key) => @delegate.getNormalFlowFunction(key.Curr, key.Succ)
+            );
 
-			callCache = builder.build(new CacheLoaderAnonymousInnerClass2(this, @delegate));
+			callCache = new LoadingCache<CallKey, FlowFunction<D>>(
+                (CallKey key) => @delegate.getCallFlowFunction(key.CallStmt, key.DestinationMethod)
+            );
 
-			returnCache = builder.build(new CacheLoaderAnonymousInnerClass3(this, @delegate));
+			returnCache = new LoadingCache<ReturnKey, FlowFunction<D>>(
+                (ReturnKey key) => @delegate.getReturnFlowFunction(key.CallStmt, key.DestinationMethod, key.ExitStmt, key.ReturnSite)
+            );
 
-			callToReturnCache = builder.build(new CacheLoaderAnonymousInnerClass4(this, @delegate));
-		}
-
-		private class CacheLoaderAnonymousInnerClass : CacheLoader<NNKey, FlowFunction<D>>
-		{
-			private readonly FlowFunctionCache<N, D, M> outerInstance;
-
-			private heros.FlowFunctions<N, D, M> @delegate;
-
-			public CacheLoaderAnonymousInnerClass(FlowFunctionCache<N, D, M> outerInstance, heros.FlowFunctions<N, D, M> @delegate)
-			{
-				this.outerInstance = outerInstance;
-				this.@delegate = @delegate;
-			}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FlowFunction<D> load(NNKey key) throws Exception
-			public FlowFunction<D> load(NNKey key)
-			{
-				return @delegate.getNormalFlowFunction(key.Curr, key.Succ);
-			}
-		}
-
-		private class CacheLoaderAnonymousInnerClass2 : CacheLoader<CallKey, FlowFunction<D>>
-		{
-			private readonly FlowFunctionCache<N, D, M> outerInstance;
-
-			private heros.FlowFunctions<N, D, M> @delegate;
-
-			public CacheLoaderAnonymousInnerClass2(FlowFunctionCache<N, D, M> outerInstance, heros.FlowFunctions<N, D, M> @delegate)
-			{
-				this.outerInstance = outerInstance;
-				this.@delegate = @delegate;
-			}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FlowFunction<D> load(CallKey key) throws Exception
-			public FlowFunction<D> load(CallKey key)
-			{
-				return @delegate.getCallFlowFunction(key.CallStmt, key.DestinationMethod);
-			}
-		}
-
-		private class CacheLoaderAnonymousInnerClass3 : CacheLoader<ReturnKey, FlowFunction<D>>
-		{
-			private readonly FlowFunctionCache<N, D, M> outerInstance;
-
-			private heros.FlowFunctions<N, D, M> @delegate;
-
-			public CacheLoaderAnonymousInnerClass3(FlowFunctionCache<N, D, M> outerInstance, heros.FlowFunctions<N, D, M> @delegate)
-			{
-				this.outerInstance = outerInstance;
-				this.@delegate = @delegate;
-			}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FlowFunction<D> load(ReturnKey key) throws Exception
-			public FlowFunction<D> load(ReturnKey key)
-			{
-				return @delegate.getReturnFlowFunction(key.CallStmt, key.DestinationMethod, key.ExitStmt, key.ReturnSite);
-			}
-		}
-
-		private class CacheLoaderAnonymousInnerClass4 : CacheLoader<NNKey, FlowFunction<D>>
-		{
-			private readonly FlowFunctionCache<N, D, M> outerInstance;
-
-			private heros.FlowFunctions<N, D, M> @delegate;
-
-			public CacheLoaderAnonymousInnerClass4(FlowFunctionCache<N, D, M> outerInstance, heros.FlowFunctions<N, D, M> @delegate)
-			{
-				this.outerInstance = outerInstance;
-				this.@delegate = @delegate;
-			}
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public FlowFunction<D> load(NNKey key) throws Exception
-			public FlowFunction<D> load(NNKey key)
-			{
-				return @delegate.getCallToReturnFlowFunction(key.Curr, key.Succ);
-			}
+			callToReturnCache = new LoadingCache<NNKey, FlowFunction<D>>(
+                (NNKey key) => @delegate.getCallToReturnFlowFunction(key.Curr, key.Succ)
+            );
 		}
 
 		public virtual FlowFunction<D> getNormalFlowFunction(N curr, N succ)
 		{
-			return normalCache.getUnchecked(new NNKey(this, curr, succ));
+			return normalCache.Get(new NNKey(this, curr, succ));
 		}
 
 		public virtual FlowFunction<D> getCallFlowFunction(N callStmt, M destinationMethod)
 		{
-			return callCache.getUnchecked(new CallKey(this, callStmt, destinationMethod));
+			return callCache.Get(new CallKey(this, callStmt, destinationMethod));
 		}
 
 		public virtual FlowFunction<D> getReturnFlowFunction(N callSite, M calleeMethod, N exitStmt, N returnSite)
 		{
-			return returnCache.getUnchecked(new ReturnKey(this, callSite, calleeMethod, exitStmt, returnSite));
+			return returnCache.Get(new ReturnKey(this, callSite, calleeMethod, exitStmt, returnSite));
 		}
 
 		public virtual FlowFunction<D> getCallToReturnFlowFunction(N callSite, N returnSite)
 		{
-			return callToReturnCache.getUnchecked(new NNKey(this, callSite, returnSite));
+			return callToReturnCache.Get(new NNKey(this, callSite, returnSite));
 		}
 
 		private class NNKey
 		{
-			private readonly FlowFunctionCache<N, D, M> outerInstance;
+            private readonly FlowFunctionCache<N, D, M> outerInstance;
 
 			internal readonly N curr, succ;
 
@@ -182,8 +99,8 @@ namespace heros
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + ((curr == default(N)) ? 0 : curr.GetHashCode());
-				result = prime * result + ((succ == default(N)) ? 0 : succ.GetHashCode());
+				result = prime * result + (Utils.IsDefault(curr) ? 0 : curr.GetHashCode());
+				result = prime * result + (Utils.IsDefault(succ) ? 0 : succ.GetHashCode());
 				return result;
 			}
 
@@ -201,12 +118,11 @@ namespace heros
 				{
 					return false;
 				}
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") NNKey other = (NNKey) obj;
+
 				NNKey other = (NNKey) obj;
-				if (curr == default(N))
+				if (Utils.IsDefault(curr))
 				{
-					if (other.curr != default(N))
+					if (Utils.IsDefault(other.curr))
 					{
 						return false;
 					}
@@ -215,9 +131,9 @@ namespace heros
 				{
 					return false;
 				}
-				if (succ == default(N))
+				if (Utils.IsDefault(succ))
 				{
-					if (other.succ != default(N))
+					if (Utils.IsDefault(other.succ))
 					{
 						return false;
 					}
@@ -264,8 +180,8 @@ namespace heros
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + ((callStmt == default(N)) ? 0 : callStmt.GetHashCode());
-				result = prime * result + ((destinationMethod == default(M)) ? 0 : destinationMethod.GetHashCode());
+				result = prime * result + (Utils.IsDefault(callStmt) ? 0 : callStmt.GetHashCode());
+				result = prime * result + (Utils.IsDefault(destinationMethod) ? 0 : destinationMethod.GetHashCode());
 				return result;
 			}
 
@@ -283,12 +199,10 @@ namespace heros
 				{
 					return false;
 				}
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") CallKey other = (CallKey) obj;
 				CallKey other = (CallKey) obj;
-				if (callStmt == default(N))
+				if (Utils.IsDefault(callStmt))
 				{
-					if (other.callStmt != default(N))
+					if (Utils.IsDefault(other.callStmt))
 					{
 						return false;
 					}
@@ -297,9 +211,9 @@ namespace heros
 				{
 					return false;
 				}
-				if (destinationMethod == default(M))
+				if (Utils.IsDefault(destinationMethod))
 				{
-					if (other.destinationMethod != default(M))
+					if (Utils.IsDefault(other.destinationMethod))
 					{
 						return false;
 					}
@@ -346,8 +260,8 @@ namespace heros
 			{
 				const int prime = 31;
 				int result = base.GetHashCode();
-				result = prime * result + ((exitStmt == default(N)) ? 0 : exitStmt.GetHashCode());
-				result = prime * result + ((returnSite == default(N)) ? 0 : returnSite.GetHashCode());
+				result = prime * result + (Utils.IsDefault(exitStmt) ? 0 : exitStmt.GetHashCode());
+				result = prime * result + (Utils.IsDefault(returnSite) ? 0 : returnSite.GetHashCode());
 				return result;
 			}
 
@@ -368,9 +282,9 @@ namespace heros
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("unchecked") ReturnKey other = (ReturnKey) obj;
 				ReturnKey other = (ReturnKey) obj;
-				if (exitStmt == default(N))
+				if (Utils.IsDefault(exitStmt))
 				{
-					if (other.exitStmt != default(N))
+					if (Utils.IsDefault(other.exitStmt))
 					{
 						return false;
 					}
@@ -379,9 +293,9 @@ namespace heros
 				{
 					return false;
 				}
-				if (returnSite == default(N))
+				if (Utils.IsDefault(returnSite))
 				{
-					if (other.returnSite != default(N))
+					if (Utils.IsDefault(other.returnSite))
 					{
 						return false;
 					}
@@ -394,20 +308,23 @@ namespace heros
 			}
 		}
 
-		public virtual void printStats()
-		{
-			logger.debug("Stats for flow-function cache:\n" + "Normal:         {}\n" + "Call:           {}\n" + "Return:         {}\n" + "Call-to-return: {}\n", normalCache.stats(), callCache.stats(),returnCache.stats(),callToReturnCache.stats());
-		}
+		//public virtual void printStats()
+		//{
+		//	logger.debug("Stats for flow-function cache:\n" + "Normal:         {}\n" + "Call:           {}\n" + "Return:         {}\n" + "Call-to-return: {}\n", 
+  //              normalCache.stats(),
+  //              callCache.stats(), 
+  //              returnCache.stats(), 
+  //              callToReturnCache.stats()
+  //          );
+		//}
 
-		public virtual void invalidate()
-		{
-			callCache.invalidateAll();
-			callToReturnCache.invalidateAll();
-			normalCache.invalidateAll();
-			returnCache.invalidateAll();
-
-		}
-
+		//public virtual void invalidate()
+		//{
+		//	callCache.invalidateAll();
+		//	callToReturnCache.invalidateAll();
+		//	normalCache.invalidateAll();
+		//	returnCache.invalidateAll();
+		//}
 	}
 
 }
