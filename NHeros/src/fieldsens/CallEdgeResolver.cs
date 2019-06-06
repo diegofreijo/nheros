@@ -17,42 +17,42 @@ namespace heros.fieldsens
 	using Lists = com.google.common.collect.Lists;
 
 
-	internal class CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>>
+	internal class CallEdgeResolver<Field, Fact, Stmt, Method> : ResolverTemplate<Field, Fact, Stmt, Method, CallEdge<Field, Fact, Stmt, Method>>
 	{
 
-		public CallEdgeResolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger) : this(analyzer, debugger, null)
+		public CallEdgeResolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Debugger<Field, Fact, Stmt, Method> debugger) : this(analyzer, debugger, null)
 		{
 		}
 
-		public CallEdgeResolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger, CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> parent) : base(analyzer, analyzer.AccessPath, parent, debugger)
+		public CallEdgeResolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Debugger<Field, Fact, Stmt, Method> debugger, CallEdgeResolver<Field, Fact, Stmt, Method> parent) : base(analyzer, analyzer.AccessPath, parent, debugger)
 		{
 		}
 
-		protected internal override AccessPath<System.Reflection.FieldInfo> getAccessPathOf(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> inc)
+		protected internal override AccessPath<Field> getAccessPathOf(CallEdge<Field, Fact, Stmt, Method> inc)
 		{
 			return inc.CalleeSourceFact.AccessPath;
 		}
 
-		protected internal override void processIncomingGuaranteedPrefix(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> inc)
+		protected internal override void processIncomingGuaranteedPrefix(CallEdge<Field, Fact, Stmt, Method> inc)
 		{
 			analyzer.applySummaries(inc);
 		}
 
-		protected internal override void processIncomingPotentialPrefix(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> inc)
+		protected internal override void processIncomingPotentialPrefix(CallEdge<Field, Fact, Stmt, Method> inc)
 		{
 			@lock();
 			inc.registerInterestCallback(analyzer);
 			unlock();
 		}
 
-		protected internal override ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> createNestedResolver(AccessPath<System.Reflection.FieldInfo> newAccPath)
+		protected internal override ResolverTemplate<Field, Fact, Stmt, Method, CallEdge<Field, Fact, Stmt, Method>> createNestedResolver(AccessPath<Field> newAccPath)
 		{
 			return analyzer.createWithAccessPath(newAccPath).CallEdgeResolver;
 		}
 
-		public virtual void applySummaries(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void applySummaries(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
-			foreach (CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge in Lists.newLinkedList(incomingEdges))
+			foreach (CallEdge<Field, Fact, Stmt, Method> incEdge in Lists.newLinkedList(incomingEdges))
 			{
 				analyzer.applySummary(incEdge, factAtStmt);
 			}

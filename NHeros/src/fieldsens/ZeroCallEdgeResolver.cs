@@ -13,34 +13,34 @@
 namespace heros.fieldsens
 {
 
-	public class ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class ZeroCallEdgeResolver<Field, Fact, Stmt, Method> : CallEdgeResolver<Field, Fact, Stmt, Method>
 	{
 
-		private ZeroHandler<System.Reflection.FieldInfo> zeroHandler;
+		private ZeroHandler<Field> zeroHandler;
 
-		public ZeroCallEdgeResolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, ZeroHandler<System.Reflection.FieldInfo> zeroHandler, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger) : base(analyzer, debugger)
+		public ZeroCallEdgeResolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, ZeroHandler<Field> zeroHandler, Debugger<Field, Fact, Stmt, Method> debugger) : base(analyzer, debugger)
 		{
 			this.zeroHandler = zeroHandler;
 		}
 
-		internal virtual ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> copyWithAnalyzer(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer)
+		internal virtual ZeroCallEdgeResolver<Field, Fact, Stmt, Method> copyWithAnalyzer(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer)
 		{
-			return new ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(analyzer, zeroHandler, debugger);
+			return new ZeroCallEdgeResolver<Field, Fact, Stmt, Method>(analyzer, zeroHandler, debugger);
 		}
 
-		public override void resolve(FlowFunction_Constraint<System.Reflection.FieldInfo> constraint, InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callback)
+		public override void resolve(FlowFunction_Constraint<Field> constraint, InterestCallback<Field, Fact, Stmt, Method> callback)
 		{
-			if (zeroHandler.shouldGenerateAccessPath(constraint.applyToAccessPath(new AccessPath<System.Reflection.FieldInfo>())))
+			if (zeroHandler.shouldGenerateAccessPath(constraint.applyToAccessPath(new AccessPath<Field>())))
 			{
 				callback.interest(analyzer, this);
 			}
 		}
 
-		public override void interest(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+		public override void interest(Resolver<Field, Fact, Stmt, Method> resolver)
 		{
 		}
 
-		protected internal override ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> getOrCreateNestedResolver(AccessPath<System.Reflection.FieldInfo> newAccPath)
+		protected internal override ZeroCallEdgeResolver<Field, Fact, Stmt, Method> getOrCreateNestedResolver(AccessPath<Field> newAccPath)
 		{
 			return this;
 		}

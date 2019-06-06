@@ -31,46 +31,46 @@ namespace heros.fieldsens
 	using Maps = com.google.common.collect.Maps;
 	using Sets = com.google.common.collect.Sets;
 
-	public class PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>
 	{
 
 		private static readonly Logger logger = LoggerFactory.getLogger(typeof(PerAccessPathMethodAnalyzer));
 		private Fact sourceFact;
-		private readonly AccessPath<System.Reflection.FieldInfo> accessPath;
-		private IDictionary<WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> reachableStatements = new Dictionary();
-		private IList<WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> summaries = new List();
-		private Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context;
-		private System.Reflection.MethodInfo method;
-		private DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> returnSiteResolvers = new DefaultValueMapAnonymousInnerClass();
+		private readonly AccessPath<Field> accessPath;
+		private IDictionary<WrappedFactAtStatement<Field, Fact, Stmt, Method>, WrappedFactAtStatement<Field, Fact, Stmt, Method>> reachableStatements = new Dictionary();
+		private IList<WrappedFactAtStatement<Field, Fact, Stmt, Method>> summaries = new List();
+		private Context<Field, Fact, Stmt, Method> context;
+		private Method method;
+		private DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<Field, Fact, Stmt, Method>> returnSiteResolvers = new DefaultValueMapAnonymousInnerClass();
 
-		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>>
+		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<Field, Fact, Stmt, Method>>
 		{
-			protected internal override ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> createItem(FactAtStatement<Fact, Stmt> key)
+			protected internal override ReturnSiteResolver<Field, Fact, Stmt, Method> createItem(FactAtStatement<Fact, Stmt> key)
 			{
-				return new ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.context.factHandler, outerInstance, key.stmt, outerInstance.debugger);
+				return new ReturnSiteResolver<Field, Fact, Stmt, Method>(outerInstance.context.factHandler, outerInstance, key.stmt, outerInstance.debugger);
 			}
 		}
-		private DefaultValueMap<FactAtStatement<Fact, Stmt>, ControlFlowJoinResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> ctrFlowJoinResolvers = new DefaultValueMapAnonymousInnerClass2();
+		private DefaultValueMap<FactAtStatement<Fact, Stmt>, ControlFlowJoinResolver<Field, Fact, Stmt, Method>> ctrFlowJoinResolvers = new DefaultValueMapAnonymousInnerClass2();
 
-		private class DefaultValueMapAnonymousInnerClass2 : DefaultValueMap<FactAtStatement<Fact, Stmt>, ControlFlowJoinResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>>
+		private class DefaultValueMapAnonymousInnerClass2 : DefaultValueMap<FactAtStatement<Fact, Stmt>, ControlFlowJoinResolver<Field, Fact, Stmt, Method>>
 		{
-			protected internal override ControlFlowJoinResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> createItem(FactAtStatement<Fact, Stmt> key)
+			protected internal override ControlFlowJoinResolver<Field, Fact, Stmt, Method> createItem(FactAtStatement<Fact, Stmt> key)
 			{
-				return new ControlFlowJoinResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.context.factHandler, outerInstance, key.stmt, outerInstance.debugger);
+				return new ControlFlowJoinResolver<Field, Fact, Stmt, Method>(outerInstance.context.factHandler, outerInstance, key.stmt, outerInstance.debugger);
 			}
 		}
-		private CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callEdgeResolver;
-		private PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> parent;
-		private Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger;
+		private CallEdgeResolver<Field, Fact, Stmt, Method> callEdgeResolver;
+		private PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> parent;
+		private Debugger<Field, Fact, Stmt, Method> debugger;
 
-		public PerAccessPathMethodAnalyzer(System.Reflection.MethodInfo method, Fact sourceFact, Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger) : this(method, sourceFact, context, debugger, new AccessPath<System.Reflection.FieldInfo>(), null)
+		public PerAccessPathMethodAnalyzer(Method method, Fact sourceFact, Context<Field, Fact, Stmt, Method> context, Debugger<Field, Fact, Stmt, Method> debugger) : this(method, sourceFact, context, debugger, new AccessPath<Field>(), null)
 		{
 		}
 
-		private PerAccessPathMethodAnalyzer(System.Reflection.MethodInfo method, Fact sourceFact, Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger, AccessPath<System.Reflection.FieldInfo> accPath, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> parent)
+		private PerAccessPathMethodAnalyzer(Method method, Fact sourceFact, Context<Field, Fact, Stmt, Method> context, Debugger<Field, Fact, Stmt, Method> debugger, AccessPath<Field> accPath, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> parent)
 		{
 			this.debugger = debugger;
-			if (method == default(System.Reflection.MethodInfo))
+			if (method == default(Method))
 			{
 				throw new System.ArgumentException("Method must be not null");
 			}
@@ -81,26 +81,26 @@ namespace heros.fieldsens
 			this.context = context;
 			if (parent == null)
 			{
-				this.callEdgeResolver = ZeroSource ? new ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(this, context.zeroHandler, debugger) : new CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(this, debugger);
+				this.callEdgeResolver = ZeroSource ? new ZeroCallEdgeResolver<Field, Fact, Stmt, Method>(this, context.zeroHandler, debugger) : new CallEdgeResolver<Field, Fact, Stmt, Method>(this, debugger);
 			}
 			else
 			{
-				this.callEdgeResolver = ZeroSource ? parent.callEdgeResolver : new CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(this, debugger, parent.callEdgeResolver);
+				this.callEdgeResolver = ZeroSource ? parent.callEdgeResolver : new CallEdgeResolver<Field, Fact, Stmt, Method>(this, debugger, parent.callEdgeResolver);
 			}
 			log("initialized");
 		}
 
-		public virtual PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> createWithAccessPath(AccessPath<System.Reflection.FieldInfo> accPath)
+		public virtual PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> createWithAccessPath(AccessPath<Field> accPath)
 		{
-			return new PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(method, sourceFact, context, debugger, accPath, this);
+			return new PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>(method, sourceFact, context, debugger, accPath, this);
 		}
 
-		internal virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> wrappedSource()
+		internal virtual WrappedFact<Field, Fact, Stmt, Method> wrappedSource()
 		{
-			return new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(sourceFact, accessPath, callEdgeResolver);
+			return new WrappedFact<Field, Fact, Stmt, Method>(sourceFact, accessPath, callEdgeResolver);
 		}
 
-		public virtual AccessPath<System.Reflection.FieldInfo> AccessPath
+		public virtual AccessPath<Field> AccessPath
 		{
 			get
 			{
@@ -121,7 +121,7 @@ namespace heros.fieldsens
 			callEdgeResolver.interest(callEdgeResolver);
 			foreach (Stmt startPoint in context.icfg.getStartPointsOf(method))
 			{
-				WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> target = new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(startPoint, wrappedSource());
+				WrappedFactAtStatement<Field, Fact, Stmt, Method> target = new WrappedFactAtStatement<Field, Fact, Stmt, Method>(startPoint, wrappedSource());
 				if (!reachableStatements.ContainsKey(target))
 				{
 					scheduleEdgeTo(target);
@@ -131,18 +131,18 @@ namespace heros.fieldsens
 
 		public virtual void addInitialSeed(Stmt stmt)
 		{
-			scheduleEdgeTo(new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(stmt, wrappedSource()));
+			scheduleEdgeTo(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(stmt, wrappedSource()));
 		}
 
-		private void scheduleEdgeTo(ICollection<Stmt> successors, WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact)
+		private void scheduleEdgeTo(ICollection<Stmt> successors, WrappedFact<Field, Fact, Stmt, Method> fact)
 		{
 			foreach (Stmt stmt in successors)
 			{
-				scheduleEdgeTo(new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(stmt, fact));
+				scheduleEdgeTo(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(stmt, fact));
 			}
 		}
 
-		internal virtual void scheduleEdgeTo(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		internal virtual void scheduleEdgeTo(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			Debug.Assert(context.icfg.getMethodOf(factAtStmt.Statement).Equals(method));
 			if (reachableStatements.ContainsKey(factAtStmt))
@@ -169,25 +169,25 @@ namespace heros.fieldsens
 			return method + "; " + sourceFact + accessPath;
 		}
 
-		internal virtual void processCall(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		internal virtual void processCall(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
-			ICollection<System.Reflection.MethodInfo> calledMethods = context.icfg.getCalleesOfCallAt(factAtStmt.Statement);
-			foreach (System.Reflection.MethodInfo calledMethod in calledMethods)
+			ICollection<Method> calledMethods = context.icfg.getCalleesOfCallAt(factAtStmt.Statement);
+			foreach (Method calledMethod in calledMethods)
 			{
-				FlowFunction<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> flowFunction = context.flowFunctions.getCallFlowFunction(factAtStmt.Statement, calledMethod);
-				ICollection<FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
-				foreach (FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> targetFact in targetFacts)
+				FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getCallFlowFunction(factAtStmt.Statement, calledMethod);
+				ICollection<FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<Field, Fact, Stmt, Method>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
+				foreach (FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> targetFact in targetFacts)
 				{
 					//TODO handle constraint
-					MethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer = context.getAnalyzer(calledMethod);
-					analyzer.addIncomingEdge(new CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(this, factAtStmt, targetFact.Fact));
+					MethodAnalyzer<Field, Fact, Stmt, Method> analyzer = context.getAnalyzer(calledMethod);
+					analyzer.addIncomingEdge(new CallEdge<Field, Fact, Stmt, Method>(this, factAtStmt, targetFact.Fact));
 				}
 			}
 
 			processCallToReturnEdge(factAtStmt);
 		}
 
-		internal virtual void processExit(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		internal virtual void processExit(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			log("New Summary: " + factAtStmt);
 			if (!summaries.Add(factAtStmt))
@@ -205,12 +205,12 @@ namespace heros.fieldsens
 					ICollection<Stmt> returnSites = context.icfg.getReturnSitesOfCallAt(callSite);
 					foreach (Stmt returnSite in returnSites)
 					{
-						FlowFunction<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> flowFunction = context.flowFunctions.getReturnFlowFunction(callSite, method, factAtStmt.Statement, returnSite);
-						ICollection<FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
-						foreach (FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> targetFact in targetFacts)
+						FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getReturnFlowFunction(callSite, method, factAtStmt.Statement, returnSite);
+						ICollection<FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<Field, Fact, Stmt, Method>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
+						foreach (FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> targetFact in targetFacts)
 						{
 							//TODO handle constraint
-							context.getAnalyzer(context.icfg.getMethodOf(callSite)).addUnbalancedReturnFlow(new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(returnSite, targetFact.Fact), callSite);
+							context.getAnalyzer(context.icfg.getMethodOf(callSite)).addUnbalancedReturnFlow(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(returnSite, targetFact.Fact), callSite);
 						}
 					}
 				}
@@ -219,13 +219,13 @@ namespace heros.fieldsens
 				//instead we thus call the return flow function will a null caller
 				if (callSites.Count == 0)
 				{
-					FlowFunction<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> flowFunction = context.flowFunctions.getReturnFlowFunction(default(Stmt), method, factAtStmt.Statement, default(Stmt));
-					flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
+					FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getReturnFlowFunction(default(Stmt), method, factAtStmt.Statement, default(Stmt));
+					flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<Field, Fact, Stmt, Method>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
 				}
 			}
 		}
 
-		private void processCallToReturnEdge(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		private void processCallToReturnEdge(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			if (isLoopStart(factAtStmt.Statement))
 			{
@@ -237,22 +237,22 @@ namespace heros.fieldsens
 			}
 		}
 
-		private void processNonJoiningCallToReturnFlow(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		private void processNonJoiningCallToReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			ICollection<Stmt> returnSites = context.icfg.getReturnSitesOfCallAt(factAtStmt.Statement);
 			foreach (Stmt returnSite in returnSites)
 			{
-				FlowFunction<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> flowFunction = context.flowFunctions.getCallToReturnFlowFunction(factAtStmt.Statement, returnSite);
-				ICollection<FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
-				foreach (FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> targetFact in targetFacts)
+				FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getCallToReturnFlowFunction(factAtStmt.Statement, returnSite);
+				ICollection<FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<Field, Fact, Stmt, Method>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
+				foreach (FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> targetFact in targetFacts)
 				{
 					//TODO handle constraint
-					scheduleEdgeTo(new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(returnSite, targetFact.Fact));
+					scheduleEdgeTo(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(returnSite, targetFact.Fact));
 				}
 			}
 		}
 
-		private void processNormalFlow(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		private void processNormalFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			if (isLoopStart(factAtStmt.Statement))
 			{
@@ -289,7 +289,7 @@ namespace heros.fieldsens
 			return false;
 		}
 
-		internal virtual void processFlowFromJoinStmt(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		internal virtual void processFlowFromJoinStmt(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			if (context.icfg.isCallStmt(factAtStmt.Statement))
 			{
@@ -301,14 +301,14 @@ namespace heros.fieldsens
 			}
 		}
 
-		private void processNormalNonJoiningFlow(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		private void processNormalNonJoiningFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final java.util.List<Stmt> successors = context.icfg.getSuccsOf(factAtStmt.getStatement());
 			IList<Stmt> successors = context.icfg.getSuccsOf(factAtStmt.Statement);
-			FlowFunction<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> flowFunction = context.flowFunctions.getNormalFlowFunction(factAtStmt.Statement);
-			ICollection<FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
-			foreach (FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> targetFact in targetFacts)
+			FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getNormalFlowFunction(factAtStmt.Statement);
+			ICollection<FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method>> targetFacts = flowFunction.computeTargets(factAtStmt.Fact, new AccessPathHandler<Field, Fact, Stmt, Method>(factAtStmt.AccessPath, factAtStmt.Resolver, debugger));
+			foreach (FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> targetFact in targetFacts)
 			{
 				if (targetFact.Constraint == null)
 				{
@@ -321,21 +321,21 @@ namespace heros.fieldsens
 			}
 		}
 
-		private class InterestCallbackAnonymousInnerClass : InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+		private class InterestCallbackAnonymousInnerClass : InterestCallback<Field, Fact, Stmt, Method>
 		{
-			private readonly PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance;
+			private readonly PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance;
 
 			private IList<Stmt> successors;
 
-			public InterestCallbackAnonymousInnerClass(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance, IList<Stmt> successors)
+			public InterestCallbackAnonymousInnerClass(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance, IList<Stmt> successors)
 			{
 				this.outerInstance = outerInstance;
 				this.successors = successors;
 			}
 
-			public void interest(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+			public void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 			{
-				analyzer.scheduleEdgeTo(successors, new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(targetFact.Fact.Fact, targetFact.Fact.AccessPath, resolver));
+				analyzer.scheduleEdgeTo(successors, new WrappedFact<Field, Fact, Stmt, Method>(targetFact.Fact.Fact, targetFact.Fact.AccessPath, resolver));
 			}
 
 			public void canBeResolvedEmpty()
@@ -344,7 +344,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual void addIncomingEdge(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge)
+		public virtual void addIncomingEdge(CallEdge<Field, Fact, Stmt, Method> incEdge)
 		{
 			if (BootStrapped)
 			{
@@ -357,14 +357,14 @@ namespace heros.fieldsens
 			callEdgeResolver.addIncoming(incEdge);
 		}
 
-		internal virtual void applySummary(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> exitFact)
+		internal virtual void applySummary(CallEdge<Field, Fact, Stmt, Method> incEdge, WrappedFactAtStatement<Field, Fact, Stmt, Method> exitFact)
 		{
 			ICollection<Stmt> returnSites = context.icfg.getReturnSitesOfCallAt(incEdge.CallSite);
 			foreach (Stmt returnSite in returnSites)
 			{
-				FlowFunction<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> flowFunction = context.flowFunctions.getReturnFlowFunction(incEdge.CallSite, method, exitFact.Statement, returnSite);
-				ISet<FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> targets = flowFunction.computeTargets(exitFact.Fact, new AccessPathHandler<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(exitFact.AccessPath, exitFact.Resolver, debugger));
-				foreach (FlowFunction_ConstrainedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> targetFact in targets)
+				FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getReturnFlowFunction(incEdge.CallSite, method, exitFact.Statement, returnSite);
+				ISet<FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method>> targets = flowFunction.computeTargets(exitFact.Fact, new AccessPathHandler<Field, Fact, Stmt, Method>(exitFact.AccessPath, exitFact.Resolver, debugger));
+				foreach (FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> targetFact in targets)
 				{
 					context.factHandler.restoreCallingContext(targetFact.Fact.Fact, incEdge.CallerCallSiteFact.Fact);
 					//TODO handle constraint
@@ -373,22 +373,22 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual void scheduleUnbalancedReturnEdgeTo(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact)
+		public virtual void scheduleUnbalancedReturnEdgeTo(WrappedFactAtStatement<Field, Fact, Stmt, Method> fact)
 		{
-			ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver = returnSiteResolvers.getOrCreate(fact.AsFactAtStatement);
-			resolver.addIncoming(new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(fact.WrappedFact.Fact, fact.WrappedFact.AccessPath, fact.WrappedFact.Resolver), null, Delta.empty<System.Reflection.FieldInfo>());
+			ReturnSiteResolver<Field, Fact, Stmt, Method> resolver = returnSiteResolvers.getOrCreate(fact.AsFactAtStatement);
+			resolver.addIncoming(new WrappedFact<Field, Fact, Stmt, Method>(fact.WrappedFact.Fact, fact.WrappedFact.AccessPath, fact.WrappedFact.Resolver), null, Delta.empty<Field>());
 		}
 
-		private void scheduleReturnEdge(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge, WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact, Stmt returnSite)
+		private void scheduleReturnEdge(CallEdge<Field, Fact, Stmt, Method> incEdge, WrappedFact<Field, Fact, Stmt, Method> fact, Stmt returnSite)
 		{
-			Delta<System.Reflection.FieldInfo> delta = accessPath.getDeltaTo(incEdge.CalleeSourceFact.AccessPath);
-			ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> returnSiteResolver = incEdge.CallerAnalyzer.returnSiteResolvers.getOrCreate(new FactAtStatement<Fact, Stmt>(fact.Fact, returnSite));
+			Delta<Field> delta = accessPath.getDeltaTo(incEdge.CalleeSourceFact.AccessPath);
+			ReturnSiteResolver<Field, Fact, Stmt, Method> returnSiteResolver = incEdge.CallerAnalyzer.returnSiteResolvers.getOrCreate(new FactAtStatement<Fact, Stmt>(fact.Fact, returnSite));
 			returnSiteResolver.addIncoming(fact, incEdge.CalleeSourceFact.Resolver, delta);
 		}
 
-		internal virtual void applySummaries(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge)
+		internal virtual void applySummaries(CallEdge<Field, Fact, Stmt, Method> incEdge)
 		{
-			foreach (WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> summary in summaries)
+			foreach (WrappedFactAtStatement<Field, Fact, Stmt, Method> summary in summaries)
 			{
 				applySummary(incEdge, summary);
 			}
@@ -404,12 +404,12 @@ namespace heros.fieldsens
 
 		private class Job : ThreadStart
 		{
-			private readonly PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance;
+			private readonly PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance;
 
 
-			internal WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt;
+			internal WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt;
 
-			public Job(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+			public Job(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 			{
 				this.outerInstance = outerInstance;
 				this.factAtStmt = factAtStmt;
@@ -443,7 +443,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual CallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> CallEdgeResolver
+		public virtual CallEdgeResolver<Field, Fact, Stmt, Method> CallEdgeResolver
 		{
 			get
 			{
@@ -451,7 +451,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual System.Reflection.MethodInfo Method
+		public virtual Method Method
 		{
 			get
 			{

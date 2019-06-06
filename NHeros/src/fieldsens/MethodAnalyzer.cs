@@ -14,14 +14,14 @@ namespace heros.fieldsens
 {
 	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
 
-	public interface MethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public interface MethodAnalyzer<Field, Fact, Stmt, Method>
 	{
 
-		void addIncomingEdge(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge);
+		void addIncomingEdge(CallEdge<Field, Fact, Stmt, Method> incEdge);
 
 		void addInitialSeed(Stmt startPoint, Fact val);
 
-		void addUnbalancedReturnFlow(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> target, Stmt callSite);
+		void addUnbalancedReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> target, Stmt callSite);
 	}
 
 }

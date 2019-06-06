@@ -1,6 +1,6 @@
 ﻿using heros.fieldsens;
 using System.Collections.Generic;
-using static heros.utilities.Edge<Fact>;
+using static heros.utilities.Edge;
 
 /// <summary>
 ///*****************************************************************************
@@ -29,7 +29,7 @@ namespace heros.utilities
 		private IDictionary<Statement, TestMethod> stmt2method = new Dictionary<Statement, TestMethod>();
 		private Multiset<ExpectedFlowFunction<JoinableFact>> remainingFlowFunctions = HashMultiset.create();
 
-		public virtual MethodHelper method(string methodName, Statement[] startingPoints, params EdgeBuilder<Fact>[] edgeBuilders)
+		public virtual MethodHelper method(string methodName, Statement[] startingPoints, params EdgeBuilder[] edgeBuilders)
 		{
 			MethodHelper methodHelper = new MethodHelper(this, new TestMethod(methodName));
 			methodHelper.startPoints(startingPoints);
@@ -50,8 +50,6 @@ namespace heros.utilities
 			return result;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public static EdgeBuilder.NormalStmtBuilder normalStmt(String stmt, ExpectedFlowFunction<JoinableFact>...flowFunctions)
 		public static EdgeBuilder.NormalStmtBuilder normalStmt(string stmt, params ExpectedFlowFunction<JoinableFact>[] flowFunctions)
 		{
 			return new NormalStmtBuilder(new Statement(stmt), flowFunctions);

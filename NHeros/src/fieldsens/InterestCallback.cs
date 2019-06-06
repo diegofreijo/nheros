@@ -13,10 +13,10 @@
 namespace heros.fieldsens
 {
 
-	public interface InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public interface InterestCallback<Field, Fact, Stmt, Method>
 	{
 
-		void interest(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver);
+		void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver);
 
 		void canBeResolvedEmpty();
 	}

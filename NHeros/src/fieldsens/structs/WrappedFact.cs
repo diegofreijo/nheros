@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using NHeros.src.util;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,18 +16,15 @@
 /// </summary>
 namespace heros.fieldsens.structs
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-
-	public class WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class WrappedFact<Field, Fact, Stmt, Method>
 	{
-
 		private readonly Fact fact;
-		private readonly AccessPath<System.Reflection.FieldInfo> accessPath;
-		private readonly Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver;
+		private readonly AccessPath<Field> accessPath;
+		private readonly Resolver<Field, Fact, Stmt, Method> resolver;
 
-		public WrappedFact(Fact fact, AccessPath<System.Reflection.FieldInfo> accessPath, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+		public WrappedFact(Fact fact, AccessPath<Field> accessPath, Resolver<Field, Fact, Stmt, Method> resolver)
 		{
-			Debug.Assert(fact != default(Fact));
+			Debug.Assert(!Utils.IsDefault(fact));
 			Debug.Assert(accessPath != null);
 			Debug.Assert(resolver != null);
 
@@ -34,7 +33,7 @@ namespace heros.fieldsens.structs
 			this.resolver = resolver;
 		}
 
-		public virtual Fact Fact
+		public virtual Fact F
 		{
 			get
 			{
@@ -42,12 +41,12 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> applyDelta(AccessPath.Delta<System.Reflection.FieldInfo> delta)
+		public virtual WrappedFact<Field, Fact, Stmt, Method> applyDelta(AccessPath<Field>.Delta<Field> delta)
 		{
-			return new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(fact, delta.applyTo(accessPath), resolver); //TODO keep resolver?
+			return new WrappedFact<Field, Fact, Stmt, Method>(fact, delta.applyTo(accessPath), resolver); //TODO keep resolver?
 		}
 
-		public virtual AccessPath<System.Reflection.FieldInfo> AccessPath
+		public virtual AccessPath<Field> AccessPath
 		{
 			get
 			{
@@ -55,7 +54,7 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> applyConstraint(FlowFunction_Constraint<System.Reflection.FieldInfo> constraint, Fact zeroValue)
+		public virtual WrappedFact<Field, Fact, Stmt, Method> applyConstraint(FlowFunction_Constraint<Field> constraint, Fact zeroValue)
 		{
 			if (fact.Equals(zeroValue))
 			{
@@ -63,7 +62,7 @@ namespace heros.fieldsens.structs
 			}
 			else
 			{
-				return new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(fact, constraint.applyToAccessPath(accessPath), resolver);
+				return new WrappedFact<Field, Fact, Stmt, Method>(fact, constraint.applyToAccessPath(accessPath), resolver);
 			}
 		}
 
@@ -82,7 +81,7 @@ namespace heros.fieldsens.structs
 			const int prime = 31;
 			int result = 1;
 			result = prime * result + ((accessPath == null) ? 0 : accessPath.GetHashCode());
-			result = prime * result + ((fact == default(Fact)) ? 0 : fact.GetHashCode());
+			result = prime * result + (Utils.IsDefault(fact) ? 0 : fact.GetHashCode());
 			result = prime * result + ((resolver == null) ? 0 : resolver.GetHashCode());
 			return result;
 		}
@@ -101,7 +100,7 @@ namespace heros.fieldsens.structs
 			{
 				return false;
 			}
-			WrappedFact other = (WrappedFact) obj;
+			var other = (WrappedFact<Field, Fact, Stmt, Method>) obj;
 			if (accessPath == null)
 			{
 				if (other.accessPath != null)
@@ -113,9 +112,9 @@ namespace heros.fieldsens.structs
 			{
 				return false;
 			}
-			if (fact == default(Fact))
+			if (Utils.IsDefault(fact))
 			{
-				if (other.fact != default(Fact))
+				if (!Utils.IsDefault(other.fact))
 				{
 					return false;
 				}
@@ -138,7 +137,7 @@ namespace heros.fieldsens.structs
 			return true;
 		}
 
-		public virtual Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> Resolver
+		public virtual Resolver<Field, Fact, Stmt, Method> Resolver
 		{
 			get
 			{

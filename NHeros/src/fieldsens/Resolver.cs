@@ -19,24 +19,24 @@ namespace heros.fieldsens
 	using Lists = com.google.common.collect.Lists;
 	using Sets = com.google.common.collect.Sets;
 
-	public abstract class Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public abstract class Resolver<Field, Fact, Stmt, Method>
 	{
 
 //JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
-		private ISet<Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> interest_Conflict = Sets.newHashSet();
-		private IList<InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> interestCallbacks = new List();
-		protected internal PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer;
+		private ISet<Resolver<Field, Fact, Stmt, Method>> interest_Conflict = Sets.newHashSet();
+		private IList<InterestCallback<Field, Fact, Stmt, Method>> interestCallbacks = new List();
+		protected internal PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer;
 //JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
 		private bool canBeResolvedEmpty_Conflict = false;
 
-		public Resolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer)
+		public Resolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer)
 		{
 			this.analyzer = analyzer;
 		}
 
-		public abstract void resolve(FlowFunction_Constraint<System.Reflection.FieldInfo> constraint, InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callback);
+		public abstract void resolve(FlowFunction_Constraint<Field> constraint, InterestCallback<Field, Fact, Stmt, Method> callback);
 
-		public virtual void interest(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+		public virtual void interest(Resolver<Field, Fact, Stmt, Method> resolver)
 		{
 			if (!interest_Conflict.Add(resolver))
 			{
@@ -44,7 +44,7 @@ namespace heros.fieldsens
 			}
 
 			log("Interest given by: " + resolver);
-			foreach (InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callback in Lists.newLinkedList(interestCallbacks))
+			foreach (InterestCallback<Field, Fact, Stmt, Method> callback in Lists.newLinkedList(interestCallbacks))
 			{
 				callback.interest(analyzer, resolver);
 			}
@@ -58,7 +58,7 @@ namespace heros.fieldsens
 			}
 
 			canBeResolvedEmpty_Conflict = true;
-			foreach (InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callback in Lists.newLinkedList(interestCallbacks))
+			foreach (InterestCallback<Field, Fact, Stmt, Method> callback in Lists.newLinkedList(interestCallbacks))
 			{
 				callback.canBeResolvedEmpty();
 			}
@@ -72,11 +72,11 @@ namespace heros.fieldsens
 			}
 		}
 
-		protected internal virtual void registerCallback(InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callback)
+		protected internal virtual void registerCallback(InterestCallback<Field, Fact, Stmt, Method> callback)
 		{
 			if (interest_Conflict.Count > 0)
 			{
-				foreach (Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver in Lists.newLinkedList(interest_Conflict))
+				foreach (Resolver<Field, Fact, Stmt, Method> resolver in Lists.newLinkedList(interest_Conflict))
 				{
 					callback.interest(analyzer, resolver);
 				}

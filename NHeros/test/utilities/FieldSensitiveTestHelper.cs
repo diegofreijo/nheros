@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using heros.fieldsens;
+using System.Collections.Generic;
+using static heros.utilities.EdgeBuilder;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,49 +16,14 @@
 /// </summary>
 namespace heros.utilities
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.junit.Assert.assertTrue;
-	using Call2ReturnEdge = heros.utilities.Edge.Call2ReturnEdge;
-	using CallEdge = heros.utilities.Edge.CallEdge;
-	using EdgeVisitor = heros.utilities.Edge.EdgeVisitor;
-	using NormalEdge = heros.utilities.Edge.NormalEdge;
-	using ReturnEdge = heros.utilities.Edge.ReturnEdge;
-	using CallSiteBuilder = heros.utilities.EdgeBuilder.CallSiteBuilder;
-	using ExitStmtBuilder = heros.utilities.EdgeBuilder.ExitStmtBuilder;
-	using NormalStmtBuilder = heros.utilities.EdgeBuilder.NormalStmtBuilder;
-	using AccessPath = heros.fieldsens.AccessPath;
-	using AccessPathHandler = heros.fieldsens.AccessPathHandler;
-	using BiDiFieldSensitiveIFDSSolver = heros.fieldsens.BiDiFieldSensitiveIFDSSolver;
-	using FactMergeHandler = heros.fieldsens.FactMergeHandler;
-	using FieldSensitiveIFDSSolver = heros.fieldsens.FieldSensitiveIFDSSolver;
-	using FlowFunction = heros.fieldsens.FlowFunction;
-	using FlowFunctions = heros.fieldsens.FlowFunctions;
-	using IFDSTabulationProblem = heros.fieldsens.IFDSTabulationProblem;
-	using Scheduler = heros.fieldsens.Scheduler;
-	using ZeroHandler = heros.fieldsens.ZeroHandler;
-	using FlowFunction_ConstrainedFact = heros.fieldsens.FlowFunction_ConstrainedFact;
-
-
-	
-	using Predicate = com.google.common.@base.Predicate;
-	using HashMultimap = com.google.common.collect.HashMultimap;
-	using HashMultiset = com.google.common.collect.HashMultiset;
-	using Iterables = com.google.common.collect.Iterables;
-	using Lists = com.google.common.collect.Lists;
-	using Maps = com.google.common.collect.Maps;
-	using Multimap = com.google.common.collect.Multimap;
-	using Multiset = com.google.common.collect.Multiset;
-	using Sets = com.google.common.collect.Sets;
-
-	public class FieldSensitiveTestHelper
+    public class FieldSensitiveTestHelper
 	{
-
 		private Multimap<TestMethod, Statement> method2startPoint = HashMultimap.create();
-		private IList<NormalEdge> normalEdges = new List();
-		private IList<CallEdge> callEdges = new List();
-		private IList<Call2ReturnEdge> call2retEdges = new List();
-		private IList<ReturnEdge> returnEdges = new List();
-		private IDictionary<Statement, TestMethod> stmt2method = new Dictionary();
+		private IList<NormalEdge<TestFact>> normalEdges = new List<NormalEdge<TestFact>>();
+		private IList<CallEdge<TestFact>> callEdges = new List<CallEdge<TestFact>>();
+		private IList<Call2ReturnEdge<TestFact>> call2retEdges = new List<Call2ReturnEdge<TestFact>>();
+		private IList<ReturnEdge<TestFact>> returnEdges = new List<ReturnEdge<TestFact>>();
+		private IDictionary<Statement, TestMethod> stmt2method = new Dictionary<Statement, TestMethod>();
 		private Multiset<ExpectedFlowFunction> remainingFlowFunctions = HashMultiset.create();
 		private TestDebugger<string, TestFact, Statement, TestMethod> debugger;
 
@@ -86,7 +53,7 @@ namespace heros.utilities
 			return result;
 		}
 
-		public static EdgeBuilder.NormalStmtBuilder normalStmt(string stmt, ExpectedFlowFunction<Fact>[] flowFunctions)
+		public static EdgeBuilder.NormalStmtBuilder normalStmt(string stmt, ExpectedFlowFunction<TestFact>[] flowFunctions)
 		{
 			return new NormalStmtBuilder(new Statement(stmt), flowFunctions);
 		}
@@ -123,7 +90,7 @@ namespace heros.utilities
 
 		private class ExpectedFlowFunctionAnonymousInnerClass : ExpectedFlowFunction<TestFact>
 		{
-			public ExpectedFlowFunctionAnonymousInnerClass(int times, TestFact new) : base(times, new TestFact)
+			public ExpectedFlowFunctionAnonymousInnerClass(int times, TestFact fact) : base(times, fact)
 			{
 			}
 
@@ -242,7 +209,7 @@ namespace heros.utilities
 		{
 			private heros.utilities.FieldSensitiveTestHelper.AccessPathTransformer transformer;
 
-			public ExpectedFlowFunctionAnonymousInnerClass2(int times, TestFact new, heros.utilities.TestFact[] targetFacts, heros.utilities.FieldSensitiveTestHelper.AccessPathTransformer transformer) : base(times, new TestFact, targetFacts)
+			public ExpectedFlowFunctionAnonymousInnerClass2(int times, TestFact fact, heros.utilities.TestFact[] targetFacts, heros.utilities.FieldSensitiveTestHelper.AccessPathTransformer transformer) : base(times, fact, targetFacts)
 			{
 				this.transformer = transformer;
 			}

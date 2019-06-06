@@ -28,7 +28,7 @@ namespace heros.fieldsens
 	/// @param <Method>
 	///            The type of objects used to represent methods. Typically
 	///            <seealso cref="SootMethod"/>. </param>
-	public interface FlowFunctions<Stmt, FieldRef, F, System.Reflection.MethodInfo>
+	public interface FlowFunctions<Stmt, FieldRef, F, Method>
 	{
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace heros.fieldsens
 		/// </summary>
 		/// <param name="curr">
 		///            The current statement. </param>
-		FlowFunction<FieldRef, F, Stmt, System.Reflection.MethodInfo> getNormalFlowFunction(Stmt curr);
+		FlowFunction<FieldRef, F, Stmt, Method> getNormalFlowFunction(Stmt curr);
 
 
 		/// <summary>
@@ -48,7 +48,7 @@ namespace heros.fieldsens
 		///            this call. </param>
 		/// <param name="destinationMethod">
 		///            The concrete target method for which the flow is computed. </param>
-		FlowFunction<FieldRef, F, Stmt, System.Reflection.MethodInfo> getCallFlowFunction(Stmt callStmt, System.Reflection.MethodInfo destinationMethod);
+		FlowFunction<FieldRef, F, Stmt, Method> getCallFlowFunction(Stmt callStmt, Method destinationMethod);
 
 		/// <summary>
 		/// Returns the flow function that computes the flow for a an exit from a
@@ -77,7 +77,7 @@ namespace heros.fieldsens
 		///            returning <code>true</code> in a situation where the call graph
 		///            does not contain a caller for the method that is returned from.
 		/// @return </param>
-		FlowFunction<FieldRef, F, Stmt, System.Reflection.MethodInfo> getReturnFlowFunction(Stmt callSite, System.Reflection.MethodInfo calleeMethod, Stmt exitStmt, Stmt returnSite);
+		FlowFunction<FieldRef, F, Stmt, Method> getReturnFlowFunction(Stmt callSite, Method calleeMethod, Stmt exitStmt, Stmt returnSite);
 
 		/// <summary>
 		/// Returns the flow function that computes the flow from a call site to a
@@ -96,7 +96,7 @@ namespace heros.fieldsens
 		///            The return site to which the information is propagated. For
 		///            exceptional flow, this may actually be the start of an
 		///            exception handler. </param>
-		FlowFunction<FieldRef, F, Stmt, System.Reflection.MethodInfo> getCallToReturnFlowFunction(Stmt callSite, Stmt returnSite);
+		FlowFunction<FieldRef, F, Stmt, Method> getCallToReturnFlowFunction(Stmt callSite, Stmt returnSite);
 
 
 

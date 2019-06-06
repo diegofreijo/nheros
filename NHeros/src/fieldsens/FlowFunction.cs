@@ -34,35 +34,35 @@ namespace heros.fieldsens
 	/// any mutable shared state.
 	/// </summary>
 	/// @param <D> The type of data-flow facts to be computed by the tabulation problem. </param>
-	public interface FlowFunction<FieldRef, D, Stmt, System.Reflection.MethodInfo>
+	public interface FlowFunction<FieldRef, D, Stmt, Method>
 	{
 
 		/// <summary>
 		/// Returns the target values reachable from the source.
 		/// </summary>
-		ISet<FlowFunction_ConstrainedFact<FieldRef, D, Stmt, System.Reflection.MethodInfo>> computeTargets(D source, AccessPathHandler<FieldRef, D, Stmt, System.Reflection.MethodInfo> accPathHandler);
+		ISet<FlowFunction_ConstrainedFact<FieldRef, D, Stmt, Method>> computeTargets(D source, AccessPathHandler<FieldRef, D, Stmt, Method> accPathHandler);
 
 	}
 
-	public class FlowFunction_ConstrainedFact<FieldRef, D, Stmt, System.Reflection.MethodInfo>
+	public class FlowFunction_ConstrainedFact<FieldRef, D, Stmt, Method>
 	{
 
-		internal WrappedFact<FieldRef, D, Stmt, System.Reflection.MethodInfo> fact;
+		internal WrappedFact<FieldRef, D, Stmt, Method> fact;
 		internal FlowFunction_Constraint<FieldRef> constraint;
 
-		internal FlowFunction_ConstrainedFact(WrappedFact<FieldRef, D, Stmt, System.Reflection.MethodInfo> fact)
+		internal FlowFunction_ConstrainedFact(WrappedFact<FieldRef, D, Stmt, Method> fact)
 		{
 			this.fact = fact;
 			this.constraint = null;
 		}
 
-		internal FlowFunction_ConstrainedFact(WrappedFact<FieldRef, D, Stmt, System.Reflection.MethodInfo> fact, FlowFunction_Constraint<FieldRef> constraint)
+		internal FlowFunction_ConstrainedFact(WrappedFact<FieldRef, D, Stmt, Method> fact, FlowFunction_Constraint<FieldRef> constraint)
 		{
 			this.fact = fact;
 			this.constraint = constraint;
 		}
 
-		public virtual WrappedFact<FieldRef, D, Stmt, System.Reflection.MethodInfo> Fact
+		public virtual WrappedFact<FieldRef, D, Stmt, Method> Fact
 		{
 			get
 			{

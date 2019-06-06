@@ -21,21 +21,21 @@ namespace heros.fieldsens
 	using WrappedFact = heros.fieldsens.structs.WrappedFact;
 	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
 
-	public class ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>>
+	public class ReturnSiteResolver<Field, Fact, Stmt, Method> : ResolverTemplate<Field, Fact, Stmt, Method, ReturnEdge<Field, Fact, Stmt, Method>>
 	{
 
 		private Stmt returnSite;
 		private bool propagated = false;
 		private Fact sourceFact;
-		private FactMergeHandler<Fact> factMergeHandler;
+		private FactMergeHandler factMergeHandler;
 
-		public ReturnSiteResolver(FactMergeHandler<Fact> factMergeHandler, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Stmt returnSite, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger) : this(factMergeHandler, analyzer, returnSite, null, debugger, new AccessPath<System.Reflection.FieldInfo>(), null)
+		public ReturnSiteResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt returnSite, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, returnSite, null, debugger, new AccessPath<Field>(), null)
 		{
 			this.factMergeHandler = factMergeHandler;
 			propagated = false;
 		}
 
-		private ReturnSiteResolver(FactMergeHandler<Fact> factMergeHandler, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Stmt returnSite, Fact sourceFact, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger, AccessPath<System.Reflection.FieldInfo> resolvedAccPath, ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> parent) : base(analyzer, resolvedAccPath, parent, debugger)
+		private ReturnSiteResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt returnSite, Fact sourceFact, Debugger<Field, Fact, Stmt, Method> debugger, AccessPath<Field> resolvedAccPath, ReturnSiteResolver<Field, Fact, Stmt, Method> parent) : base(analyzer, resolvedAccPath, parent, debugger)
 		{
 			this.factMergeHandler = factMergeHandler;
 			this.returnSite = returnSite;
@@ -48,20 +48,20 @@ namespace heros.fieldsens
 			return "<" + resolvedAccessPath + ":" + returnSite + " in " + analyzer.Method + ">";
 		}
 
-		protected internal virtual AccessPath<System.Reflection.FieldInfo> getAccessPathOf(ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> inc)
+		protected internal virtual AccessPath<Field> getAccessPathOf(ReturnEdge<Field, Fact, Stmt, Method> inc)
 		{
 			return inc.usedAccessPathOfIncResolver.applyTo(inc.incAccessPath);
 		}
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 //ORIGINAL LINE: public void addIncoming(final heros.fieldsens.structs.WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, heros.fieldsens.AccessPath.Delta<Field> callDelta)
-		public virtual void addIncoming(WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolverAtCaller, Delta<System.Reflection.FieldInfo> callDelta)
+		public virtual void addIncoming(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, Delta<Field> callDelta)
 		{
 
-			addIncoming(new ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(fact, resolverAtCaller, callDelta));
+			addIncoming(new ReturnEdge<Field, Fact, Stmt, Method>(fact, resolverAtCaller, callDelta));
 		}
 
-		protected internal virtual void processIncomingGuaranteedPrefix(ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge)
+		protected internal virtual void processIncomingGuaranteedPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
 			if (propagated)
 			{
@@ -71,11 +71,11 @@ namespace heros.fieldsens
 			{
 				propagated = true;
 				sourceFact = retEdge.incFact;
-				analyzer.scheduleEdgeTo(new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(returnSite, new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(retEdge.incFact, new AccessPath<System.Reflection.FieldInfo>(), this)));
+				analyzer.scheduleEdgeTo(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(returnSite, new WrappedFact<Field, Fact, Stmt, Method>(retEdge.incFact, new AccessPath<Field>(), this)));
 			}
 		};
 
-		protected internal virtual void processIncomingPotentialPrefix(ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge)
+		protected internal virtual void processIncomingPotentialPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
 			log("Incoming potential prefix:  " + retEdge);
 			resolveViaDelta(retEdge);
@@ -86,9 +86,9 @@ namespace heros.fieldsens
 			analyzer.log("Return Site " + ToString() + ": " + message);
 		}
 
-		protected internal override ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> createNestedResolver(AccessPath<System.Reflection.FieldInfo> newAccPath)
+		protected internal override ResolverTemplate<Field, Fact, Stmt, Method, ReturnEdge<Field, Fact, Stmt, Method>> createNestedResolver(AccessPath<Field> newAccPath)
 		{
-			return new ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(factMergeHandler, analyzer, returnSite, sourceFact, debugger, newAccPath, this);
+			return new ReturnSiteResolver<Field, Fact, Stmt, Method>(factMergeHandler, analyzer, returnSite, sourceFact, debugger, newAccPath, this);
 		}
 
 		public virtual Stmt ReturnSite
@@ -99,7 +99,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		private bool isNullOrCallEdgeResolver(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+		private bool isNullOrCallEdgeResolver(Resolver<Field, Fact, Stmt, Method> resolver)
 		{
 			if (resolver == null)
 			{
@@ -114,7 +114,7 @@ namespace heros.fieldsens
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 //ORIGINAL LINE: private void resolveViaDelta(final heros.fieldsens.structs.ReturnEdge<Field, Fact, Stmt, Method> retEdge)
-		private void resolveViaDelta(ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge)
+		private void resolveViaDelta(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
 			if (isNullOrCallEdgeResolver(retEdge.incResolver))
 			{
@@ -123,30 +123,30 @@ namespace heros.fieldsens
 			else
 			{
 				//resolve via incoming facts resolver
-				Delta<System.Reflection.FieldInfo> delta = retEdge.usedAccessPathOfIncResolver.applyTo(retEdge.incAccessPath).getDeltaTo(resolvedAccessPath);
+				Delta<Field> delta = retEdge.usedAccessPathOfIncResolver.applyTo(retEdge.incAccessPath).getDeltaTo(resolvedAccessPath);
 				Debug.Assert(delta.accesses.Length <= 1);
-				retEdge.incResolver.resolve(new DeltaConstraint<System.Reflection.FieldInfo>(delta), new InterestCallbackAnonymousInnerClass(this, retEdge));
+				retEdge.incResolver.resolve(new DeltaConstraint<Field>(delta), new InterestCallbackAnonymousInnerClass(this, retEdge));
 			}
 		}
 
-		private class InterestCallbackAnonymousInnerClass : InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+		private class InterestCallbackAnonymousInnerClass : InterestCallback<Field, Fact, Stmt, Method>
 		{
-			private readonly ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance;
+			private readonly ReturnSiteResolver<Field, Fact, Stmt, Method> outerInstance;
 
-			private ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge;
+			private ReturnEdge<Field, Fact, Stmt, Method> retEdge;
 
-			public InterestCallbackAnonymousInnerClass(ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance, ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge)
+			public InterestCallbackAnonymousInnerClass(ReturnSiteResolver<Field, Fact, Stmt, Method> outerInstance, ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 			{
 				this.outerInstance = outerInstance;
 				this.retEdge = retEdge;
 			}
 
 
-			public void interest(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+			public void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 			{
 				if (resolver is ZeroCallEdgeResolver)
 				{
-					outerInstance.interest(((ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>) resolver).copyWithAnalyzer(outerInstance.analyzer));
+					outerInstance.interest(((ZeroCallEdgeResolver<Field, Fact, Stmt, Method>) resolver).copyWithAnalyzer(outerInstance.analyzer));
 				}
 				else
 				{
@@ -163,9 +163,9 @@ namespace heros.fieldsens
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 //ORIGINAL LINE: private void resolveViaDeltaAndPotentiallyDelegateToCallSite(final heros.fieldsens.structs.ReturnEdge<Field, Fact, Stmt, Method> retEdge)
-		private void resolveViaDeltaAndPotentiallyDelegateToCallSite(ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge)
+		private void resolveViaDeltaAndPotentiallyDelegateToCallSite(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
-			AccessPath<System.Reflection.FieldInfo> inc = retEdge.usedAccessPathOfIncResolver.applyTo(retEdge.incAccessPath);
+			AccessPath<Field> inc = retEdge.usedAccessPathOfIncResolver.applyTo(retEdge.incAccessPath);
 			if (!retEdge.callDelta.canBeAppliedTo(inc))
 			{
 				return;
@@ -173,7 +173,7 @@ namespace heros.fieldsens
 
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final AccessPath<Field> currAccPath = retEdge.callDelta.applyTo(inc);
-			AccessPath<System.Reflection.FieldInfo> currAccPath = retEdge.callDelta.applyTo(inc);
+			AccessPath<Field> currAccPath = retEdge.callDelta.applyTo(inc);
 			if (resolvedAccessPath.isPrefixOf(currAccPath) == PrefixTestResult.GUARANTEED_PREFIX)
 			{
 				incomingEdges.Add(retEdge.copyWithIncomingResolver(null, retEdge.usedAccessPathOfIncResolver));
@@ -187,7 +187,7 @@ namespace heros.fieldsens
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 //ORIGINAL LINE: protected void resolveViaCallSiteResolver(final heros.fieldsens.structs.ReturnEdge<Field, Fact, Stmt, Method> retEdge, AccessPath<Field> currAccPath)
-		protected internal virtual void resolveViaCallSiteResolver(ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> retEdge, AccessPath<System.Reflection.FieldInfo> currAccPath)
+		protected internal virtual void resolveViaCallSiteResolver(ReturnEdge<Field, Fact, Stmt, Method> retEdge, AccessPath<Field> currAccPath)
 		{
 			if (isNullOrCallEdgeResolver(retEdge.resolverAtCaller))
 			{
@@ -195,20 +195,20 @@ namespace heros.fieldsens
 			}
 			else
 			{
-				retEdge.resolverAtCaller.resolve(new DeltaConstraint<System.Reflection.FieldInfo>(currAccPath.getDeltaTo(resolvedAccessPath)), new InterestCallbackAnonymousInnerClass2(this));
+				retEdge.resolverAtCaller.resolve(new DeltaConstraint<Field>(currAccPath.getDeltaTo(resolvedAccessPath)), new InterestCallbackAnonymousInnerClass2(this));
 			}
 		}
 
-		private class InterestCallbackAnonymousInnerClass2 : InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+		private class InterestCallbackAnonymousInnerClass2 : InterestCallback<Field, Fact, Stmt, Method>
 		{
-			private readonly ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance;
+			private readonly ReturnSiteResolver<Field, Fact, Stmt, Method> outerInstance;
 
-			public InterestCallbackAnonymousInnerClass2(ReturnSiteResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance)
+			public InterestCallbackAnonymousInnerClass2(ReturnSiteResolver<Field, Fact, Stmt, Method> outerInstance)
 			{
 				this.outerInstance = outerInstance;
 			}
 
-			public void interest(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+			public void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 			{
 		//					incomingEdges.add(retEdge.copyWithResolverAtCaller(resolver, retEdge.incAccessPath.getDeltaTo(getResolvedAccessPath())));
 				outerInstance.interest(resolver);

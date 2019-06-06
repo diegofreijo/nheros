@@ -22,16 +22,16 @@ namespace heros.fieldsens
 	using Sets = com.google.common.collect.Sets;
 
 
-	public class BiDiFieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I> where I : heros.InterproceduralCFG<Stmt, System.Reflection.MethodInfo>
+	public class BiDiFieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> where I : heros.InterproceduralCFG<Stmt, Method>
 	{
 
-		private FieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I> forwardSolver;
-		private FieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I> backwardSolver;
+		private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> forwardSolver;
+		private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> backwardSolver;
 		private Scheduler scheduler;
 		private SynchronizerImpl<Stmt> forwardSynchronizer;
 		private SynchronizerImpl<Stmt> backwardSynchronizer;
 
-		public BiDiFieldSensitiveIFDSSolver(IFDSTabulationProblem<Stmt, System.Reflection.FieldInfo, Fact, System.Reflection.MethodInfo, I> forwardProblem, IFDSTabulationProblem<Stmt, System.Reflection.FieldInfo, Fact, System.Reflection.MethodInfo, I> backwardProblem, FactMergeHandler<Fact> factHandler, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger, Scheduler scheduler)
+		public BiDiFieldSensitiveIFDSSolver(IFDSTabulationProblem<Stmt, Field, Fact, Method, I> forwardProblem, IFDSTabulationProblem<Stmt, Field, Fact, Method, I> backwardProblem, FactMergeHandler factHandler, Debugger<Field, Fact, Stmt, Method> debugger, Scheduler scheduler)
 		{
 
 			this.scheduler = scheduler;
@@ -46,29 +46,29 @@ namespace heros.fieldsens
 		}
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> createSolver(IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, FactMergeHandler<Fact> factHandler, Debugger<Field, Fact, Stmt, Method> debugger, final SynchronizerImpl<Stmt> synchronizer)
-		private FieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I> createSolver(IFDSTabulationProblem<Stmt, System.Reflection.FieldInfo, Fact, System.Reflection.MethodInfo, I> problem, FactMergeHandler<Fact> factHandler, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger, SynchronizerImpl<Stmt> synchronizer)
+//ORIGINAL LINE: private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> createSolver(IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, FactMergeHandler factHandler, Debugger<Field, Fact, Stmt, Method> debugger, final SynchronizerImpl<Stmt> synchronizer)
+		private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> createSolver(IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, FactMergeHandler factHandler, Debugger<Field, Fact, Stmt, Method> debugger, SynchronizerImpl<Stmt> synchronizer)
 		{
 			return new FieldSensitiveIFDSSolverAnonymousInnerClass(this, problem, factHandler, debugger, scheduler, synchronizer);
 		}
 
-		private class FieldSensitiveIFDSSolverAnonymousInnerClass : FieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I>
+		private class FieldSensitiveIFDSSolverAnonymousInnerClass : FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I>
 		{
-			private readonly BiDiFieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I> outerInstance;
+			private readonly BiDiFieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> outerInstance;
 
-			private new heros.fieldsens.Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger;
+			private new heros.fieldsens.Debugger<Field, Fact, Stmt, Method> debugger;
 			private heros.fieldsens.BiDiFieldSensitiveIFDSSolver.SynchronizerImpl<Stmt> synchronizer;
 
-			public FieldSensitiveIFDSSolverAnonymousInnerClass(BiDiFieldSensitiveIFDSSolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, I> outerInstance, heros.fieldsens.IFDSTabulationProblem<Stmt, System.Reflection.FieldInfo, Fact, System.Reflection.MethodInfo, I> problem, heros.fieldsens.FactMergeHandler<Fact> factHandler, heros.fieldsens.Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger, heros.fieldsens.Scheduler scheduler, heros.fieldsens.BiDiFieldSensitiveIFDSSolver.SynchronizerImpl<Stmt> synchronizer) : base(problem, factHandler, debugger, scheduler)
+			public FieldSensitiveIFDSSolverAnonymousInnerClass(BiDiFieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> outerInstance, heros.fieldsens.IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, heros.fieldsens.FactMergeHandler factHandler, heros.fieldsens.Debugger<Field, Fact, Stmt, Method> debugger, heros.fieldsens.Scheduler scheduler, heros.fieldsens.BiDiFieldSensitiveIFDSSolver.SynchronizerImpl<Stmt> synchronizer) : base(problem, factHandler, debugger, scheduler)
 			{
 				this.outerInstance = outerInstance;
 				this.debugger = debugger;
 				this.synchronizer = synchronizer;
 			}
 
-			protected internal override MethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> createMethodAnalyzer(System.Reflection.MethodInfo method)
+			protected internal override MethodAnalyzer<Field, Fact, Stmt, Method> createMethodAnalyzer(Method method)
 			{
-				return new SourceStmtAnnotatedMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(method, context, synchronizer, debugger);
+				return new SourceStmtAnnotatedMethodAnalyzer<Field, Fact, Stmt, Method>(method, context, synchronizer, debugger);
 			}
 		}
 

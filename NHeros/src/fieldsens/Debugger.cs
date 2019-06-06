@@ -14,23 +14,23 @@ namespace heros.fieldsens
 {
 	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
 
-	public interface Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public interface Debugger<Field, Fact, Stmt, Method>
 	{
 
-		InterproceduralCFG<Stmt, System.Reflection.MethodInfo> ICFG {set;}
+		InterproceduralCFG<Stmt, Method> ICFG {set;}
 		void initialSeed(Stmt stmt);
-		void edgeTo(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt);
-		void newResolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver);
-		void newJob(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt);
-		void jobStarted(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt);
-		void jobFinished(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt);
-		void askedToResolve(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver, FlowFunction_Constraint<System.Reflection.FieldInfo> constraint);
+		void edgeTo(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt);
+		void newResolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver);
+		void newJob(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt);
+		void jobStarted(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt);
+		void jobFinished(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt);
+		void askedToResolve(Resolver<Field, Fact, Stmt, Method> resolver, FlowFunction_Constraint<Field> constraint);
 	}
 
-	public class Debugger_NullDebugger <System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class Debugger_NullDebugger <Field, Fact, Stmt, Method> : Debugger<Field, Fact, Stmt, Method>
 	{
 
-		public virtual InterproceduralCFG<Stmt, System.Reflection.MethodInfo> ICFG
+		public virtual InterproceduralCFG<Stmt, Method> ICFG
 		{
 			set
 			{
@@ -43,32 +43,32 @@ namespace heros.fieldsens
 
 		}
 
-		public virtual void edgeTo(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void edgeTo(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void newResolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+		public virtual void newResolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 		{
 
 		}
 
-		public virtual void newJob(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void newJob(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void jobStarted(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void jobStarted(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void jobFinished(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void jobFinished(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void askedToResolve(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver, FlowFunction_Constraint<System.Reflection.FieldInfo> constraint)
+		public virtual void askedToResolve(Resolver<Field, Fact, Stmt, Method> resolver, FlowFunction_Constraint<Field> constraint)
 		{
 
 		}

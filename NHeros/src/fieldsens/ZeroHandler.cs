@@ -13,7 +13,7 @@
 namespace heros.fieldsens
 {
 
-	public interface ZeroHandler<System.Reflection.FieldInfo>
+	public interface ZeroHandler<Field>
 	{
 
 		/// <summary>
@@ -21,7 +21,7 @@ namespace heros.fieldsens
 		/// to decide if the field may be read. </summary>
 		/// <param name="accPath"> The AccessPath consisting of fields already read in addition to a new field to be read. </param>
 		/// <returns> true if the AccessPath can be generated from within the Zero fact, false otherwise. </returns>
-		bool shouldGenerateAccessPath(AccessPath<System.Reflection.FieldInfo> accPath);
+		bool shouldGenerateAccessPath(AccessPath<Field> accPath);
 	}
 
 }

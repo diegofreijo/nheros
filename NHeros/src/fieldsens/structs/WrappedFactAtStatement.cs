@@ -15,19 +15,19 @@ namespace heros.fieldsens.structs
 	using Delta = heros.fieldsens.AccessPath.Delta;
 
 
-	public class WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class WrappedFactAtStatement<Field, Fact, Stmt, Method>
 	{
 
-		private WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact;
+		private WrappedFact<Field, Fact, Stmt, Method> fact;
 		private Stmt stmt;
 
-		public WrappedFactAtStatement(Stmt stmt, WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact)
+		public WrappedFactAtStatement(Stmt stmt, WrappedFact<Field, Fact, Stmt, Method> fact)
 		{
 			this.stmt = stmt;
 			this.fact = fact;
 		}
 
-		public virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> WrappedFact
+		public virtual WrappedFact<Field, Fact, Stmt, Method> WrappedFact
 		{
 			get
 			{
@@ -43,7 +43,7 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual AccessPath<System.Reflection.FieldInfo> AccessPath
+		public virtual AccessPath<Field> AccessPath
 		{
 			get
 			{
@@ -51,7 +51,7 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> Resolver
+		public virtual Resolver<Field, Fact, Stmt, Method> Resolver
 		{
 			get
 			{
@@ -75,7 +75,7 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual bool canDeltaBeApplied(AccessPath.Delta<System.Reflection.FieldInfo> delta)
+		public virtual bool canDeltaBeApplied(AccessPath.Delta<Field> delta)
 		{
 			return delta.canBeAppliedTo(fact.AccessPath);
 		}

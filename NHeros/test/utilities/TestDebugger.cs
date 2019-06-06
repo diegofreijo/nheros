@@ -26,11 +26,11 @@ namespace heros.utilities
 	using Resolver = heros.fieldsens.Resolver;
 	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
 
-	public class TestDebugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class TestDebugger<Field, Fact, Stmt, Method> : Debugger<Field, Fact, Stmt, Method>
 	{
 
 		private JsonDocument root = new JsonDocument();
-		private InterproceduralCFG<Stmt, System.Reflection.MethodInfo> icfg;
+		private InterproceduralCFG<Stmt, Method> icfg;
 
 		public virtual void writeJsonDebugFile(string filename)
 		{
@@ -53,7 +53,7 @@ namespace heros.utilities
 		/* (non-Javadoc)
 		 * @see heros.alias.Debugger#setICFG(I)
 		 */
-		public virtual InterproceduralCFG<Stmt, System.Reflection.MethodInfo> ICFG
+		public virtual InterproceduralCFG<Stmt, Method> ICFG
 		{
 			set
 			{
@@ -88,7 +88,7 @@ namespace heros.utilities
 
 			if (icfg.isCallStmt(stmt))
 			{
-				foreach (System.Reflection.MethodInfo m in icfg.getCalleesOfCallAt(stmt))
+				foreach (Method m in icfg.getCalleesOfCallAt(stmt))
 				{
 					doc.doc("calls").doc(m.ToString());
 					foreach (Stmt sp in icfg.getStartPointsOf(m))
@@ -119,7 +119,7 @@ namespace heros.utilities
 
 		protected internal virtual JsonDocument stmt(Stmt stmt)
 		{
-			System.Reflection.MethodInfo methodOf = icfg.getMethodOf(stmt);
+			Method methodOf = icfg.getMethodOf(stmt);
 			return root.doc("methods").doc(methodOf.ToString()).doc(stmt.ToString());
 		}
 
@@ -128,7 +128,7 @@ namespace heros.utilities
 			stmt(unit).keyValue("flow", expectedFlowFunctionsToString);
 		}
 
-		public virtual void expectCallFlow(Stmt callSite, System.Reflection.MethodInfo destinationMethod, string expectedFlowFunctionsToString)
+		public virtual void expectCallFlow(Stmt callSite, Method destinationMethod, string expectedFlowFunctionsToString)
 		{
 			stmt(callSite).doc("calls").doc(destinationMethod.ToString()).keyValue("flow", expectedFlowFunctionsToString);
 		}
@@ -141,32 +141,32 @@ namespace heros.utilities
 			}
 		}
 
-		public virtual void edgeTo(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void edgeTo(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void newResolver(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+		public virtual void newResolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 		{
 
 		}
 
-		public virtual void newJob(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void newJob(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void jobStarted(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void jobStarted(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void jobFinished(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtStmt)
+		public virtual void jobFinished(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 
 		}
 
-		public virtual void askedToResolve(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver, FlowFunction_Constraint<System.Reflection.FieldInfo> constraint)
+		public virtual void askedToResolve(Resolver<Field, Fact, Stmt, Method> resolver, FlowFunction_Constraint<Field> constraint)
 		{
 
 		}

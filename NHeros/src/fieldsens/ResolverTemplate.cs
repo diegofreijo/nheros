@@ -23,18 +23,18 @@ namespace heros.fieldsens
 	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
 
 
-	public abstract class ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> : Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public abstract class ResolverTemplate<Field, Fact, Stmt, Method, Incoming> : Resolver<Field, Fact, Stmt, Method>
 	{
 
 		private bool recursionLock = false;
 		protected internal ISet<Incoming> incomingEdges = Sets.newHashSet();
-		private ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> parent;
-		private IDictionary<AccessPath<System.Reflection.FieldInfo>, ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming>> nestedResolvers = new Dictionary();
-		private IDictionary<AccessPath<System.Reflection.FieldInfo>, ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming>> allResolversInExclHierarchy;
-		protected internal AccessPath<System.Reflection.FieldInfo> resolvedAccessPath;
-		protected internal Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger;
+		private ResolverTemplate<Field, Fact, Stmt, Method, Incoming> parent;
+		private IDictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>> nestedResolvers = new Dictionary();
+		private IDictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>> allResolversInExclHierarchy;
+		protected internal AccessPath<Field> resolvedAccessPath;
+		protected internal Debugger<Field, Fact, Stmt, Method> debugger;
 
-		public ResolverTemplate(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, AccessPath<System.Reflection.FieldInfo> resolvedAccessPath, ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> parent, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger) : base(analyzer)
+		public ResolverTemplate(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, AccessPath<Field> resolvedAccessPath, ResolverTemplate<Field, Fact, Stmt, Method, Incoming> parent, Debugger<Field, Fact, Stmt, Method> debugger) : base(analyzer)
 		{
 			this.resolvedAccessPath = resolvedAccessPath;
 			this.parent = parent;
@@ -76,7 +76,7 @@ namespace heros.fieldsens
 			recursionLock = false;
 		}
 
-		protected internal abstract AccessPath<System.Reflection.FieldInfo> getAccessPathOf(Incoming inc);
+		protected internal abstract AccessPath<Field> getAccessPathOf(Incoming inc);
 
 		public virtual void addIncoming(Incoming inc)
 		{
@@ -90,7 +90,7 @@ namespace heros.fieldsens
 
 				interest(this);
 
-				foreach (ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> nestedResolver in Lists.newLinkedList(nestedResolvers.Values))
+				foreach (ResolverTemplate<Field, Fact, Stmt, Method, Incoming> nestedResolver in Lists.newLinkedList(nestedResolvers.Values))
 				{
 					nestedResolver.addIncoming(inc);
 				}
@@ -107,20 +107,20 @@ namespace heros.fieldsens
 
 		protected internal abstract void processIncomingGuaranteedPrefix(Incoming inc);
 
-		public override void resolve(FlowFunction_Constraint<System.Reflection.FieldInfo> constraint, InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callback)
+		public override void resolve(FlowFunction_Constraint<Field> constraint, InterestCallback<Field, Fact, Stmt, Method> callback)
 		{
 			log("Resolve: " + constraint);
 			debugger.askedToResolve(this, constraint);
 			if (constraint.canBeAppliedTo(resolvedAccessPath) && !Locked)
 			{
-				AccessPath<System.Reflection.FieldInfo> newAccPath = constraint.applyToAccessPath(resolvedAccessPath);
-				ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> nestedResolver = getOrCreateNestedResolver(newAccPath);
+				AccessPath<Field> newAccPath = constraint.applyToAccessPath(resolvedAccessPath);
+				ResolverTemplate<Field, Fact, Stmt, Method, Incoming> nestedResolver = getOrCreateNestedResolver(newAccPath);
 				Debug.Assert(nestedResolver.resolvedAccessPath.Equals(constraint.applyToAccessPath(resolvedAccessPath)));
 				nestedResolver.registerCallback(callback);
 			}
 		}
 
-		protected internal virtual ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> getOrCreateNestedResolver(AccessPath<System.Reflection.FieldInfo> newAccPath)
+		protected internal virtual ResolverTemplate<Field, Fact, Stmt, Method, Incoming> getOrCreateNestedResolver(AccessPath<Field> newAccPath)
 		{
 			if (resolvedAccessPath.Equals(newAccPath))
 			{
@@ -136,7 +136,7 @@ namespace heros.fieldsens
 				}
 				else
 				{
-					ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> nestedResolver = createNestedResolver(newAccPath);
+					ResolverTemplate<Field, Fact, Stmt, Method, Incoming> nestedResolver = createNestedResolver(newAccPath);
 					if (resolvedAccessPath.Exclusions.Count > 0 || newAccPath.Exclusions.Count > 0)
 					{
 						allResolversInExclHierarchy[newAccPath] = nestedResolver;
@@ -152,6 +152,6 @@ namespace heros.fieldsens
 			return nestedResolvers[newAccPath];
 		}
 
-		protected internal abstract ResolverTemplate<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo, Incoming> createNestedResolver(AccessPath<System.Reflection.FieldInfo> newAccPath);
+		protected internal abstract ResolverTemplate<Field, Fact, Stmt, Method, Incoming> createNestedResolver(AccessPath<Field> newAccPath);
 	}
 }

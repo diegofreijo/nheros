@@ -13,18 +13,18 @@
 namespace heros.fieldsens
 {
 
-	public abstract class Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public abstract class Context<Field, Fact, Stmt, Method>
 	{
 
-		public readonly InterproceduralCFG<Stmt, System.Reflection.MethodInfo> icfg;
+		public readonly InterproceduralCFG<Stmt, Method> icfg;
 		public readonly Scheduler scheduler;
 		public readonly Fact zeroValue;
 		public readonly bool followReturnsPastSeeds;
-		public readonly FactMergeHandler<Fact> factHandler;
-		public readonly ZeroHandler<System.Reflection.FieldInfo> zeroHandler;
-		public readonly FlowFunctions<Stmt, System.Reflection.FieldInfo, Fact, System.Reflection.MethodInfo> flowFunctions;
+		public readonly FactMergeHandler factHandler;
+		public readonly ZeroHandler<Field> zeroHandler;
+		public readonly FlowFunctions<Stmt, Field, Fact, Method> flowFunctions;
 
-		internal Context<T1>(IFDSTabulationProblem<T1> tabulationProblem, Scheduler scheduler, FactMergeHandler<Fact> factHandler) where T1 : heros.InterproceduralCFG<Stmt, System.Reflection.MethodInfo>
+		internal Context<T1>(IFDSTabulationProblem<T1> tabulationProblem, Scheduler scheduler, FactMergeHandler factHandler) where T1 : heros.InterproceduralCFG<Stmt, Method>
 		{
 			this.icfg = tabulationProblem.interproceduralCFG();
 			this.flowFunctions = tabulationProblem.flowFunctions();
@@ -35,7 +35,7 @@ namespace heros.fieldsens
 			this.zeroHandler = tabulationProblem.zeroHandler();
 		}
 
-		public abstract MethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> getAnalyzer(System.Reflection.MethodInfo method);
+		public abstract MethodAnalyzer<Field, Fact, Stmt, Method> getAnalyzer(Method method);
 	}
 
 }

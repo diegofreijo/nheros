@@ -19,25 +19,25 @@ namespace heros.fieldsens
 	using DefaultValueMap = heros.utilities.DefaultValueMap;
 
 
-	public class SourceStmtAnnotatedMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : MethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class SourceStmtAnnotatedMethodAnalyzer<Field, Fact, Stmt, Method> : MethodAnalyzer<Field, Fact, Stmt, Method>
 	{
 
-		private System.Reflection.MethodInfo method;
-		private DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> perSourceAnalyzer = new DefaultValueMapAnonymousInnerClass();
+		private Method method;
+		private DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> perSourceAnalyzer = new DefaultValueMapAnonymousInnerClass();
 
-		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>>
+		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>>
 		{
 
-			protected internal override PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> createItem(Key<Fact, Stmt> key)
+			protected internal override PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> createItem(Key<Fact, Stmt> key)
 			{
-				return new PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.method, key.fact, outerInstance.context, outerInstance.debugger);
+				return new PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>(outerInstance.method, key.fact, outerInstance.context, outerInstance.debugger);
 			}
 		}
-		private Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context;
+		private Context<Field, Fact, Stmt, Method> context;
 		private Synchronizer<Stmt> synchronizer;
-		private Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger;
+		private Debugger<Field, Fact, Stmt, Method> debugger;
 
-		public SourceStmtAnnotatedMethodAnalyzer(System.Reflection.MethodInfo method, Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context, Synchronizer<Stmt> synchronizer, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger)
+		public SourceStmtAnnotatedMethodAnalyzer(Method method, Context<Field, Fact, Stmt, Method> context, Synchronizer<Stmt> synchronizer, Debugger<Field, Fact, Stmt, Method> debugger)
 		{
 			this.method = method;
 			this.context = context;
@@ -45,11 +45,11 @@ namespace heros.fieldsens
 			this.debugger = debugger;
 		}
 
-		public virtual void addIncomingEdge(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge)
+		public virtual void addIncomingEdge(CallEdge<Field, Fact, Stmt, Method> incEdge)
 		{
-			WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> calleeSourceFact = incEdge.CalleeSourceFact;
+			WrappedFact<Field, Fact, Stmt, Method> calleeSourceFact = incEdge.CalleeSourceFact;
 			Key<Fact, Stmt> key = new Key<Fact, Stmt>(calleeSourceFact.Fact, null);
-			PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer = perSourceAnalyzer.getOrCreate(key);
+			PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer = perSourceAnalyzer.getOrCreate(key);
 			analyzer.addIncomingEdge(incEdge);
 		}
 
@@ -61,7 +61,7 @@ namespace heros.fieldsens
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 //ORIGINAL LINE: @Override public void addUnbalancedReturnFlow(final heros.fieldsens.structs.WrappedFactAtStatement<Field, Fact, Stmt, Method> target, final Stmt callSite)
-		public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> target, Stmt callSite)
+		public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> target, Stmt callSite)
 		{
 			synchronizer.synchronizeOnStmt(callSite, () =>
 			{

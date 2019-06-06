@@ -12,7 +12,7 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	public interface FactMergeHandler<Fact>
+	public interface FactMergeHandler
 	{
 
 		/// <summary>

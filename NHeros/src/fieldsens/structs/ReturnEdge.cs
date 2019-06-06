@@ -15,21 +15,21 @@ namespace heros.fieldsens.structs
 	using Delta = heros.fieldsens.AccessPath.Delta;
 	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
 
-	public class ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class ReturnEdge<Field, Fact, Stmt, Method>
 	{
 
 		public readonly Fact incFact;
-		public readonly Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolverAtCaller;
-		public readonly AccessPath.Delta<System.Reflection.FieldInfo> callDelta;
-		public readonly AccessPath<System.Reflection.FieldInfo> incAccessPath;
-		public readonly Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incResolver;
-		public readonly AccessPath.Delta<System.Reflection.FieldInfo> usedAccessPathOfIncResolver;
+		public readonly Resolver<Field, Fact, Stmt, Method> resolverAtCaller;
+		public readonly AccessPath.Delta<Field> callDelta;
+		public readonly AccessPath<Field> incAccessPath;
+		public readonly Resolver<Field, Fact, Stmt, Method> incResolver;
+		public readonly AccessPath.Delta<Field> usedAccessPathOfIncResolver;
 
-		public ReturnEdge(WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> fact, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolverAtCaller, AccessPath.Delta<System.Reflection.FieldInfo> callDelta) : this(fact.Fact, fact.AccessPath, fact.Resolver, resolverAtCaller, callDelta, AccessPath.Delta.empty<System.Reflection.FieldInfo>())
+		public ReturnEdge(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath.Delta<Field> callDelta) : this(fact.Fact, fact.AccessPath, fact.Resolver, resolverAtCaller, callDelta, AccessPath.Delta.empty<Field>())
 		{
 		}
 
-		private ReturnEdge(Fact incFact, AccessPath<System.Reflection.FieldInfo> incAccessPath, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incResolver, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolverAtCaller, AccessPath.Delta<System.Reflection.FieldInfo> callDelta, AccessPath.Delta<System.Reflection.FieldInfo> usedAccessPathOfIncResolver)
+		private ReturnEdge(Fact incFact, AccessPath<Field> incAccessPath, Resolver<Field, Fact, Stmt, Method> incResolver, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath.Delta<Field> callDelta, AccessPath.Delta<Field> usedAccessPathOfIncResolver)
 		{
 			this.incFact = incFact;
 			this.incAccessPath = incAccessPath;
@@ -39,14 +39,14 @@ namespace heros.fieldsens.structs
 			this.usedAccessPathOfIncResolver = usedAccessPathOfIncResolver;
 		}
 
-		public virtual ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> copyWithIncomingResolver(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incResolver, AccessPath.Delta<System.Reflection.FieldInfo> usedAccessPathOfIncResolver)
+		public virtual ReturnEdge<Field, Fact, Stmt, Method> copyWithIncomingResolver(Resolver<Field, Fact, Stmt, Method> incResolver, AccessPath.Delta<Field> usedAccessPathOfIncResolver)
 		{
-			return new ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(incFact, incAccessPath, incResolver, resolverAtCaller, callDelta, usedAccessPathOfIncResolver);
+			return new ReturnEdge<Field, Fact, Stmt, Method>(incFact, incAccessPath, incResolver, resolverAtCaller, callDelta, usedAccessPathOfIncResolver);
 		}
 
-		public virtual ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> copyWithResolverAtCaller(Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolverAtCaller, AccessPath.Delta<System.Reflection.FieldInfo> usedAccessPathOfIncResolver)
+		public virtual ReturnEdge<Field, Fact, Stmt, Method> copyWithResolverAtCaller(Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath.Delta<Field> usedAccessPathOfIncResolver)
 		{
-			return new ReturnEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(incFact, incAccessPath, null, resolverAtCaller, callDelta, usedAccessPathOfIncResolver);
+			return new ReturnEdge<Field, Fact, Stmt, Method>(incFact, incAccessPath, null, resolverAtCaller, callDelta, usedAccessPathOfIncResolver);
 		}
 
 		public override string ToString()

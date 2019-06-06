@@ -20,21 +20,21 @@ namespace heros.fieldsens
 	using WrappedFact = heros.fieldsens.structs.WrappedFact;
 	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
 
-	public class CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class CallEdge<Field, Fact, Stmt, Method>
 	{
 
-		private WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> calleeSourceFact;
-		private PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callerAnalyzer;
-		private WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtCallSite;
+		private WrappedFact<Field, Fact, Stmt, Method> calleeSourceFact;
+		private PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> callerAnalyzer;
+		private WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtCallSite;
 
-		public CallEdge(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> callerAnalyzer, WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> factAtCallSite, WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> calleeSourceFact)
+		public CallEdge(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> callerAnalyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtCallSite, WrappedFact<Field, Fact, Stmt, Method> calleeSourceFact)
 		{
 			this.callerAnalyzer = callerAnalyzer;
 			this.factAtCallSite = factAtCallSite;
 			this.calleeSourceFact = calleeSourceFact;
 		}
 
-		public virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> CalleeSourceFact
+		public virtual WrappedFact<Field, Fact, Stmt, Method> CalleeSourceFact
 		{
 			get
 			{
@@ -42,7 +42,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> CallerCallSiteFact
+		public virtual WrappedFact<Field, Fact, Stmt, Method> CallerCallSiteFact
 		{
 			get
 			{
@@ -50,7 +50,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> CallerSourceFact
+		public virtual WrappedFact<Field, Fact, Stmt, Method> CallerSourceFact
 		{
 			get
 			{
@@ -66,7 +66,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> CallerAnalyzer
+		public virtual PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> CallerAnalyzer
 		{
 			get
 			{
@@ -76,28 +76,28 @@ namespace heros.fieldsens
 
 //JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
 //ORIGINAL LINE: public void registerInterestCallback(final PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer)
-		public virtual void registerInterestCallback(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> interestedAnalyzer)
+		public virtual void registerInterestCallback(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer)
 		{
 //JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
 //ORIGINAL LINE: final heros.fieldsens.AccessPath.Delta<Field> delta = calleeSourceFact.getAccessPath().getDeltaTo(interestedAnalyzer.getAccessPath());
-			Delta<System.Reflection.FieldInfo> delta = calleeSourceFact.AccessPath.getDeltaTo(interestedAnalyzer.AccessPath);
+			Delta<Field> delta = calleeSourceFact.AccessPath.getDeltaTo(interestedAnalyzer.AccessPath);
 
 			if (!factAtCallSite.canDeltaBeApplied(delta))
 			{
 				return;
 			}
 
-			factAtCallSite.WrappedFact.Resolver.resolve(new DeltaConstraint<System.Reflection.FieldInfo>(delta), new InterestCallbackAnonymousInnerClass(this, interestedAnalyzer, delta));
+			factAtCallSite.WrappedFact.Resolver.resolve(new DeltaConstraint<Field>(delta), new InterestCallbackAnonymousInnerClass(this, interestedAnalyzer, delta));
 		}
 
-		private class InterestCallbackAnonymousInnerClass : InterestCallback<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+		private class InterestCallbackAnonymousInnerClass : InterestCallback<Field, Fact, Stmt, Method>
 		{
-			private readonly CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance;
+			private readonly CallEdge<Field, Fact, Stmt, Method> outerInstance;
 
-			private heros.fieldsens.PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> interestedAnalyzer;
-			private Delta<System.Reflection.FieldInfo> delta;
+			private heros.fieldsens.PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer;
+			private Delta<Field> delta;
 
-			public InterestCallbackAnonymousInnerClass(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> outerInstance, heros.fieldsens.PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> interestedAnalyzer, Delta<System.Reflection.FieldInfo> delta)
+			public InterestCallbackAnonymousInnerClass(CallEdge<Field, Fact, Stmt, Method> outerInstance, heros.fieldsens.PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer, Delta<Field> delta)
 			{
 				this.outerInstance = outerInstance;
 				this.interestedAnalyzer = interestedAnalyzer;
@@ -105,17 +105,17 @@ namespace heros.fieldsens
 			}
 
 
-			public void interest(PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer, Resolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> resolver)
+			public void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 			{
-				WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> calleeSourceFactWithDelta = new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.calleeSourceFact.Fact, delta.applyTo(outerInstance.calleeSourceFact.AccessPath), resolver);
+				WrappedFact<Field, Fact, Stmt, Method> calleeSourceFactWithDelta = new WrappedFact<Field, Fact, Stmt, Method>(outerInstance.calleeSourceFact.Fact, delta.applyTo(outerInstance.calleeSourceFact.AccessPath), resolver);
 				Debug.Assert(interestedAnalyzer.AccessPath.isPrefixOf(calleeSourceFactWithDelta.AccessPath) == PrefixTestResult.GUARANTEED_PREFIX);
 
-				CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> newCallEdge = new CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(analyzer, new WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.factAtCallSite.Statement, new WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.factAtCallSite.WrappedFact.Fact, delta.applyTo(outerInstance.factAtCallSite.WrappedFact.AccessPath), resolver)), calleeSourceFactWithDelta);
+				CallEdge<Field, Fact, Stmt, Method> newCallEdge = new CallEdge<Field, Fact, Stmt, Method>(analyzer, new WrappedFactAtStatement<Field, Fact, Stmt, Method>(outerInstance.factAtCallSite.Statement, new WrappedFact<Field, Fact, Stmt, Method>(outerInstance.factAtCallSite.WrappedFact.Fact, delta.applyTo(outerInstance.factAtCallSite.WrappedFact.AccessPath), resolver)), calleeSourceFactWithDelta);
 
 				if (resolver is ZeroCallEdgeResolver)
 				{
 					interestedAnalyzer.CallEdgeResolver.incomingEdges.Add(newCallEdge);
-					interestedAnalyzer.CallEdgeResolver.interest(((ZeroCallEdgeResolver<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>) resolver).copyWithAnalyzer(interestedAnalyzer));
+					interestedAnalyzer.CallEdgeResolver.interest(((ZeroCallEdgeResolver<Field, Fact, Stmt, Method>) resolver).copyWithAnalyzer(interestedAnalyzer));
 					interestedAnalyzer.CallEdgeResolver.processIncomingGuaranteedPrefix(newCallEdge);
 				}
 				else
@@ -126,7 +126,7 @@ namespace heros.fieldsens
 
 			public void canBeResolvedEmpty()
 			{
-				outerInstance.callerAnalyzer.CallEdgeResolver.resolve(new DeltaConstraint<System.Reflection.FieldInfo>(delta), this);
+				outerInstance.callerAnalyzer.CallEdgeResolver.resolve(new DeltaConstraint<Field>(delta), this);
 			}
 		}
 

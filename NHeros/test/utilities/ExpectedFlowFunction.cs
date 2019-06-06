@@ -17,7 +17,7 @@ namespace heros.utilities
     
 
 	public abstract class ExpectedFlowFunction<Fact>
-	{
+    {
 		public readonly Fact source;
 		public readonly Fact[] targets;
 		public Edge<Fact> edge;

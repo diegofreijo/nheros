@@ -16,33 +16,33 @@ namespace heros.fieldsens
 	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
 	using DefaultValueMap = heros.utilities.DefaultValueMap;
 
-	public class MethodAnalyzerImpl<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> : MethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>
+	public class MethodAnalyzerImpl<Field, Fact, Stmt, Method> : MethodAnalyzer<Field, Fact, Stmt, Method>
 	{
 
-		private System.Reflection.MethodInfo method;
-		private DefaultValueMap<Fact, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>> perSourceAnalyzer = new DefaultValueMapAnonymousInnerClass();
+		private Method method;
+		private DefaultValueMap<Fact, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> perSourceAnalyzer = new DefaultValueMapAnonymousInnerClass();
 
-		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<Fact, PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>>
+		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<Fact, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>>
 		{
-			protected internal override PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> createItem(Fact key)
+			protected internal override PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> createItem(Fact key)
 			{
-				return new PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo>(outerInstance.method, key, outerInstance.context, outerInstance.debugger);
+				return new PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>(outerInstance.method, key, outerInstance.context, outerInstance.debugger);
 			}
 		}
-		private Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context;
-		private Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger;
+		private Context<Field, Fact, Stmt, Method> context;
+		private Debugger<Field, Fact, Stmt, Method> debugger;
 
-		internal MethodAnalyzerImpl(System.Reflection.MethodInfo method, Context<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> context, Debugger<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> debugger)
+		internal MethodAnalyzerImpl(Method method, Context<Field, Fact, Stmt, Method> context, Debugger<Field, Fact, Stmt, Method> debugger)
 		{
 			this.method = method;
 			this.context = context;
 			this.debugger = debugger;
 		}
 
-		public virtual void addIncomingEdge(CallEdge<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> incEdge)
+		public virtual void addIncomingEdge(CallEdge<Field, Fact, Stmt, Method> incEdge)
 		{
-			WrappedFact<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> calleeSourceFact = incEdge.CalleeSourceFact;
-			PerAccessPathMethodAnalyzer<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> analyzer = perSourceAnalyzer.getOrCreate(calleeSourceFact.Fact);
+			WrappedFact<Field, Fact, Stmt, Method> calleeSourceFact = incEdge.CalleeSourceFact;
+			PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer = perSourceAnalyzer.getOrCreate(calleeSourceFact.Fact);
 			analyzer.addIncomingEdge(incEdge);
 		}
 
@@ -51,7 +51,7 @@ namespace heros.fieldsens
 			perSourceAnalyzer.getOrCreate(val).addInitialSeed(startPoint);
 		}
 
-		public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<System.Reflection.FieldInfo, Fact, Stmt, System.Reflection.MethodInfo> target, Stmt callSite)
+		public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> target, Stmt callSite)
 		{
 			perSourceAnalyzer.getOrCreate(context.zeroValue).scheduleUnbalancedReturnEdgeTo(target);
 		}

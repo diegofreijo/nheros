@@ -40,13 +40,13 @@ namespace heros.utilities
 
 			public virtual CallSiteBuilder calls(string method, params ExpectedFlowFunction<Fact>[] flows)
 			{
-				edges_Conflict.Add(new Edge<Fact>.CallEdge(callSite, new TestMethod(method), flows));
+				edges_Conflict.Add(new CallEdge<Fact>(callSite, new TestMethod(method), flows));
 				return this;
 			}
 
 			public virtual CallSiteBuilder retSite(string returnSite, ExpectedFlowFunction<Fact>[] flows)
 			{
-				edges_Conflict.Add(new Edge<Fact>.Call2ReturnEdge(callSite, new Statement(returnSite), flows));
+				edges_Conflict.Add(new Call2ReturnEdge<Fact>(callSite, new Statement(returnSite), flows));
 				return this;
 			}
 		}
@@ -65,7 +65,7 @@ namespace heros.utilities
 
 			public virtual NormalStmtBuilder succ(string succ)
 			{
-				edges_Conflict.Add(new Edge<Fact>.NormalEdge(stmt, new Statement(succ), flowFunctions));
+				edges_Conflict.Add(new NormalEdge<Fact>(stmt, new Statement(succ), flowFunctions));
 				return this;
 			}
 		}
@@ -81,13 +81,13 @@ namespace heros.utilities
 
 			public virtual ExitStmtBuilder expectArtificalFlow(ExpectedFlowFunction<Fact>[] flows)
 			{
-				edges_Conflict.Add(new Edge<Fact>.ReturnEdge(null, exitStmt, null, flows));
+				edges_Conflict.Add(new ReturnEdge<Fact>(null, exitStmt, null, flows));
 				return this;
 			}
 
 			public virtual ExitStmtBuilder returns(Statement callSite, Statement returnSite, params ExpectedFlowFunction<Fact>[] flows)
 			{
-				edges_Conflict.Add(new Edge<Fact>.ReturnEdge(callSite, exitStmt, returnSite, flows));
+				edges_Conflict.Add(new ReturnEdge<Fact>(callSite, exitStmt, returnSite, flows));
 				return this;
 			}
 
