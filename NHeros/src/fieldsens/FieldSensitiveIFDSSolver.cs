@@ -15,15 +15,8 @@
 
 namespace heros.fieldsens
 {
-	using DefaultValueMap = heros.utilities.DefaultValueMap;
-
-
-	using Logger = org.slf4j.Logger;
-	using LoggerFactory = org.slf4j.LoggerFactory;
-
 	public class FieldSensitiveIFDSSolver<FieldRef, D, N, M, I> where I : heros.InterproceduralCFG<N, M>
 	{
-
 		protected internal static readonly Logger logger = LoggerFactory.getLogger(typeof(FieldSensitiveIFDSSolver));
 
 		private DefaultValueMap<M, MethodAnalyzer<FieldRef, D, N, M>> methodAnalyzers = new DefaultValueMapAnonymousInnerClass();

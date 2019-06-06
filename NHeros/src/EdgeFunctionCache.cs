@@ -16,15 +16,12 @@ namespace heros
     public class EdgeFunctionCache<N, D, M, V> : EdgeFunctions<N, D, M, V>
     {
 
-        protected internal readonly EdgeFunctions<N, D, M, V> @delegate;
+        readonly EdgeFunctions<N, D, M, V> @delegate;
 
-        protected internal readonly LoadingCache<NDNDKey, EdgeFunction<V>> normalCache;
-
-        protected internal readonly LoadingCache<CallKey, EdgeFunction<V>> callCache;
-
-        protected internal readonly LoadingCache<ReturnKey, EdgeFunction<V>> returnCache;
-
-        protected internal readonly LoadingCache<NDNDKey, EdgeFunction<V>> callToReturnCache;
+        readonly LoadingCache<NDNDKey, EdgeFunction<V>> normalCache;
+        readonly LoadingCache<CallKey, EdgeFunction<V>> callCache;
+        readonly LoadingCache<ReturnKey, EdgeFunction<V>> returnCache;
+        readonly LoadingCache<NDNDKey, EdgeFunction<V>> callToReturnCache;
 
         //internal Logger logger = LoggerFactory.getLogger(this.GetType());
 
@@ -404,10 +401,10 @@ namespace heros
         }
 
 
-        public virtual void printStats()
-        {
-            logger.debug("Stats for edge-function cache:\n" + "Normal:         {}\n" + "Call:           {}\n" + "Return:         {}\n" + "Call-to-return: {}\n", normalCache.stats(), callCache.stats(), returnCache.stats(), callToReturnCache.stats());
-        }
+        //public virtual void printStats()
+        //{
+        //    logger.debug("Stats for edge-function cache:\n" + "Normal:         {}\n" + "Call:           {}\n" + "Return:         {}\n" + "Call-to-return: {}\n", normalCache.stats(), callCache.stats(), returnCache.stats(), callToReturnCache.stats());
+        //}
 
     }
 

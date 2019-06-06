@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
+using heros.edgefunc;
 
 /// <summary>
 ///*****************************************************************************
@@ -20,21 +21,6 @@ using System.Threading;
 /// </summary>
 namespace heros.solver
 {
-
-	using EdgeIdentity = heros.edgefunc.EdgeIdentity;
-
-
-	using Logger = org.slf4j.Logger;
-	using LoggerFactory = org.slf4j.LoggerFactory;
-
-	using Predicate = com.google.common.@base.Predicate;
-	using CacheBuilder = com.google.common.cache.CacheBuilder;
-	using HashBasedTable = com.google.common.collect.HashBasedTable;
-	using Maps = com.google.common.collect.Maps;
-	using Table = com.google.common.collect.Table;
-	using Cell = com.google.common.collect.Table.Cell;
-
-
 	/// <summary>
 	/// Solves the given <seealso cref="IDETabulationProblem"/> as described in the 1996 paper by Sagiv,
 	/// Horwitz and Reps. To solve the problem, call <seealso cref="solve()"/>. Results can then be
@@ -52,16 +38,15 @@ namespace heros.solver
 	/// @param <I> The type of inter-procedural control-flow graph being used. </param>
 	public class IDESolver<N, D, M, V, I> where I : heros.InterproceduralCFG<N, M>
 	{
-
 		public static CacheBuilder<object, object> DEFAULT_CACHE_BUILDER = CacheBuilder.newBuilder().concurrencyLevel(Runtime.Runtime.availableProcessors()).initialCapacity(10000).softValues();
 
 		protected internal static readonly Logger logger = LoggerFactory.getLogger(typeof(IDESolver));
 
 		[SynchronizedBy("consistent lock on field")]
-		protected internal Table<N, N, IDictionary<D, ISet<D>>> computedIntraPEdges = HashBasedTable.create();
+		protected internal IDictionary<Pair<N, N>, IDictionary<D, ISet<D>>> computedIntraPEdges = HashBasedTable.create();
 
 		[SynchronizedBy("consistent lock on field")]
-		protected internal Table<N, N, IDictionary<D, ISet<D>>> computedInterPEdges = HashBasedTable.create();
+		protected internal IDictionary<Pair<N, N>, IDictionary<D, ISet<D>>> computedInterPEdges = HashBasedTable.create();
 
 		//enable with -Dorg.slf4j.simpleLogger.defaultLogLevel=trace
 		public static bool DEBUG = logger.DebugEnabled;
@@ -159,8 +144,6 @@ namespace heros.solver
 		/// <seealso cref="solve()"/>. </summary>
 		/// <param name="flowFunctionCacheBuilder"> A valid <seealso cref="CacheBuilder"/> or <code>null</code> if no caching is to be used for flow functions. </param>
 		/// <param name="edgeFunctionCacheBuilder"> A valid <seealso cref="CacheBuilder"/> or <code>null</code> if no caching is to be used for edge functions. </param>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: public IDESolver(heros.IDETabulationProblem<N,D,M,V,I> tabulationProblem, @SuppressWarnings("rawtypes") com.google.common.cache.CacheBuilder flowFunctionCacheBuilder, @SuppressWarnings("rawtypes") com.google.common.cache.CacheBuilder edgeFunctionCacheBuilder)
 		public IDESolver(IDETabulationProblem<N, D, M, V, I> tabulationProblem, CacheBuilder flowFunctionCacheBuilder, CacheBuilder edgeFunctionCacheBuilder)
 		{
 			if (logger.DebugEnabled)
@@ -282,11 +265,12 @@ namespace heros.solver
 			{
 				executor.awaitCompletion();
 			}
-			catch (InterruptedException e)
+			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
 				Console.Write(e.StackTrace);
 			}
+
 			Exception exception = executor.Exception;
 			if (exception != null)
 			{
@@ -343,6 +327,7 @@ namespace heros.solver
 			{
 				return;
 			}
+
 			Table<N, N, IDictionary<D, ISet<D>>> tgtMap = interP ? computedInterPEdges : computedIntraPEdges;
 			lock (tgtMap)
 			{
@@ -365,17 +350,11 @@ namespace heros.solver
 		/// <param name="edge"> an edge whose target node resembles a method call </param>
 		private void processCall(PathEdge<N, D> edge)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final D d1 = edge.factAtSource();
 			D d1 = edge.factAtSource();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final N n = edge.getTarget();
 			N n = edge.Target; // a call node; line 14...
 
 			logger.trace("Processing call to {}", n);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final D d2 = edge.factAtTarget();
 			D d2 = edge.factAtTarget();
 			EdgeFunction<V> f = jumpFunction(edge);
 			ICollection<N> returnSiteNs = icfg.getReturnSitesOfCallAt(n);
@@ -492,17 +471,11 @@ namespace heros.solver
 		/// <param name="edge"> an edge whose target node resembles a method exits </param>
 		protected internal virtual void processExit(PathEdge<N, D> edge)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final N n = edge.getTarget();
 			N n = edge.Target; // an exit node; line 21...
 			EdgeFunction<V> f = jumpFunction(edge);
 			M methodThatNeedsSummary = icfg.getMethodOf(n);
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final D d1 = edge.factAtSource();
 			D d1 = edge.factAtSource();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final D d2 = edge.factAtTarget();
 			D d2 = edge.factAtTarget();
 
 			//for each of the method's start points, determine incoming calls

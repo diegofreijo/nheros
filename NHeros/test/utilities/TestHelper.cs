@@ -1,6 +1,8 @@
 ﻿using heros.fieldsens;
+using heros.solver;
+using System;
 using System.Collections.Generic;
-using static heros.utilities.Edge;
+using System.Linq;
 
 /// <summary>
 ///*****************************************************************************
@@ -16,24 +18,22 @@ using static heros.utilities.Edge;
 /// </summary>
 namespace heros.utilities
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
-//	import static org.junit.Assert.assertTrue;
-
 	public class TestHelper
 	{
-		private Multimap<TestMethod, Statement> method2startPoint = HashMultimap.create();
-		private IList<NormalEdge> normalEdges = new List<NormalEdge>();
-		private IList<CallEdge> callEdges = new List<CallEdge>();
-		private IList<Call2ReturnEdge> call2retEdges = new List<Call2ReturnEdge>();
-		private IList<ReturnEdge> returnEdges = new List<ReturnEdge>();
+		private IDictionary<TestMethod, ISet<Statement>> method2startPoint = new Dictionary<TestMethod, ISet<Statement>>();
+		private IList<NormalEdge<JoinableFact>> normalEdges = new List<NormalEdge<JoinableFact>>();
+		private IList<CallEdge<JoinableFact>> callEdges = new List<CallEdge<JoinableFact>>();
+		private IList<Call2ReturnEdge<JoinableFact>> call2retEdges = new List<Call2ReturnEdge<JoinableFact>>();
+		private IList<ReturnEdge<JoinableFact>> returnEdges = new List<ReturnEdge<JoinableFact>>();
 		private IDictionary<Statement, TestMethod> stmt2method = new Dictionary<Statement, TestMethod>();
-		private Multiset<ExpectedFlowFunction<JoinableFact>> remainingFlowFunctions = HashMultiset.create();
+        private IDictionary<ExpectedFlowFunction<JoinableFact>, int> remainingFlowFunctions = new Dictionary<ExpectedFlowFunction<JoinableFact>, int>();
 
-		public virtual MethodHelper method(string methodName, Statement[] startingPoints, params EdgeBuilder[] edgeBuilders)
+
+        public virtual MethodHelper method(string methodName, Statement[] startingPoints, params EdgeBuilder<JoinableFact>[] edgeBuilders)
 		{
 			MethodHelper methodHelper = new MethodHelper(this, new TestMethod(methodName));
 			methodHelper.startPoints(startingPoints);
-			foreach (EdgeBuilder edgeBuilder in edgeBuilders)
+			foreach (var edgeBuilder in edgeBuilders)
 			{
 				methodHelper.edges(edgeBuilder.edges());
 			}
@@ -50,19 +50,19 @@ namespace heros.utilities
 			return result;
 		}
 
-		public static EdgeBuilder.NormalStmtBuilder normalStmt(string stmt, params ExpectedFlowFunction<JoinableFact>[] flowFunctions)
+		public static EdgeBuilder<JoinableFact>.NormalStmtBuilder normalStmt(string stmt, params ExpectedFlowFunction<JoinableFact>[] flowFunctions)
 		{
-			return new NormalStmtBuilder(new Statement(stmt), flowFunctions);
+			return new EdgeBuilder<JoinableFact>.NormalStmtBuilder(new Statement(stmt), flowFunctions);
 		}
 
-		public static EdgeBuilder.CallSiteBuilder callSite(string callSite)
+		public static EdgeBuilder<JoinableFact>.CallSiteBuilder callSite(string callSite)
 		{
-			return new EdgeBuilder.CallSiteBuilder(new Statement(callSite));
+			return new EdgeBuilder<JoinableFact>.CallSiteBuilder(new Statement(callSite));
 		}
 
-		public static EdgeBuilder.ExitStmtBuilder exitStmt(string exitStmt)
+		public static EdgeBuilder<JoinableFact>.ExitStmtBuilder exitStmt(string exitStmt)
 		{
-			return new EdgeBuilder.ExitStmtBuilder(new Statement(exitStmt));
+			return new EdgeBuilder<JoinableFact>.ExitStmtBuilder(new Statement(exitStmt));
 		}
 
 		public static Statement over(string callSite)
@@ -97,7 +97,7 @@ namespace heros.utilities
 				throw new System.InvalidOperationException();
 			}
 
-            public override FlowFunction_ConstrainedFact<string, TestFact, Statement, TestMethod> apply(TestFact target, AccessPathHandler<string, TestFact, Statement, TestMethod> accPathHandler)
+            public override FlowFunction_ConstrainedFact<string, JoinableFact, Statement, TestMethod> apply(JoinableFact target, AccessPathHandler<string, JoinableFact, Statement, TestMethod> accPathHandler)
             {
                 throw new System.InvalidOperationException();
             }
@@ -129,7 +129,7 @@ namespace heros.utilities
 				throw new System.InvalidOperationException();
 			}
 
-			public override FlowFunction_ConstrainedFact<string, TestFact, Statement, TestMethod> apply(TestFact target, AccessPathHandler<string, TestFact, Statement, TestMethod> accPathHandler)
+			public override FlowFunction_ConstrainedFact<string, JoinableFact, Statement, TestMethod> apply(JoinableFact target, AccessPathHandler<string, JoinableFact, Statement, TestMethod> accPathHandler)
 			{
 				throw new System.InvalidOperationException();
 			}
@@ -157,7 +157,9 @@ namespace heros.utilities
 
 			public bool isStartPoint(Statement stmt)
 			{
-				return outerInstance.method2startPoint.values().contains(stmt);
+                return outerInstance.method2startPoint.Any(
+                    (kvp) => kvp.Value.Contains(stmt)
+                );
 			}
 
 			public bool isFallThroughSuccessor(Statement stmt, Statement succ)
@@ -167,7 +169,7 @@ namespace heros.utilities
 
 			public bool isExitStmt(Statement stmt)
 			{
-				foreach (ReturnEdge edge in outerInstance.returnEdges)
+				foreach (var edge in outerInstance.returnEdges)
 				{
 					if (edge.exitStmt.Equals(stmt))
 					{
@@ -177,29 +179,11 @@ namespace heros.utilities
 				return false;
 			}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public boolean isCallStmt(final Statement stmt)
 			public bool isCallStmt(Statement stmt)
 			{
-				return Iterables.any(outerInstance.callEdges, new PredicateAnonymousInnerClass(this, stmt));
-			}
-
-			private class PredicateAnonymousInnerClass : Predicate<CallEdge>
-			{
-				private readonly InterproceduralCFGAnonymousInnerClass outerInstance;
-
-				private heros.utilities.Statement stmt;
-
-				public PredicateAnonymousInnerClass(InterproceduralCFGAnonymousInnerClass outerInstance, heros.utilities.Statement stmt)
-				{
-					this.outerInstance = outerInstance;
-					this.stmt = stmt;
-				}
-
-				public bool apply(CallEdge edge)
-				{
-					return edge.callSite.Equals(stmt);
-				}
+                return outerInstance.callEdges.Any(
+                    (edge) => edge.callSite.Equals(stmt)
+                );
 			}
 
 			public bool isBranchTarget(Statement stmt, Statement succ)
@@ -209,12 +193,12 @@ namespace heros.utilities
 
 			public IList<Statement> getSuccsOf(Statement n)
 			{
-				LinkedList<Statement> result = new List();
-				foreach (NormalEdge edge in outerInstance.normalEdges)
+				var result = new List<Statement>();
+				foreach (var edge in outerInstance.normalEdges)
 				{
 					if (edge.includeInCfg && edge.unit.Equals(n))
 					{
-						result.AddLast(edge.succUnit);
+						result.Add(edge.succUnit);
 					}
 				}
 				return result;
@@ -222,12 +206,12 @@ namespace heros.utilities
 
 			public IList<Statement> getPredsOf(Statement stmt)
 			{
-				LinkedList<Statement> result = new List();
-				foreach (NormalEdge edge in outerInstance.normalEdges)
+				var result = new List<Statement>();
+				foreach (var edge in outerInstance.normalEdges)
 				{
 					if (edge.includeInCfg && edge.succUnit.Equals(stmt))
 					{
-						result.AddLast(edge.unit);
+						result.Add(edge.unit);
 					}
 				}
 				return result;
@@ -235,20 +219,29 @@ namespace heros.utilities
 
 			public ICollection<Statement> getStartPointsOf(TestMethod m)
 			{
-				return outerInstance.method2startPoint.get(m);
+                if (!outerInstance.method2startPoint.ContainsKey(m))
+                {
+                    var ret = new HashSet<Statement>();
+                    outerInstance.method2startPoint.Add(m, ret);
+                    return ret;
+                }
+                else
+                {
+                    return outerInstance.method2startPoint[m];
+                }
 			}
 
 			public ICollection<Statement> getReturnSitesOfCallAt(Statement n)
 			{
-				ISet<Statement> result = Sets.newHashSet();
-				foreach (Call2ReturnEdge edge in outerInstance.call2retEdges)
+				var result = new HashSet<Statement>();
+				foreach (var edge in outerInstance.call2retEdges)
 				{
 					if (edge.includeInCfg && edge.callSite.Equals(n))
 					{
 						result.Add(edge.returnSite);
 					}
 				}
-				foreach (ReturnEdge edge in outerInstance.returnEdges)
+				foreach (var edge in outerInstance.returnEdges)
 				{
 					if (edge.includeInCfg && edge.callSite.Equals(n))
 					{
@@ -271,15 +264,15 @@ namespace heros.utilities
 
 			public ICollection<Statement> getCallersOf(TestMethod m)
 			{
-				ISet<Statement> result = Sets.newHashSet();
-				foreach (CallEdge edge in outerInstance.callEdges)
+                var result = new HashSet<Statement>();
+                foreach (var edge in outerInstance.callEdges)
 				{
 					if (edge.includeInCfg && edge.destinationMethod.Equals(m))
 					{
 						result.Add(edge.callSite);
 					}
 				}
-				foreach (ReturnEdge edge in outerInstance.returnEdges)
+				foreach (var edge in outerInstance.returnEdges)
 				{
 					if (edge.includeInCfg && edge.calleeMethod.Equals(m))
 					{
@@ -291,8 +284,8 @@ namespace heros.utilities
 
 			public ICollection<TestMethod> getCalleesOfCallAt(Statement n)
 			{
-				IList<TestMethod> result = new List();
-				foreach (CallEdge edge in outerInstance.callEdges)
+				var result = new List<TestMethod>();
+				foreach (var edge in outerInstance.callEdges)
 				{
 					if (edge.includeInCfg && edge.callSite.Equals(n))
 					{
@@ -308,10 +301,10 @@ namespace heros.utilities
 			}
 		}
 
-		public virtual void assertAllFlowFunctionsUsed()
-		{
-			assertTrue("These Flow Functions were expected, but never used: \n" + Joiner.on(",\n").join(remainingFlowFunctions), remainingFlowFunctions.Empty);
-		}
+		//public virtual void assertAllFlowFunctionsUsed()
+		//{
+		//	assertTrue("These Flow Functions were expected, but never used: \n" + Joiner.on(",\n").join(remainingFlowFunctions), remainingFlowFunctions.Empty);
+		//}
 
 		private void addOrVerifyStmt2Method(Statement stmt, TestMethod m)
 		{
@@ -341,53 +334,63 @@ namespace heros.utilities
 				this.method = method;
 			}
 
-			public virtual void edges(ICollection<Edge> edges)
+			public virtual void edges(ICollection<Edge<JoinableFact>> edges)
 			{
-				foreach (Edge edge in edges)
+				foreach (var edge in edges)
 				{
-					foreach (ExpectedFlowFunction<JoinableFact> ff in edge.flowFunctions)
+					foreach (var ff in edge.flowFunctions)
 					{
-						outerInstance.remainingFlowFunctions.add(ff, ff.times);
+                        if (outerInstance.remainingFlowFunctions.ContainsKey(ff))
+                        {
+                            outerInstance.remainingFlowFunctions[ff] = outerInstance.remainingFlowFunctions[ff] + ff.times;
+                        }
+                        else
+                        {
+                            outerInstance.remainingFlowFunctions.Add(
+                                ff,
+                                ff.times + outerInstance.remainingFlowFunctions[ff]
+                            );
+                        }
 					}
 
 					edge.accept(new EdgeVisitorAnonymousInnerClass(this, edge));
 				}
 			}
 
-			private class EdgeVisitorAnonymousInnerClass : EdgeVisitor
-			{
+			private class EdgeVisitorAnonymousInnerClass : EdgeVisitor<JoinableFact>
+            {
 				private readonly MethodHelper outerInstance;
 
-				private heros.utilities.Edge edge;
+				private heros.utilities.Edge<JoinableFact> edge;
 
-				public EdgeVisitorAnonymousInnerClass(MethodHelper outerInstance, heros.utilities.Edge edge)
+				public EdgeVisitorAnonymousInnerClass(MethodHelper outerInstance, heros.utilities.Edge<JoinableFact> edge)
 				{
 					this.outerInstance = outerInstance;
 					this.edge = edge;
 				}
 
-				public void visit(ReturnEdge edge)
+				public void visit(ReturnEdge<JoinableFact> edge)
 				{
 					outerInstance.outerInstance.addOrVerifyStmt2Method(edge.exitStmt, outerInstance.method);
 					edge.calleeMethod = outerInstance.method;
 					outerInstance.outerInstance.returnEdges.Add(edge);
 				}
 
-				public void visit(Call2ReturnEdge edge)
+				public void visit(Call2ReturnEdge<JoinableFact> edge)
 				{
 					outerInstance.outerInstance.addOrVerifyStmt2Method(edge.callSite, outerInstance.method);
 					outerInstance.outerInstance.addOrVerifyStmt2Method(edge.returnSite, outerInstance.method);
 					outerInstance.outerInstance.call2retEdges.Add(edge);
 				}
 
-				public void visit(CallEdge edge)
+				public void visit(CallEdge<JoinableFact> edge)
 				{
 					outerInstance.outerInstance.addOrVerifyStmt2Method(edge.callSite, outerInstance.method);
 					outerInstance.outerInstance.callEdges.Add(edge);
 				}
 
-				public void visit(NormalEdge edge)
-				{
+				public void visit(NormalEdge<JoinableFact> edge)
+                {
 					outerInstance.outerInstance.addOrVerifyStmt2Method(edge.unit, outerInstance.method);
 					outerInstance.outerInstance.addOrVerifyStmt2Method(edge.succUnit, outerInstance.method);
 					outerInstance.outerInstance.normalEdges.Add(edge);
@@ -396,7 +399,18 @@ namespace heros.utilities
 
 			public virtual void startPoints(Statement[] startingPoints)
 			{
-				outerInstance.method2startPoint.putAll(method, Lists.newArrayList(startingPoints));
+                ISet<Statement> statements;
+                if (!outerInstance.method2startPoint.ContainsKey(method))
+                {
+                    statements = new HashSet<Statement>();
+                    outerInstance.method2startPoint.Add(method, statements);
+                }
+                else
+                {
+                    statements = outerInstance.method2startPoint[method];
+                }
+
+                statements.UnionWith(startingPoints);
 			}
 		}
 
@@ -429,57 +443,53 @@ namespace heros.utilities
 
 			public FlowFunction<JoinableFact> getReturnFlowFunction(Statement callSite, TestMethod calleeMethod, Statement exitStmt, Statement returnSite)
 			{
-				foreach (ReturnEdge edge in outerInstance.returnEdges)
+				foreach (var edge in outerInstance.returnEdges)
 				{
 					if (nullAwareEquals(callSite, edge.callSite) && edge.calleeMethod.Equals(calleeMethod) && edge.exitStmt.Equals(exitStmt) && nullAwareEquals(edge.returnSite, returnSite))
 					{
 						return createFlowFunction(edge);
 					}
 				}
-				throw new AssertionError(string.Format("No Flow Function expected for return edge {0} -> {1} (call edge: {2} -> {3})", exitStmt, returnSite, callSite, calleeMethod));
+				throw new Exception(string.Format("No Flow Function expected for return edge {0} -> {1} (call edge: {2} -> {3})", exitStmt, returnSite, callSite, calleeMethod));
 			}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public heros.FlowFunction<JoinableFact> getNormalFlowFunction(final Statement curr, final Statement succ)
 			public FlowFunction<JoinableFact> getNormalFlowFunction(Statement curr, Statement succ)
 			{
-				foreach (NormalEdge edge in outerInstance.normalEdges)
+				foreach (var edge in outerInstance.normalEdges)
 				{
 					if (edge.unit.Equals(curr) && edge.succUnit.Equals(succ))
 					{
 						return createFlowFunction(edge);
 					}
 				}
-				throw new AssertionError(string.Format("No Flow Function expected for {0} -> {1}", curr, succ));
+				throw new Exception(string.Format("No Flow Function expected for {0} -> {1}", curr, succ));
 			}
 
 			public FlowFunction<JoinableFact> getCallToReturnFlowFunction(Statement callSite, Statement returnSite)
 			{
-				foreach (Call2ReturnEdge edge in outerInstance.call2retEdges)
+				foreach (var edge in outerInstance.call2retEdges)
 				{
 					if (edge.callSite.Equals(callSite) && edge.returnSite.Equals(returnSite))
 					{
 						return createFlowFunction(edge);
 					}
 				}
-				throw new AssertionError(string.Format("No Flow Function expected for call to return edge {0} -> {1}", callSite, returnSite));
+				throw new Exception(string.Format("No Flow Function expected for call to return edge {0} -> {1}", callSite, returnSite));
 			}
 
 			public FlowFunction<JoinableFact> getCallFlowFunction(Statement callStmt, TestMethod destinationMethod)
 			{
-				foreach (CallEdge edge in outerInstance.callEdges)
+				foreach (var edge in outerInstance.callEdges)
 				{
 					if (edge.callSite.Equals(callStmt) && edge.destinationMethod.Equals(destinationMethod))
 					{
 						return createFlowFunction(edge);
 					}
 				}
-				throw new AssertionError(string.Format("No Flow Function expected for call {0} -> {1}", callStmt, destinationMethod));
+				throw new Exception(string.Format("No Flow Function expected for call {0} -> {1}", callStmt, destinationMethod));
 			}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: private heros.FlowFunction<JoinableFact> createFlowFunction(final Edge edge)
-			private FlowFunction<JoinableFact> createFlowFunction(Edge edge)
+			private FlowFunction<JoinableFact> createFlowFunction(Edge<JoinableFact> edge)
 			{
 				return new FlowFunctionAnonymousInnerClass(this, edge);
 			}
@@ -488,9 +498,9 @@ namespace heros.utilities
 			{
 				private readonly FlowFunctionsAnonymousInnerClass outerInstance;
 
-				private heros.utilities.Edge edge;
+				private Edge<JoinableFact> edge;
 
-				public FlowFunctionAnonymousInnerClass(FlowFunctionsAnonymousInnerClass outerInstance, heros.utilities.Edge edge)
+				public FlowFunctionAnonymousInnerClass(FlowFunctionsAnonymousInnerClass outerInstance, Edge<JoinableFact> edge)
 				{
 					this.outerInstance = outerInstance;
 					this.edge = edge;
@@ -498,33 +508,32 @@ namespace heros.utilities
 
 				public ISet<JoinableFact> computeTargets(JoinableFact source)
 				{
-					foreach (ExpectedFlowFunction<JoinableFact> ff in edge.flowFunctions)
+					foreach (var ff in edge.flowFunctions)
 					{
 						if (ff.source.Equals(source))
 						{
-							if (outerInstance.outerInstance.remainingFlowFunctions.remove(ff))
+							if (outerInstance.outerInstance.remainingFlowFunctions.ContainsKey(ff))
 							{
-								return Sets.newHashSet(ff.targets);
+                                outerInstance.outerInstance.remainingFlowFunctions.Remove(ff);
+                                return new HashSet<JoinableFact>(ff.targets);
 							}
 							else
 							{
-								throw new AssertionError(string.Format("Flow Function '{0}' was used multiple times on edge '{1}'", ff, edge));
+								throw new Exception(string.Format("Flow Function '{0}' was used multiple times on edge '{1}'", ff, edge));
 							}
 						}
 					}
-					throw new AssertionError(string.Format("Fact '{0}' was not expected at edge '{1}'", source, edge));
+					throw new Exception(string.Format("Fact '{0}' was not expected at edge '{1}'", source, edge));
 				}
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public void runSolver(final boolean followReturnsPastSeeds, final String...initialSeeds)
-		public virtual void runSolver(bool followReturnsPastSeeds, params string[] initialSeeds)
+        public virtual void runSolver(bool followReturnsPastSeeds, params string[] initialSeeds)
 		{
 			IFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>> solver = new IFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>(createTabulationProblem(followReturnsPastSeeds, initialSeeds));
 
 			solver.solve();
-			assertAllFlowFunctionsUsed();
+			//assertAllFlowFunctionsUsed();
 		}
 
 
@@ -533,53 +542,54 @@ namespace heros.utilities
 			AsSpecified,
 			ExchangeForwardAndBackward
 		}
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: public void runBiDiSolver(TestHelper backwardHelper, TabulationProblemExchange direction, final String...initialSeeds)
-		public virtual void runBiDiSolver(TestHelper backwardHelper, TabulationProblemExchange direction, params string[] initialSeeds)
+
+        public virtual void runBiDiSolver(TestHelper backwardHelper, TabulationProblemExchange direction, params string[] initialSeeds)
 		{
-			BiDiIFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>> solver = direction == TabulationProblemExchange.AsSpecified ? new BiDiIFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>(createTabulationProblem(true, initialSeeds), backwardHelper.createTabulationProblem(true, initialSeeds)) : new BiDiIFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>(backwardHelper.createTabulationProblem(true, initialSeeds), createTabulationProblem(true, initialSeeds));
+            var solver = (direction == TabulationProblemExchange.AsSpecified) 
+                ? new BiDiIFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>(createTabulationProblem(true, initialSeeds), backwardHelper.createTabulationProblem(true, initialSeeds)) 
+                : new BiDiIFDSSolver<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>(backwardHelper.createTabulationProblem(true, initialSeeds), createTabulationProblem(true, initialSeeds));
 
 			solver.solve();
-			assertAllFlowFunctionsUsed();
-			backwardHelper.assertAllFlowFunctionsUsed();
+			//assertAllFlowFunctionsUsed();
+			//backwardHelper.assertAllFlowFunctionsUsed();
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
-//ORIGINAL LINE: private heros.IFDSTabulationProblem<Statement, JoinableFact, TestMethod, heros.InterproceduralCFG<Statement, TestMethod>> createTabulationProblem(final boolean followReturnsPastSeeds, final String[] initialSeeds)
 		private IFDSTabulationProblem<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>> createTabulationProblem(bool followReturnsPastSeeds, string[] initialSeeds)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final heros.InterproceduralCFG<Statement, TestMethod> icfg = buildIcfg();
 			InterproceduralCFG<Statement, TestMethod> icfg = buildIcfg();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
-//ORIGINAL LINE: final heros.FlowFunctions<Statement, JoinableFact, TestMethod> flowFunctions = flowFunctions();
-			FlowFunctions<Statement, JoinableFact, TestMethod> flowFunctions = flowFunctions();
 
-			return new IFDSTabulationProblemAnonymousInnerClass(this, followReturnsPastSeeds, initialSeeds, icfg, flowFunctions);
+			return new IFDSTabulationProblemAnonymousInnerClass(this, followReturnsPastSeeds, initialSeeds, icfg, this.flowFunctions());
 		}
 
-		private class IFDSTabulationProblemAnonymousInnerClass : IFDSTabulationProblem<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>
+		private class IFDSTabulationProblemAnonymousInnerClass 
+            : IFDSTabulationProblem<Statement, JoinableFact, TestMethod, InterproceduralCFG<Statement, TestMethod>>
 		{
 			private readonly TestHelper outerInstance;
 
-			private bool followReturnsPastSeeds;
-			private string[] initialSeeds;
+			private bool _followReturnsPastSeeds;
+			private string[] _initialSeeds;
 			private InterproceduralCFG<Statement, TestMethod> icfg;
-			private FlowFunctions<Statement, JoinableFact, TestMethod> flowFunctions;
+			private FlowFunctions<Statement, JoinableFact, TestMethod> _flowFunctions;
 
-			public IFDSTabulationProblemAnonymousInnerClass(TestHelper outerInstance, bool followReturnsPastSeeds, string[] initialSeeds, InterproceduralCFG<Statement, TestMethod> icfg, FlowFunctions<Statement, JoinableFact, TestMethod> flowFunctions)
+			public IFDSTabulationProblemAnonymousInnerClass(
+                TestHelper outerInstance, 
+                bool followReturnsPastSeeds, 
+                string[] initialSeeds, 
+                InterproceduralCFG<Statement, TestMethod> icfg, 
+                FlowFunctions<Statement, JoinableFact, TestMethod> flowFunctions
+            )
 			{
 				this.outerInstance = outerInstance;
-				this.followReturnsPastSeeds = followReturnsPastSeeds;
-				this.initialSeeds = initialSeeds;
+				this._followReturnsPastSeeds = followReturnsPastSeeds;
+				this._initialSeeds = initialSeeds;
 				this.icfg = icfg;
-				this.flowFunctions = flowFunctions;
+				this._flowFunctions = flowFunctions;
 			}
 
 
 			public bool followReturnsPastSeeds()
 			{
-				return followReturnsPastSeeds;
+				return _followReturnsPastSeeds;
 			}
 
 			public bool autoAddZero()
@@ -599,7 +609,7 @@ namespace heros.utilities
 
 			public FlowFunctions<Statement, JoinableFact, TestMethod> flowFunctions()
 			{
-				return flowFunctions;
+				return this._flowFunctions;
 			}
 
 			public InterproceduralCFG<Statement, TestMethod> interproceduralCFG()
@@ -609,10 +619,10 @@ namespace heros.utilities
 
 			public IDictionary<Statement, ISet<JoinableFact>> initialSeeds()
 			{
-				IDictionary<Statement, ISet<JoinableFact>> result = new Dictionary();
-				foreach (string stmt in initialSeeds)
+				IDictionary<Statement, ISet<JoinableFact>> result = new Dictionary<Statement, ISet<JoinableFact>>();
+				foreach (string stmt in _initialSeeds)
 				{
-					result[new Statement(stmt)] = Sets.newHashSet(new JoinableFact("0"));
+					result[new Statement(stmt)] = new HashSet<JoinableFact> { new JoinableFact("0") };
 				}
 				return result;
 			}

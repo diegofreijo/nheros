@@ -38,14 +38,17 @@ namespace heros.solver
 	/// 				reportable paths. </param>
 	/// @param <M> see <seealso cref="IFDSSolver"/> </param>
 	/// @param <I> see <seealso cref="IFDSSolver"/> </param>
-	public class BiDiIFDSSolver<N, D, M, I> : BiDiIDESolver<N, D, M, BinaryDomain, I> where D : JoinHandlingNode<D> where I : heros.InterproceduralCFG<N, M>
+	public class BiDiIFDSSolver<N, D, M, I> : BiDiIDESolver<N, D, M, BinaryDomain, I> 
+        where D : JoinHandlingNode<D> 
+        where I : heros.InterproceduralCFG<N, M>
 	{
 
 
 		/// <summary>
 		/// Instantiates a <seealso cref="BiDiIFDSSolver"/> with the associated forward and backward problem.
 		/// </summary>
-		public BiDiIFDSSolver(IFDSTabulationProblem<N, D, M, I> forwardProblem, IFDSTabulationProblem<N, D, M, I> backwardProblem) : base(IFDSSolver.createIDETabulationProblem(forwardProblem), IFDSSolver.createIDETabulationProblem(backwardProblem))
+		public BiDiIFDSSolver(IFDSTabulationProblem<N, D, M, I> forwardProblem, IFDSTabulationProblem<N, D, M, I> backwardProblem) 
+            : base(IFDSSolver.createIDETabulationProblem(forwardProblem), IFDSSolver.createIDETabulationProblem(backwardProblem))
 		{
 		}
 

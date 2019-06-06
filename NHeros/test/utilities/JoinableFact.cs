@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿using heros.solver;
+using JoinHandlingNode_JoinKey = heros.solver.JoinHandlingNode_JoinKey;
+
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2014 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,13 +15,8 @@
 /// </summary>
 namespace heros.utilities
 {
-	using JoinHandlingNode = heros.solver.JoinHandlingNode;
-	using LinkedNode = heros.solver.LinkedNode;
-	using JoinHandlingNode_JoinKey = heros.solver.JoinHandlingNode_JoinKey;
-
 	public class JoinableFact : JoinHandlingNode<JoinableFact>
 	{
-
 		public readonly string name;
 
 		public JoinableFact(string name)

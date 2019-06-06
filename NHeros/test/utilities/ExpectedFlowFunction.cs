@@ -37,6 +37,6 @@ namespace heros.utilities
 
 		public abstract string transformerString();
 
-		public abstract heros.fieldsens.FlowFunction_ConstrainedFact<string, TestFact, Statement, TestMethod> apply(TestFact target, AccessPathHandler<string, TestFact, Statement, TestMethod> accPathHandler);
+		public abstract heros.fieldsens.FlowFunction_ConstrainedFact<string, Fact, Statement, TestMethod> apply(Fact target, AccessPathHandler<string, Fact, Statement, TestMethod> accPathHandler);
 	}
 }
