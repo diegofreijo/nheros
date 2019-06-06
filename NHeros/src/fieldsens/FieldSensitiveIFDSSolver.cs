@@ -67,7 +67,7 @@ namespace heros.fieldsens
 
 			public override MethodAnalyzer<FieldRef, D, N, M> getAnalyzer(M method)
 			{
-				if (method == default(M))
+				if (Utils.IsDefault(method))
 				{
 					throw new System.ArgumentException("Method must be not null");
 				}

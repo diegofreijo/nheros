@@ -130,8 +130,8 @@ namespace heros.solver
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + ((relatedCallSite == default(N)) ? 0 : relatedCallSite.GetHashCode());
-				result = prime * result + ((sourceStmt == default(N)) ? 0 : sourceStmt.GetHashCode());
+				result = prime * result + (Utils.IsDefault((relatedCallSite)) ? 0 : relatedCallSite.GetHashCode());
+				result = prime * result + (Utils.IsDefault((sourceStmt)) ? 0 : sourceStmt.GetHashCode());
 				return result;
 			}
 
@@ -152,9 +152,9 @@ namespace heros.solver
 					return false;
 				}
 				LeakKey other = (LeakKey) obj;
-				if (relatedCallSite == default(N))
+				if (Utils.IsDefault(relatedCallSite))
 				{
-					if (other.relatedCallSite != default(N))
+					if (!Utils.IsDefault(other.relatedCallSite))
 					{
 						return false;
 					}
@@ -163,9 +163,9 @@ namespace heros.solver
 				{
 					return false;
 				}
-				if (sourceStmt == default(N))
+				if (Utils.IsDefault(sourceStmt))
 				{
-					if (other.sourceStmt != default(N))
+					if (!Utils.IsDefault(other.sourceStmt))
 					{
 						return false;
 					}
@@ -343,7 +343,7 @@ namespace heros.solver
 
 			public override string ToString()
 			{
-				if (source != default(N))
+				if (!Utils.IsDefault(source))
 				{
 					return "" + abstraction + "-@-" + source + "";
 				}
@@ -357,8 +357,8 @@ namespace heros.solver
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + ((abstraction == default(D)) ? 0 : abstraction.GetHashCode());
-				result = prime * result + ((source == default(N)) ? 0 : source.GetHashCode());
+				result = prime * result + (Utils.IsDefault((abstraction)) ? 0 : abstraction.GetHashCode());
+				result = prime * result + (Utils.IsDefault((source)) ? 0 : source.GetHashCode());
 				return result;
 			}
 
@@ -379,9 +379,9 @@ namespace heros.solver
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("unchecked") AbstractionWithSourceStmt other = (AbstractionWithSourceStmt) obj;
 				AbstractionWithSourceStmt other = (AbstractionWithSourceStmt) obj;
-				if (abstraction == default(D))
+				if (Utils.IsDefault(abstraction))
 				{
-					if (other.abstraction != default(D))
+					if (!Utils.IsDefault(other.abstraction))
 					{
 						return false;
 					}
@@ -390,9 +390,9 @@ namespace heros.solver
 				{
 					return false;
 				}
-				if (source == default(N))
+				if (Utils.IsDefault(source))
 				{
-					if (other.source != default(N))
+					if (!Utils.IsDefault(other.source))
 					{
 						return false;
 					}

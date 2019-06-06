@@ -875,7 +875,7 @@ namespace heros.solver
 			{
 				l = val_Conflict.get(nHashN, nHashD);
 			}
-			if (l == default(V))
+			if (Utils.IsDefault(l))
 			{
 				return valueLattice.topElement(); //implicitly initialized to top; see line [1] of Fig. 7 in SRH96 paper
 			}

@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using NHeros.src.util;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2012 Eric Bodden.
 /// All rights reserved. This program and the accompanying materials
@@ -42,8 +43,8 @@ namespace heros.solver
 
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + ((o1 == default(T)) ? 0 : o1.GetHashCode());
-			result = prime * result + ((o2 == default(U)) ? 0 : o2.GetHashCode());
+			result = prime * result + (Utils.IsDefault((o1)) ? 0 : o1.GetHashCode());
+			result = prime * result + (Utils.IsDefault((o2)) ? 0 : o2.GetHashCode());
 			hashCode_Conflict = result;
 
 			return hashCode_Conflict;
@@ -63,12 +64,10 @@ namespace heros.solver
 			{
 				return false;
 			}
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") Pair other = (Pair) obj;
-			Pair other = (Pair) obj;
-			if (o1 == default(T))
+            Pair<T, U> other = (Pair<T, U>)obj;
+			if (Utils.IsDefault(o1))
 			{
-				if (other.o1 != default(T))
+				if (!Utils.IsDefault(other.o1))
 				{
 					return false;
 				}
@@ -77,9 +76,9 @@ namespace heros.solver
 			{
 				return false;
 			}
-			if (o2 == default(U))
+			if (Utils.IsDefault(o2))
 			{
-				if (other.o2 != default(U))
+				if (!Utils.IsDefault(other.o2))
 				{
 					return false;
 				}

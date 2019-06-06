@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using System;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2012 Eric Bodden.
 /// All rights reserved. This program and the accompanying materials
@@ -17,17 +18,14 @@ namespace heros
 	///	Semantic annotation stating that the annotated field can remain unsynchronized.
 	///  This annotation is meant as a structured comment only, and has no immediate effect. 
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: There is no attribute target in .NET corresponding to FIELD:
-//ORIGINAL LINE: @Target(FIELD) public class DontSynchronize extends System.Attribute
-	[AttributeUsage(<missing>, AllowMultiple = false, Inherited = false)]
-	public class DontSynchronize : System.Attribute
+    //[AttributeUsage(<missing>, AllowMultiple = false, Inherited = false)]
+	public class DontSynchronize : Attribute
 	{
 		internal string value;
 
-		public DontSynchronize(String value = "")
+		public DontSynchronize(string value = "")
 		{
 			this.value = value;
 		}
 	}
-
 }

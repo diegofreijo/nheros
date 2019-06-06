@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NHeros.src.util;
+using System.Collections.Generic;
 
 /// <summary>
 ///*****************************************************************************
@@ -58,7 +59,7 @@ namespace heros.template
 
 		public D zeroValue()
 		{
-			if (zeroValue_Conflict == default(D))
+			if (Utils.IsDefault(zeroValue_Conflict))
 			{
 				zeroValue_Conflict = createZeroValue();
 			}

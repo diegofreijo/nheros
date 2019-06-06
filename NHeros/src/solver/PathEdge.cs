@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using NHeros.src.util;
+using System.Text;
 
 /// <summary>
 ///*****************************************************************************
@@ -41,9 +42,9 @@ namespace heros.solver
 
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + ((dSource == default(D)) ? 0 : dSource.GetHashCode());
-			result = prime * result + ((dTarget == default(D)) ? 0 : dTarget.GetHashCode());
-			result = prime * result + ((target == default(N)) ? 0 : target.GetHashCode());
+			result = prime * result + (Utils.IsDefault((dSource)) ? 0 : dSource.GetHashCode());
+			result = prime * result + (Utils.IsDefault((dTarget)) ? 0 : dTarget.GetHashCode());
+			result = prime * result + (Utils.IsDefault((target)) ? 0 : target.GetHashCode());
 			this.hashCode_Conflict = result;
 		}
 
@@ -87,9 +88,9 @@ namespace heros.solver
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") PathEdge other = (PathEdge) obj;
 			PathEdge other = (PathEdge) obj;
-			if (dSource == default(D))
+			if (Utils.IsDefault(dSource))
 			{
-				if (other.dSource != default(D))
+				if (!Utils.IsDefault(other.dSource))
 				{
 					return false;
 				}
@@ -98,9 +99,9 @@ namespace heros.solver
 			{
 				return false;
 			}
-			if (dTarget == default(D))
+			if (Utils.IsDefault(dTarget))
 			{
-				if (other.dTarget != default(D))
+				if (!Utils.IsDefault(other.dTarget))
 				{
 					return false;
 				}
@@ -109,9 +110,9 @@ namespace heros.solver
 			{
 				return false;
 			}
-			if (target == default(N))
+			if (Utils.IsDefault(target))
 			{
-				if (other.target != default(N))
+				if (!Utils.IsDefault(other.target))
 				{
 					return false;
 				}

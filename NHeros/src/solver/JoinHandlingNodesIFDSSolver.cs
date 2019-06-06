@@ -86,7 +86,7 @@ namespace heros.solver
 				int result = 1;
 				result = prime * result + ((sourceKey == null) ? 0 : sourceKey.GetHashCode());
 				result = prime * result + ((targetKey == null) ? 0 : targetKey.GetHashCode());
-				result = prime * result + ((n == default(N)) ? 0 : n.GetHashCode());
+				result = prime * result + (Utils.IsDefault((n)) ? 0 : n.GetHashCode());
 				return result;
 			}
 
@@ -129,9 +129,9 @@ namespace heros.solver
 				{
 					return false;
 				}
-				if (n == default(N))
+				if (Utils.IsDefault(n))
 				{
-					if (other.n != default(N))
+					if (!Utils.IsDefault(other.n))
 					{
 						return false;
 					}

@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using System;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2012 Eric Bodden.
 /// All rights reserved. This program and the accompanying materials
@@ -17,17 +18,14 @@ namespace heros
 	///	Semantic annotation that the annotated field is synchronized.
 	///  This annotation is meant as a structured comment only, and has no immediate effect. 
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: There is no attribute target in .NET corresponding to FIELD:
-//ORIGINAL LINE: @Target(FIELD) public class SynchronizedBy extends System.Attribute
-	[AttributeUsage(<missing>, AllowMultiple = false, Inherited = false)]
-	public class SynchronizedBy : System.Attribute
+    //[AttributeUsage(<missing>, AllowMultiple = false, Inherited = false)]
+	public class SynchronizedBy : Attribute
 	{
 		internal string value;
 
-		public SynchronizedBy(String value = "")
+		public SynchronizedBy(string value = "")
 		{
 			this.value = value;
 		}
 	}
-
 }

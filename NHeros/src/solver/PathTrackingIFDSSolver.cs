@@ -86,9 +86,9 @@ namespace heros.solver
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + ((sourceVal == default(D)) ? 0 : sourceVal.GetHashCode());
-				result = prime * result + ((targetVal == default(D)) ? 0 : targetVal.GetHashCode());
-				result = prime * result + ((n == default(N)) ? 0 : n.GetHashCode());
+				result = prime * result + (Utils.IsDefault((sourceVal)) ? 0 : sourceVal.GetHashCode());
+				result = prime * result + (Utils.IsDefault((targetVal)) ? 0 : targetVal.GetHashCode());
+				result = prime * result + (Utils.IsDefault((n)) ? 0 : n.GetHashCode());
 				return result;
 			}
 
@@ -109,9 +109,9 @@ namespace heros.solver
 //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
 //ORIGINAL LINE: @SuppressWarnings({ "unchecked" }) CacheEntry other = (CacheEntry) obj;
 				CacheEntry other = (CacheEntry) obj;
-				if (sourceVal == default(D))
+				if (Utils.IsDefault(sourceVal))
 				{
-					if (other.sourceVal != default(D))
+					if (!Utils.IsDefault(other.sourceVal))
 					{
 						return false;
 					}
@@ -120,9 +120,9 @@ namespace heros.solver
 				{
 					return false;
 				}
-				if (targetVal == default(D))
+				if (Utils.IsDefault(targetVal))
 				{
-					if (other.targetVal != default(D))
+					if (!Utils.IsDefault(other.targetVal))
 					{
 						return false;
 					}
@@ -131,9 +131,9 @@ namespace heros.solver
 				{
 					return false;
 				}
-				if (n == default(N))
+				if (Utils.IsDefault(n))
 				{
-					if (other.n != default(N))
+					if (!Utils.IsDefault(other.n))
 					{
 						return false;
 					}

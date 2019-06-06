@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NHeros.src.util;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 /// <summary>
@@ -15,21 +16,11 @@ using System.Diagnostics;
 /// </summary>
 namespace heros.solver
 {
-
-
-
-	using HashBasedTable = com.google.common.collect.HashBasedTable;
-	using Table = com.google.common.collect.Table;
-	using Cell = com.google.common.collect.Table.Cell;
-
-
 	/// <summary>
 	/// The IDE algorithm uses a list of jump functions. Instead of a list, we use a set of three
 	/// maps that are kept in sync. This allows for efficient indexing: the algorithm accesses
 	/// elements from the list through three different indices.
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @ThreadSafe public class JumpFunctions<N,D,L>
 	public class JumpFunctions<N, D, L>
 	{
 		[SynchronizedBy("consistent lock on this")]
@@ -62,9 +53,9 @@ namespace heros.solver
 		{
 			lock (this)
 			{
-				Debug.Assert(sourceVal != default(D));
-				Debug.Assert(target != default(N));
-				Debug.Assert(targetVal != default(D));
+				Debug.Assert(!Utils.IsDefault(sourceVal));
+				Debug.Assert(!Utils.IsDefault(target));
+				Debug.Assert(!Utils.IsDefault(targetVal));
 				Debug.Assert(function != null);
         
 				//we do not store the default function (all-top)
@@ -108,8 +99,8 @@ namespace heros.solver
 		{
 			lock (this)
 			{
-				Debug.Assert(target != default(N));
-				Debug.Assert(targetVal != default(D));
+				Debug.Assert(!Utils.IsDefault(target));
+				Debug.Assert(!Utils.IsDefault(targetVal));
 				IDictionary<D, EdgeFunction<L>> res = nonEmptyReverseLookup.get(target,targetVal);
 				if (res == null)
 				{
@@ -128,8 +119,8 @@ namespace heros.solver
 		{
 			lock (this)
 			{
-				Debug.Assert(sourceVal != default(D));
-				Debug.Assert(target != default(N));
+				Debug.Assert(!Utils.IsDefault(sourceVal));
+				Debug.Assert(!Utils.IsDefault(target));
 				IDictionary<D, EdgeFunction<L>> res = nonEmptyForwardLookup.get(sourceVal, target);
 				if (res == null)
 				{
@@ -147,7 +138,7 @@ namespace heros.solver
 		{
 			lock (this)
 			{
-				Debug.Assert(target != default(N));
+				Debug.Assert(!Utils.IsDefault(target));
 				Table<D, D, EdgeFunction<L>> table = nonEmptyLookupByTargetNode[target];
 				if (table == null)
 				{
@@ -171,9 +162,9 @@ namespace heros.solver
 		{
 			lock (this)
 			{
-				Debug.Assert(sourceVal != default(D));
-				Debug.Assert(target != default(N));
-				Debug.Assert(targetVal != default(D));
+				Debug.Assert(!Utils.IsDefault(sourceVal));
+				Debug.Assert(!Utils.IsDefault(target));
+				Debug.Assert(!Utils.IsDefault(targetVal));
         
 				IDictionary<D, EdgeFunction<L>> sourceValToFunc = nonEmptyReverseLookup.get(target, targetVal);
 				if (sourceValToFunc == null)

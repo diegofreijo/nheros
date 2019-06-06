@@ -49,7 +49,7 @@ namespace heros.solver
 			}
 			public virtual long get(D o)
 			{
-				if (o == default(D))
+				if (Utils.IsDefault(o))
 				{
 					throw new System.ArgumentException("Null key");
 				}
