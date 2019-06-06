@@ -1,6 +1,9 @@
-﻿using System;
+﻿using NHeros.src.util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 /// <summary>
 ///*****************************************************************************
@@ -16,11 +19,6 @@ using System.Diagnostics;
 /// </summary>
 namespace heros.solver
 {
-
-
-	using Table = com.google.common.collect.Table;
-	using Cell = com.google.common.collect.Table.Cell;
-
 	/// <summary>
 	/// A class to dump the results of flow functions to a dot file for visualization.
 	/// 
@@ -32,7 +30,7 @@ namespace heros.solver
 	/// @param <D> The type of data-flow facts to be computed by the tabulation problem. </param>
 	/// @param <M> The type of objects used to represent methods. Typically <seealso cref="SootMethod"/>. </param>
 	/// @param <I> The type of inter-procedural control-flow graph being used. </param>
-	public class FlowFunctionDotExport<N, D, M, I> where I : heros.InterproceduralCFG<N, M>
+	public class FlowFunctionDotExport<N, D, M, V, I> where I : heros.InterproceduralCFG<N, M>
 	{
 		private class Numberer<D>
 		{
@@ -61,13 +59,10 @@ namespace heros.solver
 
 			}
 		}
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: private final IDESolver<N, D, M, ?, I> solver;
-		private readonly IDESolver<N, D, M, ?, I> solver;
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: private final heros.ItemPrinter<? super N, ? super D, ? super M> printer;
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-		private readonly ItemPrinter<object, ?, ?> printer;
+
+        private readonly IDESolver<N, D, M, V, I> solver;
+
+        private readonly ItemPrinter<N, D, M> printer;
 		private readonly ISet<M> methodWhitelist;
 
 		/// <summary>
@@ -75,9 +70,8 @@ namespace heros.solver
 		/// <param name="solver"> The solver instance to dump. </param>
 		/// <param name="printer"> The printer object to use to create the string representations of
 		/// the nodes, facts, and methods in the exploded super-graph. </param>
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: public FlowFunctionDotExport(IDESolver<N, D, M, ?, I> solver, heros.ItemPrinter<? super N, ? super D, ? super M> printer)
-		public FlowFunctionDotExport<T1, T2>(IDESolver<T1> solver, ItemPrinter<T2> printer) : this(solver, printer, null)
+        public FlowFunctionDotExport(IDESolver<N, D, M, V, I> solver, ItemPrinter<N, D, M> printer) 
+            : this(solver, printer, null)
 		{
 		}
 
@@ -89,9 +83,7 @@ namespace heros.solver
 		/// <param name="methodWhitelist"> A set of methods of type M for which the full graphs should be printed.
 		/// Flow functions for which both unit endpoints are not contained in a method in methodWhitelist are not printed.
 		/// Callee/caller edges into/out of the methods in the set are still printed.   </param>
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the Java 'super' constraint:
-//ORIGINAL LINE: public FlowFunctionDotExport(IDESolver<N, D, M, ?, I> solver, heros.ItemPrinter<? super N, ? super D, ? super M> printer, java.util.Set<M> methodWhitelist)
-		public FlowFunctionDotExport<T1, T2>(IDESolver<T1> solver, ItemPrinter<T2> printer, ISet<M> methodWhitelist)
+		public FlowFunctionDotExport(IDESolver<N, D, M, V, I> solver, ItemPrinter<N, D, M> printer, ISet<M> methodWhitelist)
 		{
 			this.solver = solver;
 			this.printer = printer;
@@ -116,9 +108,9 @@ namespace heros.solver
 
 		private class UnitFactTracker
 		{
-			private readonly FlowFunctionDotExport<N, D, M, I> outerInstance;
+			private readonly FlowFunctionDotExport<N, D, M, V, I> outerInstance;
 
-			public UnitFactTracker(FlowFunctionDotExport<N, D, M, I> outerInstance)
+			public UnitFactTracker(FlowFunctionDotExport<N, D, M, V, I> outerInstance)
 			{
 				this.outerInstance = outerInstance;
 			}
@@ -165,12 +157,12 @@ namespace heros.solver
 			}
 		}
 
-		private void numberEdges(Table<N, N, IDictionary<D, ISet<D>>> edgeSet, UnitFactTracker utf)
+		private void numberEdges(IDictionary<Pair<N, N>, IDictionary<D, ISet<D>>> edgeSet, UnitFactTracker utf)
 		{
-			foreach (Table.Cell<N, N, IDictionary<D, ISet<D>>> c in edgeSet.cellSet())
+			foreach (Pair<N, N> pair in edgeSet.Keys)
 			{
-				N sourceUnit = c.RowKey;
-				N destUnit = c.ColumnKey;
+                N sourceUnit = pair.O1;
+				N destUnit = pair.O2;
 				M destMethod = solver.icfg.getMethodOf(destUnit);
 				M sourceMethod = solver.icfg.getMethodOf(sourceUnit);
 				if (isMethodFiltered(sourceMethod) && isMethodFiltered(destMethod))
@@ -193,7 +185,7 @@ namespace heros.solver
 				{
 					utf.registerUnit(sourceMethod, sourceUnit);
 				}
-				foreach (KeyValuePair<D, ISet<D>> entry in c.Value.entrySet())
+				foreach (KeyValuePair<D, ISet<D>> entry in edgeSet[pair])
 				{
 					utf.registerFactAtUnit(sourceUnit, entry.Key);
 					foreach (D destFact in entry.Value)
@@ -214,18 +206,18 @@ namespace heros.solver
 			return isMethodFiltered(solver.icfg.getMethodOf(node));
 		}
 
-		private void printMethodUnits(ISet<N> units, M method, PrintStream pf, UnitFactTracker utf)
+		private void printMethodUnits(ISet<N> units, M method, StringBuilder pf, UnitFactTracker utf)
 		{
 			foreach (N methodUnit in units)
 			{
 				ISet<D> loc = utf.factsForUnit[methodUnit];
 				string unitText = escapeLabelString(printer.printNode(methodUnit, method));
-				pf.print(utf.getUnitLabel(methodUnit) + " [shape=record,label=\"" + unitText + " ");
+				pf.Append(utf.getUnitLabel(methodUnit) + " [shape=record,label=\"" + unitText + " ");
 				foreach (D hl in loc)
 				{
-					pf.print("| <" + utf.getFactLabel(methodUnit, hl) + "> " + escapeLabelString(printer.printFact(hl)));
+					pf.Append("| <" + utf.getFactLabel(methodUnit, hl) + "> " + escapeLabelString(printer.printFact(hl)));
 				}
-				pf.println("\"];");
+				pf.Append("\"];");
 			}
 		}
 
@@ -239,22 +231,22 @@ namespace heros.solver
 		/// <param name="fileName"> The output file to which to write the dot representation. </param>
 		public virtual void dumpDotFile(string fileName)
 		{
-			File f = new File(fileName);
-			PrintStream pf = null;
+            //File f = File.OpenWrite(fileName);
+			StringBuilder pf = null;
 			try
 			{
-				pf = new PrintStream(f);
+				pf = new StringBuilder();
 				UnitFactTracker utf = new UnitFactTracker(this);
 
 				numberEdges(solver.computedIntraPEdges, utf);
 				numberEdges(solver.computedInterPEdges, utf);
 
-				pf.println("digraph ifds {" + "node[shape=record];");
+				pf.AppendLine("digraph ifds {" + "node[shape=record];");
 				int methodCounter = 0;
 				foreach (KeyValuePair<M, ISet<N>> kv in utf.methodToUnit.SetOfKeyValuePairs())
 				{
 					ISet<N> intraProc = kv.Value;
-					pf.println("subgraph cluster" + methodCounter + " {");
+					pf.AppendLine("subgraph cluster" + methodCounter + " {");
 					methodCounter++;
 					printMethodUnits(intraProc, kv.Key, pf, utf);
 					foreach (N methodUnit in intraProc)
@@ -263,57 +255,52 @@ namespace heros.solver
 						foreach (KeyValuePair<N, IDictionary<D, ISet<D>>> kv2 in flows.SetOfKeyValuePairs())
 						{
 							N destUnit = kv2.Key;
-							foreach (KeyValuePair<D, ISet<D>> pointFlow in kv2.Value.entrySet())
+							foreach (KeyValuePair<D, ISet<D>> pointFlow in kv2.Value)
 							{
 								foreach (D destFact in pointFlow.Value)
 								{
 									string edge = utf.getEdgePoint(methodUnit, pointFlow.Key) + " -> " + utf.getEdgePoint(destUnit, destFact);
-									pf.print(edge);
-									pf.println(";");
+									pf.Append(edge);
+									pf.AppendLine(";");
 								}
 							}
 						}
 					}
-					pf.println("label=\"" + escapeLabelString(printer.printMethod(kv.Key)) + "\";");
-					pf.println("}");
+					pf.Append("label=\"" + escapeLabelString(printer.printMethod(kv.Key)) + "\";");
+					pf.AppendLine("}");
 				}
 				foreach (KeyValuePair<M, ISet<N>> kv in utf.stubMethods.SetOfKeyValuePairs())
 				{
-					pf.println("subgraph cluster" + methodCounter++ + " {");
+					pf.AppendLine("subgraph cluster" + methodCounter++ + " {");
 					printMethodUnits(kv.Value, kv.Key, pf, utf);
-					pf.println("label=\"" + escapeLabelString("[STUB] " + printer.printMethod(kv.Key)) + "\";");
-					pf.println("graph[style=dotted];");
-					pf.println("}");
+					pf.AppendLine("label=\"" + escapeLabelString("[STUB] " + printer.printMethod(kv.Key)) + "\";");
+					pf.AppendLine("graph[style=dotted];");
+					pf.AppendLine("}");
 				}
-				foreach (Table.Cell<N, N, IDictionary<D, ISet<D>>> c in solver.computedInterPEdges.cellSet())
+				foreach (Pair<N, N> pair in solver.computedInterPEdges.Keys)
 				{
-					if (isNodeFiltered(c.RowKey) && isNodeFiltered(c.ColumnKey))
+					if (isNodeFiltered(pair.O1) && isNodeFiltered(pair.O2))
 					{
 						continue;
 					}
-					foreach (KeyValuePair<D, ISet<D>> kv in c.Value.entrySet())
+					foreach (KeyValuePair<D, ISet<D>> kv in solver.computedInterPEdges[pair])
 					{
 						foreach (D dFact in kv.Value)
 						{
-							pf.print(utf.getEdgePoint(c.RowKey, kv.Key));
-							pf.print(" -> ");
-							pf.print(utf.getEdgePoint(c.ColumnKey, dFact));
-							pf.println(" [style=dotted];");
+							pf.Append(utf.getEdgePoint(pair.O1, kv.Key));
+							pf.Append(" -> ");
+							pf.Append(utf.getEdgePoint(pair.O2, dFact));
+							pf.AppendLine(" [style=dotted];");
 						}
 					}
 				}
-				pf.println("}");
+				pf.AppendLine("}");
+
+                File.WriteAllText(fileName, pf.ToString());
 			}
 			catch (FileNotFoundException e)
 			{
 				throw new Exception("Writing dot output failed", e);
-			}
-			finally
-			{
-				if (pf != null)
-				{
-					pf.close();
-				}
 			}
 		}
 	}

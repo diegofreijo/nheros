@@ -19,7 +19,6 @@ namespace heros.solver
 		protected internal T o1;
 		protected internal U o2;
 
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
 		protected internal int hashCode_Conflict = 0;
 
 		public Pair()
@@ -43,8 +42,8 @@ namespace heros.solver
 
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + (Utils.IsDefault((o1)) ? 0 : o1.GetHashCode());
-			result = prime * result + (Utils.IsDefault((o2)) ? 0 : o2.GetHashCode());
+			result = prime * result + (Utils.IsDefault(o1) ? 0 : o1.GetHashCode());
+			result = prime * result + (Utils.IsDefault(o2) ? 0 : o2.GetHashCode());
 			hashCode_Conflict = result;
 
 			return hashCode_Conflict;
