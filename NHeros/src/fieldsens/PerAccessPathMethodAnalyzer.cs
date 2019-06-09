@@ -303,7 +303,7 @@ namespace heros.fieldsens
 
 		private void processNormalNonJoiningFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final java.util.List<Stmt> successors = context.icfg.getSuccsOf(factAtStmt.getStatement());
 			IList<Stmt> successors = context.icfg.getSuccsOf(factAtStmt.Statement);
 			FlowFunction<Field, Fact, Stmt, Method> flowFunction = context.flowFunctions.getNormalFlowFunction(factAtStmt.Statement);

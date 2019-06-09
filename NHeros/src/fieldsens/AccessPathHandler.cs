@@ -53,7 +53,7 @@ namespace heros.fieldsens
 			return new FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method>(new WrappedFact<Field, Fact, Stmt, Method>(fact, new AccessPath<Field>(), new ZeroCallEdgeResolver<Field, Fact, Stmt, Method>(resolver.analyzer, zeroHandler, debugger)));
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public ResultBuilder<Field, Fact, Stmt, Method> prepend(final Field field)
 		public virtual ResultBuilder<Field, Fact, Stmt, Method> prepend(Field field)
 		{
@@ -78,7 +78,7 @@ namespace heros.fieldsens
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public ResultBuilder<Field, Fact, Stmt, Method> read(final Field field)
 		public virtual ResultBuilder<Field, Fact, Stmt, Method> read(Field field)
 		{
@@ -117,7 +117,7 @@ namespace heros.fieldsens
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public ResultBuilder<Field, Fact, Stmt, Method> overwrite(final Field field)
 		public virtual ResultBuilder<Field, Fact, Stmt, Method> overwrite(Field field)
 		{
@@ -143,7 +143,7 @@ namespace heros.fieldsens
 				this.field = field;
 			}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") @Override public heros.fieldsens.FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> generate(Fact fact)
 			public override FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> generate(Fact fact)
 			{

@@ -141,7 +141,7 @@ namespace heros
                 {
                     return false;
                 }
-                //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+                
                 //ORIGINAL LINE: @SuppressWarnings("unchecked") NDNDKey other = (NDNDKey) obj;
                 NDNDKey other = (NDNDKey)obj;
                 if (Utils.IsDefault(d1))
@@ -266,7 +266,7 @@ namespace heros
                 {
                     return false;
                 }
-                //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+                
                 //ORIGINAL LINE: @SuppressWarnings("unchecked") CallKey other = (CallKey) obj;
                 CallKey other = (CallKey)obj;
                 if (Utils.IsDefault(d1))
@@ -371,7 +371,7 @@ namespace heros
                 {
                     return false;
                 }
-                //JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+                
                 //ORIGINAL LINE: @SuppressWarnings("unchecked") ReturnKey other = (ReturnKey) obj;
                 ReturnKey other = (ReturnKey)obj;
                 if (Utils.IsDefault(exitStmt))

@@ -25,7 +25,7 @@ namespace heros.flowfunc
 	public class KillAll<D> : FlowFunction<D>
 	{
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") private final static KillAll instance = new KillAll();
 		private static readonly KillAll instance = new KillAll();
 
@@ -38,7 +38,7 @@ namespace heros.flowfunc
 			return emptySet();
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") public static <D> KillAll<D> v()
 		public static KillAll<D> v<D>()
 		{

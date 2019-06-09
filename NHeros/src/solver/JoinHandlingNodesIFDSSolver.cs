@@ -104,7 +104,7 @@ namespace heros.solver
 				{
 					return false;
 				}
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings({ "unchecked" }) CacheEntry other = (CacheEntry) obj;
 				CacheEntry other = (CacheEntry) obj;
 				if (sourceKey == null)

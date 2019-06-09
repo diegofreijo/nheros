@@ -227,7 +227,7 @@ namespace heros.solver
 		protected internal virtual void awaitCompletionComputeValuesAndShutdown()
 		{
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final long before = System.currentTimeMillis();
 				long before = DateTimeHelper.CurrentUnixTimeMillis();
 				//run executor and await termination of tasks
@@ -236,7 +236,7 @@ namespace heros.solver
 			}
 			if (computeValues_Conflict)
 			{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final long before = System.currentTimeMillis();
 				long before = DateTimeHelper.CurrentUnixTimeMillis();
 				computeValues();
@@ -594,7 +594,7 @@ namespace heros.solver
 		/// <param name="d5">
 		///            Fact that originally should be propagated to the caller. </param>
 		/// <returns> Fact that will be propagated to the caller. </returns>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") protected D restoreContextOnReturnedFact(N callSite, D d4, D d5)
 		protected internal virtual D restoreContextOnReturnedFact(N callSite, D d4, D d5)
 		{
@@ -629,13 +629,13 @@ namespace heros.solver
 		/// <param name="edge"> </param>
 		private void processNormalFlow(PathEdge<N, D> edge)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final D d1 = edge.factAtSource();
 			D d1 = edge.factAtSource();
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final N n = edge.getTarget();
 			N n = edge.Target;
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final D d2 = edge.factAtTarget();
 			D d2 = edge.factAtTarget();
 
@@ -754,7 +754,7 @@ namespace heros.solver
 			//Phase II(ii)
 			//we create an array of all nodes and then dispatch fractions of this array to multiple threads
 			ISet<N> allNonCallStartNodes = icfg.allNonCallStartNodes();
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") N[] nonCallStartNodesArray = (N[]) new Object[allNonCallStartNodes.size()];
 			N[] nonCallStartNodesArray = (N[]) new object[allNonCallStartNodes.Count];
 			int i = 0;

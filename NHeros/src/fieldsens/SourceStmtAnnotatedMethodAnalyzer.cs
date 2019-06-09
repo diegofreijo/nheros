@@ -59,7 +59,7 @@ namespace heros.fieldsens
 			perSourceAnalyzer.getOrCreate(key).addInitialSeed(startPoint);
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: @Override public void addUnbalancedReturnFlow(final heros.fieldsens.structs.WrappedFactAtStatement<Field, Fact, Stmt, Method> target, final Stmt callSite)
 		public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> target, Stmt callSite)
 		{

@@ -85,7 +85,7 @@ namespace heros.solver
 			{
 				return false;
 			}
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") PathEdge other = (PathEdge) obj;
 			PathEdge other = (PathEdge) obj;
 			if (Utils.IsDefault(dSource))

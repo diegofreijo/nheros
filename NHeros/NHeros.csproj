@@ -126,6 +126,8 @@
     <Compile Include="src\utilities\JsonArray.cs" />
     <Compile Include="src\utilities\JsonDocument.cs" />
     <Compile Include="src\util\LoadingCache.cs" />
+    <Compile Include="src\util\Multimap.cs" />
+    <Compile Include="src\util\Multiset.cs" />
     <Compile Include="src\util\SootThreadGroup.cs" />
     <Compile Include="src\util\Utils.cs" />
     <Compile Include="src\ZeroedFlowFunctions.cs" />

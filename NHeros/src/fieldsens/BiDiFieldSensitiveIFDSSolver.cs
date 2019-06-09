@@ -38,7 +38,7 @@ namespace heros.fieldsens
 			backwardSolver = createSolver(backwardProblem, factHandler, debugger, backwardSynchronizer);
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> createSolver(IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, FactMergeHandler factHandler, Debugger<Field, Fact, Stmt, Method> debugger, final SynchronizerImpl<Stmt> synchronizer)
 		private FieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> createSolver(IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, FactMergeHandler factHandler, Debugger<Field, Fact, Stmt, Method> debugger, SynchronizerImpl<Stmt> synchronizer)
 		{

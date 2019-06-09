@@ -14,9 +14,9 @@
 /// </summary>
 namespace heros.solver
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.solver.IFDSSolver.BinaryDomain.BOTTOM;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.solver.IFDSSolver.BinaryDomain.TOP;
 	using AllBottom = heros.edgefunc.AllBottom;
 	using AllTop = heros.edgefunc.AllTop;
@@ -49,13 +49,13 @@ namespace heros.solver
 		/// Creates a solver for the given problem. The solver must then be started by calling
 		/// <seealso cref="solve()"/>.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public IFDSSolver(final heros.IFDSTabulationProblem<N,D,M,I> ifdsProblem)
 		public IFDSSolver(IFDSTabulationProblem<N, D, M, I> ifdsProblem) : base(createIDETabulationProblem(ifdsProblem))
 		{
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: static <N, D, M, I extends heros.InterproceduralCFG<N, M>> heros.IDETabulationProblem<N, D, M, BinaryDomain, I> createIDETabulationProblem(final heros.IFDSTabulationProblem<N, D, M, I> ifdsProblem)
 		internal static IDETabulationProblem<N, D, M, BinaryDomain, I> createIDETabulationProblem<N, D, M, I>(IFDSTabulationProblem<N, D, M, I> ifdsProblem) where I : heros.InterproceduralCFG<N, M>
 		{

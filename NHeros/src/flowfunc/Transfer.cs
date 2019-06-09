@@ -14,7 +14,7 @@
 /// </summary>
 namespace heros.flowfunc
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.TwoElementSet.twoElementSet;
 
 

@@ -13,13 +13,13 @@
 namespace heros.fieldsens
 {
 	using static heros.fieldsens.AccessPath.PrefixTestResult;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static org.junit.Assert.assertArrayEquals;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static org.junit.Assert.assertEquals;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static org.junit.Assert.assertFalse;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static org.junit.Assert.assertTrue;
 
 
@@ -63,7 +63,7 @@ namespace heros.fieldsens
 			return accessPath;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void append()
 		public virtual void append()
 		{
@@ -71,7 +71,7 @@ namespace heros.fieldsens
 			assertEquals(ap("a.b"), sut.append("b"));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void addOnExclusion()
 		public virtual void addOnExclusion()
 		{
@@ -79,7 +79,7 @@ namespace heros.fieldsens
 			assertEquals(ap("b"), sut.append("b"));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test(expected=IllegalArgumentException.class) public void addMergedFieldsOnSingleExclusion()
 		public virtual void addMergedFieldsOnSingleExclusion()
 		{
@@ -87,35 +87,35 @@ namespace heros.fieldsens
 			sut.append("a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void prepend()
 		public virtual void prepend()
 		{
 			assertEquals(ap("c.a.b"), ap("a.b").prepend("c"));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void remove()
 		public virtual void remove()
 		{
 			assertEquals(ap("b"), ap("a.b").removeFirst());
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void deltaDepth1()
 		public virtual void deltaDepth1()
 		{
 			assertArrayEquals(new string[] {"b"}, ap("a").getDeltaTo(ap("a.b")).accesses);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void deltaDepth2()
 		public virtual void deltaDepth2()
 		{
 			assertArrayEquals(new string[] {"b", "c"}, ap("a").getDeltaTo(ap("a.b.c")).accesses);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void deltaOnNonEmptyAccPathsWithExclusions()
 		public virtual void deltaOnNonEmptyAccPathsWithExclusions()
 		{
@@ -124,14 +124,14 @@ namespace heros.fieldsens
 			assertEquals(Sets.newHashSet("g"), delta.exclusions);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void deltaOnPotentialPrefix()
 		public virtual void deltaOnPotentialPrefix()
 		{
 			assertEquals(Sets.newHashSet("f", "g"), ap("^f").getDeltaTo(ap("^g")).exclusions);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void emptyDeltaOnEqualExclusions()
 		public virtual void emptyDeltaOnEqualExclusions()
 		{
@@ -141,14 +141,14 @@ namespace heros.fieldsens
 			assertTrue(actual.getDeltaTo(ap("^f")).exclusions.SetEquals(Sets.newHashSet("f")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void multipleExclPrefixOfMultipleExcl()
 		public virtual void multipleExclPrefixOfMultipleExcl()
 		{
 			assertEquals(PrefixTestResult.POTENTIAL_PREFIX, ap("^f,g").isPrefixOf(ap("^f,h")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testBaseValuePrefixOfFieldAccess()
 		public virtual void testBaseValuePrefixOfFieldAccess()
 		{
@@ -156,14 +156,14 @@ namespace heros.fieldsens
 			assertEquals(NO_PREFIX, ap("f").isPrefixOf(ap("")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testBaseValueIdentity()
 		public virtual void testBaseValueIdentity()
 		{
 			assertEquals(GUARANTEED_PREFIX, ap("").isPrefixOf(ap("")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testFieldAccessPrefixOfFieldAccess()
 		public virtual void testFieldAccessPrefixOfFieldAccess()
 		{
@@ -171,7 +171,7 @@ namespace heros.fieldsens
 			assertEquals(NO_PREFIX, ap("b.c").isPrefixOf(ap("b")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testPrefixOfFieldAccessWithExclusion()
 		public virtual void testPrefixOfFieldAccessWithExclusion()
 		{
@@ -179,7 +179,7 @@ namespace heros.fieldsens
 			assertEquals(NO_PREFIX,ap("g").isPrefixOf(ap("^f")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testIdentityWithExclusion()
 		public virtual void testIdentityWithExclusion()
 		{
@@ -187,14 +187,14 @@ namespace heros.fieldsens
 			assertEquals(GUARANTEED_PREFIX,ap("^f,g").isPrefixOf(ap("^f,g")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testDifferentExclusions()
 		public virtual void testDifferentExclusions()
 		{
 			assertEquals(POTENTIAL_PREFIX,ap("^f").isPrefixOf(ap("^g")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testMixedFieldAccess()
 		public virtual void testMixedFieldAccess()
 		{
@@ -203,7 +203,7 @@ namespace heros.fieldsens
 			assertEquals(GUARANTEED_PREFIX,ap("f").isPrefixOf(ap("f^g")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testMultipleExclusions()
 		public virtual void testMultipleExclusions()
 		{
@@ -213,14 +213,14 @@ namespace heros.fieldsens
 			assertEquals(GUARANTEED_PREFIX,ap("^f").isPrefixOf(ap("^f,g")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testDifferentAccessPathLength()
 		public virtual void testDifferentAccessPathLength()
 		{
 			assertEquals(GUARANTEED_PREFIX,ap("^f").isPrefixOf(ap("g.h")));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void testExclusionRequiresFieldAccess()
 		public virtual void testExclusionRequiresFieldAccess()
 		{

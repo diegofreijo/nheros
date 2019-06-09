@@ -59,7 +59,7 @@ namespace heros.edgefunc
 		{
 			if (other is AllBottom)
 			{
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") AllBottom allBottom = (AllBottom) other;
 				AllBottom allBottom = (AllBottom) other;
 				return allBottom.bottomElement.Equals(bottomElement);

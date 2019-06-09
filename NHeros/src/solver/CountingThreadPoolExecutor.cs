@@ -82,7 +82,7 @@ namespace heros.solver
 		/// <summary>
 		/// Awaits the completion of all spawned tasks.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+
 //ORIGINAL LINE: public void awaitCompletion() throws InterruptedException
 		public virtual void awaitCompletion()
 		{
@@ -92,7 +92,7 @@ namespace heros.solver
 		/// <summary>
 		/// Awaits the completion of all spawned tasks.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+
 //ORIGINAL LINE: public void awaitCompletion(long timeout, java.util.concurrent.TimeUnit unit) throws InterruptedException
 		public virtual void awaitCompletion(long timeout, TimeUnit unit)
 		{

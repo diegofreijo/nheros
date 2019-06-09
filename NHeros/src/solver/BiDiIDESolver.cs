@@ -135,7 +135,7 @@ namespace heros.solver
 				return result;
 			}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") @Override public boolean equals(Object obj)
 			public override bool Equals(object obj)
 			{
@@ -376,7 +376,7 @@ namespace heros.solver
 				{
 					return false;
 				}
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") AbstractionWithSourceStmt other = (AbstractionWithSourceStmt) obj;
 				AbstractionWithSourceStmt other = (AbstractionWithSourceStmt) obj;
 				if (Utils.IsDefault(abstraction))
@@ -440,7 +440,7 @@ namespace heros.solver
 				}
 
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public heros.FlowFunction<AbstractionWithSourceStmt> getNormalFlowFunction(final N curr, final N succ)
 				public FlowFunction<AbstractionWithSourceStmt> getNormalFlowFunction(N curr, N succ)
 				{
@@ -467,7 +467,7 @@ namespace heros.solver
 					}
 				}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public heros.FlowFunction<AbstractionWithSourceStmt> getCallFlowFunction(final N callStmt, final M destinationMethod)
 				public FlowFunction<AbstractionWithSourceStmt> getCallFlowFunction(N callStmt, M destinationMethod)
 				{
@@ -501,7 +501,7 @@ namespace heros.solver
 					}
 				}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public heros.FlowFunction<AbstractionWithSourceStmt> getReturnFlowFunction(final N callSite, final M calleeMethod, final N exitStmt, final N returnSite)
 				public FlowFunction<AbstractionWithSourceStmt> getReturnFlowFunction(N callSite, M calleeMethod, N exitStmt, N returnSite)
 				{
@@ -532,7 +532,7 @@ namespace heros.solver
 					}
 				}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public heros.FlowFunction<AbstractionWithSourceStmt> getCallToReturnFlowFunction(final N callSite, final N returnSite)
 				public FlowFunction<AbstractionWithSourceStmt> getCallToReturnFlowFunction(N callSite, N returnSite)
 				{

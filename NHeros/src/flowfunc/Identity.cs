@@ -20,7 +20,7 @@ namespace heros.flowfunc
 	public class Identity<D> : FlowFunction<D>
 	{
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") private final static Identity instance = new Identity();
 		private static readonly Identity instance = new Identity();
 
@@ -33,7 +33,7 @@ namespace heros.flowfunc
 			return singleton(source);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") public static <D> Identity<D> v()
 		public static Identity<D> v<D>()
 		{

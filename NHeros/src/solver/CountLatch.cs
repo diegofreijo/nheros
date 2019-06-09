@@ -23,7 +23,7 @@ namespace heros.solver
 	public class CountLatch
 	{
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("serial") private static final class Sync extends java.util.concurrent.locks.AbstractQueuedSynchronizer
 		private sealed class Sync : AbstractQueuedSynchronizer
 		{
@@ -91,14 +91,14 @@ namespace heros.solver
 			this.sync = new Sync(count);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+
 //ORIGINAL LINE: public void awaitZero() throws InterruptedException
 		public virtual void awaitZero()
 		{
 			sync.acquireShared(1);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+
 //ORIGINAL LINE: public boolean awaitZero(long timeout, java.util.concurrent.TimeUnit unit) throws InterruptedException
 		public virtual bool awaitZero(long timeout, TimeUnit unit)
 		{

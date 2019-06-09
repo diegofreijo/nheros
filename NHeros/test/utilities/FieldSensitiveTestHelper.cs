@@ -140,7 +140,7 @@ namespace heros.utilities
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public static AccessPathTransformer prependField(final String fieldName)
 		public static AccessPathTransformer prependField(string fieldName)
 		{
@@ -167,7 +167,7 @@ namespace heros.utilities
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public static AccessPathTransformer overwriteField(final String fieldName)
 		public static AccessPathTransformer overwriteField(string fieldName)
 		{
@@ -812,7 +812,7 @@ namespace heros.utilities
 			AsSpecified,
 			ExchangeForwardAndBackward
 		}
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public void runBiDiSolver(FieldSensitiveTestHelper backwardHelper, TabulationProblemExchange direction, final String...initialSeeds)
 		public virtual void runBiDiSolver(FieldSensitiveTestHelper backwardHelper, TabulationProblemExchange direction, params string[] initialSeeds)
 		{

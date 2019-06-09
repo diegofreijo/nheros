@@ -14,7 +14,7 @@
 /// </summary>
 namespace heros.flowfunc
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static com.google.common.collect.Sets.newHashSet;
 
 
@@ -42,7 +42,7 @@ namespace heros.flowfunc
 			return res;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings({ "rawtypes", "unchecked" }) public static <D> heros.FlowFunction<D> union(heros.FlowFunction<D>... funcs)
 		public static FlowFunction<D> union<D>(params FlowFunction<D>[] funcs)
 		{

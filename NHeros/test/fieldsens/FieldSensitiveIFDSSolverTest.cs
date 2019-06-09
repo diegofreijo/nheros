@@ -36,7 +36,7 @@ namespace heros.fieldsens
 		private FieldSensitiveTestHelper helper;
 		private TestDebugger<string, TestFact, Statement, TestMethod> debugger;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Before public void before()
 		public virtual void before()
 		{
@@ -45,7 +45,7 @@ namespace heros.fieldsens
 			helper = new FieldSensitiveTestHelper(debugger);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Rule public org.junit.rules.TestWatcher watcher = new org.junit.rules.TestWatcher()
 		public TestWatcher watcher = new TestWatcherAnonymousInnerClass();
 
@@ -58,7 +58,7 @@ namespace heros.fieldsens
 			};
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void fieldReadAndWrite()
 		public virtual void fieldReadAndWrite()
 		{
@@ -67,7 +67,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void createSummaryForBaseValue()
 		public virtual void createSummaryForBaseValue()
 		{
@@ -77,7 +77,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void reuseSummaryForBaseValue()
 		public virtual void reuseSummaryForBaseValue()
 		{
@@ -90,7 +90,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a", "g");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void hold()
 		public virtual void hold()
 		{
@@ -100,7 +100,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void holdAndResume()
 		public virtual void holdAndResume()
 		{
@@ -111,7 +111,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void doNotHoldIfInterestedTransitiveCallerExists()
 		public virtual void doNotHoldIfInterestedTransitiveCallerExists()
 		{
@@ -124,7 +124,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void prefixFactOfSummaryIgnored()
 		public virtual void prefixFactOfSummaryIgnored()
 		{
@@ -135,7 +135,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void doNotPauseZeroSources()
 		public virtual void doNotPauseZeroSources()
 		{
@@ -144,7 +144,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void loopAndMerge()
 		public virtual void loopAndMerge()
 		{
@@ -155,7 +155,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a0");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test @Ignore("not implemented optimization") public void loopAndMergeExclusion()
 		public virtual void loopAndMergeExclusion()
 		{
@@ -167,7 +167,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a0");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseOnOverwrittenFieldOfInterest()
 		public virtual void pauseOnOverwrittenFieldOfInterest()
 		{
@@ -178,7 +178,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseOnOverwrittenFieldOfInterest2()
 		public virtual void pauseOnOverwrittenFieldOfInterest2()
 		{
@@ -189,7 +189,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void doNotPauseOnOverwrittenFieldOfInterestedPrefix()
 		public virtual void doNotPauseOnOverwrittenFieldOfInterestedPrefix()
 		{
@@ -200,7 +200,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseOnTransitiveExclusion()
 		public virtual void pauseOnTransitiveExclusion()
 		{
@@ -213,7 +213,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void resumePausedOnTransitiveExclusion()
 		public virtual void resumePausedOnTransitiveExclusion()
 		{
@@ -226,7 +226,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void resumeEdgePausedOnOverwrittenField()
 		public virtual void resumeEdgePausedOnOverwrittenField()
 		{
@@ -237,7 +237,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void resumeEdgePausedOnOverwrittenFieldForPrefixes()
 		public virtual void resumeEdgePausedOnOverwrittenFieldForPrefixes()
 		{
@@ -248,7 +248,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void exclusionOnPotentiallyInterestedCaller()
 		public virtual void exclusionOnPotentiallyInterestedCaller()
 		{
@@ -259,7 +259,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "sp");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void registerPausedEdgeInLateCallers()
 		public virtual void registerPausedEdgeInLateCallers()
 		{
@@ -270,7 +270,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test @Ignore("not implemented optimization") public void mergeExcludedField()
 		public virtual void mergeExcludedField()
 		{
@@ -279,7 +279,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void resumeOnTransitiveInterestedCaller()
 		public virtual void resumeOnTransitiveInterestedCaller()
 		{
@@ -293,7 +293,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "sp");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void happyPath()
 		public virtual void happyPath()
 		{
@@ -304,7 +304,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void reuseSummary()
 		public virtual void reuseSummary()
 		{
@@ -315,7 +315,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void reuseSummaryForRecursiveCall()
 		public virtual void reuseSummaryForRecursiveCall()
 		{
@@ -326,7 +326,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void branch()
 		public virtual void branch()
 		{
@@ -335,7 +335,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturn()
 		public virtual void unbalancedReturn()
 		{
@@ -346,7 +346,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void artificalReturnEdgeForNoCallersCase()
 		public virtual void artificalReturnEdgeForNoCallersCase()
 		{
@@ -355,7 +355,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseEdgeMutuallyRecursiveCallers()
 		public virtual void pauseEdgeMutuallyRecursiveCallers()
 		{
@@ -368,7 +368,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseDiamondShapedCallerChain()
 		public virtual void pauseDiamondShapedCallerChain()
 		{
@@ -383,7 +383,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void dontPauseDiamondShapedCallerChain()
 		public virtual void dontPauseDiamondShapedCallerChain()
 		{
@@ -398,7 +398,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void correctDeltaConstraintApplication()
 		public virtual void correctDeltaConstraintApplication()
 		{
@@ -413,7 +413,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseForSameSourceMultipleTimes()
 		public virtual void pauseForSameSourceMultipleTimes()
 		{
@@ -424,7 +424,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void pauseForSameSourceMultipleTimesTransitively()
 		public virtual void pauseForSameSourceMultipleTimesTransitively()
 		{
@@ -437,7 +437,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void multipleExclusions()
 		public virtual void multipleExclusions()
 		{
@@ -450,7 +450,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnWithFieldRead()
 		public virtual void unbalancedReturnWithFieldRead()
 		{
@@ -463,7 +463,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnAbstraction()
 		public virtual void unbalancedReturnAbstraction()
 		{
@@ -474,7 +474,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnReadAbstractedField()
 		public virtual void unbalancedReturnReadAbstractedField()
 		{
@@ -485,7 +485,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnReadUnwrittenAbstractedField()
 		public virtual void unbalancedReturnReadUnwrittenAbstractedField()
 		{
@@ -496,7 +496,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnTransitiveAbstraction()
 		public virtual void unbalancedReturnTransitiveAbstraction()
 		{
@@ -509,7 +509,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnPauseAndResume()
 		public virtual void unbalancedReturnPauseAndResume()
 		{
@@ -520,7 +520,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void abstractedReturnUseCallerInterest()
 		public virtual void abstractedReturnUseCallerInterest()
 		{
@@ -531,7 +531,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void abstractedReturnDeltaBlockingCallerInterest()
 		public virtual void abstractedReturnDeltaBlockingCallerInterest()
 		{
@@ -542,7 +542,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void abstractedReturnResolveThroughDelta()
 		public virtual void abstractedReturnResolveThroughDelta()
 		{
@@ -555,7 +555,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedAbstractedReturnRecursive()
 		public virtual void unbalancedAbstractedReturnRecursive()
 		{
@@ -566,7 +566,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void includeResolversInCallDeltas()
 		public virtual void includeResolversInCallDeltas()
 		{
@@ -579,7 +579,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void includeResolversInCallDeltas2()
 		public virtual void includeResolversInCallDeltas2()
 		{
@@ -592,7 +592,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void includeResolversInCallDeltas3()
 		public virtual void includeResolversInCallDeltas3()
 		{
@@ -607,7 +607,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "m_a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void includeResolversInCallDeltas4()
 		public virtual void includeResolversInCallDeltas4()
 		{
@@ -620,7 +620,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void includeResolversInCallDeltas5()
 		public virtual void includeResolversInCallDeltas5()
 		{
@@ -635,7 +635,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void includeResolversInCallDeltas6()
 		public virtual void includeResolversInCallDeltas6()
 		{
@@ -650,7 +650,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursiveCallReturnCase()
 		public virtual void recursiveCallReturnCase()
 		{
@@ -663,7 +663,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "x");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursivelyUseIncompatibleReturnResolver()
 		public virtual void recursivelyUseIncompatibleReturnResolver()
 		{
@@ -676,7 +676,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedUseIncompatibleReturnResolver()
 		public virtual void unbalancedUseIncompatibleReturnResolver()
 		{
@@ -689,7 +689,7 @@ namespace heros.fieldsens
 			helper.runSolver(true, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursiveReadField()
 		public virtual void recursiveReadField()
 		{
@@ -700,7 +700,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursiveReadField2()
 		public virtual void recursiveReadField2()
 		{
@@ -713,7 +713,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursiveReadField3()
 		public virtual void recursiveReadField3()
 		{
@@ -726,7 +726,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursiveReadField4()
 		public virtual void recursiveReadField4()
 		{
@@ -739,7 +739,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void loopReadingField()
 		public virtual void loopReadingField()
 		{
@@ -748,7 +748,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void loopReadingField2()
 		public virtual void loopReadingField2()
 		{
@@ -757,7 +757,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void loopReadingField3()
 		public virtual void loopReadingField3()
 		{
@@ -766,7 +766,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void recursiveReturn()
 		public virtual void recursiveReturn()
 		{
@@ -777,7 +777,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void joinStmtIsCallSite()
 		public virtual void joinStmtIsCallSite()
 		{
@@ -786,7 +786,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void readMultipleAbstractedFields()
 		public virtual void readMultipleAbstractedFields()
 		{
@@ -795,7 +795,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void intraproceduralStateExplosionInline0Resolver()
 		public virtual void intraproceduralStateExplosionInline0Resolver()
 		{
@@ -806,7 +806,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "m_a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void intraproceduralStateExplosion()
 		public virtual void intraproceduralStateExplosion()
 		{
@@ -817,7 +817,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "m_a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void nestedResolversShouldFormAGraph()
 		public virtual void nestedResolversShouldFormAGraph()
 		{
@@ -828,7 +828,7 @@ namespace heros.fieldsens
 			helper.runSolver(false, "m_a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void maintainCallingContextInCtrlFlowJoin()
 		public virtual void maintainCallingContextInCtrlFlowJoin()
 		{

@@ -71,7 +71,7 @@ namespace heros.fieldsens
 			return false;
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: @Override protected void processIncomingPotentialPrefix(final heros.fieldsens.structs.WrappedFact<Field, Fact, Stmt, Method> fact)
 		protected internal override void processIncomingPotentialPrefix(WrappedFact<Field, Fact, Stmt, Method> fact)
 		{

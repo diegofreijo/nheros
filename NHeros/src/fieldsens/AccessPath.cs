@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 /// <summary>
 ///*****************************************************************************
@@ -16,18 +17,9 @@ using System.Diagnostics;
 /// </summary>
 namespace heros.fieldsens
 {
-
-	using Function = com.google.common.@base.Function;
-	
-	using Lists = com.google.common.collect.Lists;
-	using Sets = com.google.common.collect.Sets;
-
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public class AccessPath<T>
 	public class AccessPath<T>
 	{
-
-		public static AccessPath<T> empty<T>()
+        public static AccessPath<T> empty()
 		{
 			return new AccessPath<T>();
 		}
@@ -37,8 +29,8 @@ namespace heros.fieldsens
 
 		public AccessPath()
 		{
-			accesses = (T[]) new object[0];
-			exclusions = Sets.newHashSet();
+			accesses = new T[0];
+			exclusions = new HashSet<T>();
 		}
 
 		internal AccessPath(T[] accesses, ISet<T> exclusions)
@@ -54,8 +46,7 @@ namespace heros.fieldsens
 
 		public virtual bool hasAllExclusionsOf(AccessPath<T> accPath)
 		{
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the java.util.Collection 'containsAll' method:
-			return exclusions.containsAll(accPath.exclusions);
+			return exclusions.IsSupersetOf(accPath.exclusions);
 		}
 
 		public virtual AccessPath<T> append(params T[] fieldReferences)
@@ -67,41 +58,46 @@ namespace heros.fieldsens
 
 			if (isAccessInExclusions(fieldReferences[0]))
 			{
-				throw new System.ArgumentException("FieldRef " + Arrays.ToString(fieldReferences) + " cannot be added to " + ToString());
+				throw new ArgumentException("FieldRef " + fieldReferences.ToString() + " cannot be added to " + ToString());
 			}
 
-			T[] newAccesses = Arrays.copyOf(accesses, accesses.Length + fieldReferences.Length);
-			Array.Copy(fieldReferences, 0, newAccesses, accesses.Length, fieldReferences.Length);
-			return new AccessPath<T>(newAccesses, Sets.newHashSet<T>());
+			//T[] newAccesses = Arrays.copyOf(accesses, accesses.Length + fieldReferences.Length);
+			//Array.Copy(fieldReferences, 0, newAccesses, accesses.Length, fieldReferences.Length);
+            var newAccesses = accesses.Concat(fieldReferences).ToArray();
+			return new AccessPath<T>(newAccesses, new HashSet<T>());
 		}
 
 		public virtual AccessPath<T> prepend(T fieldRef)
 		{
-			T[] newAccesses = (T[]) new object[accesses.Length + 1];
-			newAccesses[0] = fieldRef;
-			Array.Copy(accesses, 0, newAccesses, 1, accesses.Length);
+            //T[] newAccesses = (T[]) new object[accesses.Length + 1];
+            //newAccesses[0] = fieldRef;
+            //Array.Copy(accesses, 0, newAccesses, 1, accesses.Length);
+            var newAccesses = accesses.Prepend(fieldRef).ToArray();
 			return new AccessPath<T>(newAccesses, exclusions);
 		}
 
 		public virtual AccessPath<T> removeFirst()
 		{
-			T[] newAccesses = (T[]) new object[accesses.Length - 1];
-			Array.Copy(accesses, 1, newAccesses, 0, accesses.Length - 1);
-			return new AccessPath<T>(newAccesses, exclusions);
+            //T[] newAccesses = (T[]) new object[accesses.Length - 1];
+            //Array.Copy(accesses, 1, newAccesses, 0, accesses.Length - 1);
+            var newAccesses = accesses.Skip(1).ToArray();
+            return new AccessPath<T>(newAccesses, exclusions);
 		}
 
 		public virtual AccessPath<T> appendExcludedFieldReference(ICollection<T> fieldReferences)
 		{
-			HashSet<T> newExclusions = Sets.newHashSet(fieldReferences);
-			newExclusions.addAll(exclusions);
-			return new AccessPath<T>(accesses, newExclusions);
+            //HashSet<T> newExclusions = Sets.newHashSet(fieldReferences);
+            //newExclusions.addAll(exclusions);
+            var newExclusions = fieldReferences.Union(exclusions).ToHashSet();
+            return new AccessPath<T>(accesses, newExclusions);
 		}
 
 		public virtual AccessPath<T> appendExcludedFieldReference(params T[] fieldReferences)
 		{
-			HashSet<T> newExclusions = Sets.newHashSet(fieldReferences);
-			newExclusions.addAll(exclusions);
-			return new AccessPath<T>(accesses, newExclusions);
+            //HashSet<T> newExclusions = Sets.newHashSet(fieldReferences);
+            //newExclusions.addAll(exclusions);
+            //return new AccessPath<T>(accesses, newExclusions);
+            return this.appendExcludedFieldReference((ICollection<T>)fieldReferences);
 		}
 
 		public sealed class PrefixTestResult
@@ -211,11 +207,9 @@ namespace heros.fieldsens
 				return PrefixTestResult.NO_PREFIX;
 			}
 
-			bool intersection = !Sets.intersection(exclusions, accessPath.exclusions).Empty;
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the java.util.Collection 'containsAll' method:
-			bool containsAll = exclusions.containsAll(accessPath.exclusions);
-//JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the java.util.Collection 'containsAll' method:
-			bool oppositeContainsAll = accessPath.exclusions.containsAll(exclusions);
+            bool intersection = exclusions.Intersect(accessPath.exclusions).Count() == 0;   // !Sets.intersection(exclusions, accessPath.exclusions).Empty;
+			bool containsAll = exclusions.IsSupersetOf(accessPath.exclusions);
+			bool oppositeContainsAll = accessPath.exclusions.IsSupersetOf(exclusions);
 			bool potentialMatch = oppositeContainsAll || !intersection || (!containsAll && !oppositeContainsAll);
 			if (potentialMatch)
 			{
@@ -234,13 +228,15 @@ namespace heros.fieldsens
 		public virtual Delta<T> getDeltaTo(AccessPath<T> accPath)
 		{
 			Debug.Assert(isPrefixOf(accPath).atLeast(PrefixTestResult.POTENTIAL_PREFIX));
-			HashSet<T> mergedExclusions = Sets.newHashSet(accPath.exclusions);
+			HashSet<T> mergedExclusions = new HashSet<T>(accPath.exclusions);
 			if (accesses.Length == accPath.accesses.Length)
 			{
-				mergedExclusions.addAll(exclusions);
+				mergedExclusions.UnionWith(exclusions);
 			}
-			Delta<T> delta = new Delta<T>(Arrays.copyOfRange(accPath.accesses, accesses.Length, accPath.accesses.Length), mergedExclusions);
-			assert(isPrefixOf(accPath).atLeast(PrefixTestResult.POTENTIAL_PREFIX) && accPath.isPrefixOf(delta.applyTo(this)) == PrefixTestResult.GUARANTEED_PREFIX) || (isPrefixOf(accPath) == PrefixTestResult.GUARANTEED_PREFIX && accPath.Equals(delta.applyTo(this)));
+
+            var newAccesses = accPath.accesses.ToArray();
+            Delta<T> delta = new Delta<T>(newAccesses, mergedExclusions);
+			//assert(isPrefixOf(accPath).atLeast(PrefixTestResult.POTENTIAL_PREFIX) && accPath.isPrefixOf(delta.applyTo(this)) == PrefixTestResult.GUARANTEED_PREFIX) || (isPrefixOf(accPath) == PrefixTestResult.GUARANTEED_PREFIX && accPath.Equals(delta.applyTo(this)));
 			return delta;
 		}
 
@@ -274,10 +270,10 @@ namespace heros.fieldsens
 
 			public override string ToString()
 			{
-				string result = accesses.Length > 0 ? "." + Joiner.on(".").join(accesses) : "";
+				string result = accesses.Length > 0 ? "." + string.Join(".", accesses) : "";
 				if (exclusions.Count > 0)
 				{
-					result += "^" + Joiner.on(",").join(exclusions);
+					result += "^" + string.Join(",", exclusions);
 				}
 				return result;
 			}
@@ -286,7 +282,7 @@ namespace heros.fieldsens
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + Arrays.GetHashCode(accesses);
+				result = prime * result + accesses.GetHashCode();
 				result = prime * result + ((exclusions == null) ? 0 : exclusions.GetHashCode());
 				return result;
 			}
@@ -305,8 +301,8 @@ namespace heros.fieldsens
 				{
 					return false;
 				}
-				Delta other = (Delta) obj;
-				if (!Arrays.Equals(accesses, other.accesses))
+				Delta<T> other = (Delta<T>) obj;
+				if (accesses.SequenceEqual(other.accesses))
 				{
 					return false;
 				}
@@ -326,15 +322,16 @@ namespace heros.fieldsens
 
 			public static Delta<T> empty<T>()
 			{
-				return new Delta<T>((T[]) new object[0], Sets.newHashSet<T>());
+				return new Delta<T>(new T[0], new HashSet<T>());
 			}
 		}
 
 		public virtual AccessPath<T> mergeExcludedFieldReferences(AccessPath<T> accPath)
 		{
-			HashSet<T> newExclusions = Sets.newHashSet(exclusions);
-			newExclusions.addAll(accPath.exclusions);
-			return new AccessPath<T>(accesses, newExclusions);
+            //HashSet<T> newExclusions = Sets.newHashSet(exclusions);
+            //newExclusions.addAll(accPath.exclusions);
+            var newExclusions = exclusions.Union(accPath.exclusions).ToHashSet();
+            return new AccessPath<T>(accesses, newExclusions);
 		}
 
 		public virtual bool canRead(T field)
@@ -354,7 +351,7 @@ namespace heros.fieldsens
 		{
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + Arrays.GetHashCode(accesses);
+			result = prime * result + accesses.GetHashCode();
 			result = prime * result + ((exclusions == null) ? 0 : exclusions.GetHashCode());
 			return result;
 		}
@@ -373,8 +370,8 @@ namespace heros.fieldsens
 			{
 				return false;
 			}
-			AccessPath other = (AccessPath) obj;
-			if (!Arrays.Equals(accesses, other.accesses))
+			AccessPath<T> other = (AccessPath<T>) obj;
+			if (accesses.SequenceEqual(other.accesses))
 			{
 				return false;
 			}
@@ -394,10 +391,10 @@ namespace heros.fieldsens
 
 		public override string ToString()
 		{
-			string result = accesses.Length > 0 ? "." + Joiner.on(".").join(accesses) : "";
+			string result = accesses.Length > 0 ? "." + string.Join(".", accesses) : "";
 			if (exclusions.Count > 0)
 			{
-				result += "^" + Joiner.on(",").join(exclusions);
+				result += "^" + string.Join(",", exclusions);
 			}
 			return result;
 		}
@@ -406,7 +403,7 @@ namespace heros.fieldsens
 		{
 			if (accesses.Length > 0)
 			{
-				return new AccessPath<T>((T[]) new object[0], exclusions);
+				return new AccessPath<T>(new T[0], exclusions);
 			}
 			else
 			{

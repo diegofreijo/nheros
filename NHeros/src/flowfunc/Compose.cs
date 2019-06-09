@@ -48,7 +48,7 @@ namespace heros.flowfunc
 			return curr;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings({ "rawtypes", "unchecked" }) public static <D> heros.FlowFunction<D> compose(heros.FlowFunction<D>... funcs)
 		public static FlowFunction<D> compose<D>(params FlowFunction<D>[] funcs)
 		{

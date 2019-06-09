@@ -19,7 +19,7 @@ namespace heros.edgefunc
 	public class EdgeIdentity<V> : EdgeFunction<V>
 	{
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("rawtypes") private final static EdgeIdentity instance = new EdgeIdentity();
 		private static readonly EdgeIdentity instance = new EdgeIdentity();
 
@@ -61,7 +61,7 @@ namespace heros.edgefunc
 			return other == this;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @SuppressWarnings("unchecked") public static <A> EdgeIdentity<A> v()
 		public static EdgeIdentity<A> v<A>()
 		{

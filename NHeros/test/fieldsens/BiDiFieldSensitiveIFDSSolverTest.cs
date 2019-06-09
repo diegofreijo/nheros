@@ -14,23 +14,23 @@
 /// </summary>
 namespace heros.fieldsens
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.callSite;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.exitStmt;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.flow;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.kill;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.normalStmt;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.over;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.startPoints;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.times;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static heros.utilities.FieldSensitiveTestHelper.to;
 	using FieldSensitiveTestHelper = heros.utilities.FieldSensitiveTestHelper;
 	using TabulationProblemExchange = heros.utilities.FieldSensitiveTestHelper.TabulationProblemExchange;
@@ -48,7 +48,7 @@ namespace heros.fieldsens
 	using Lists = com.google.common.collect.Lists;
 
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @RunWith(Parameterized.class) public class BiDiFieldSensitiveIFDSSolverTest
 	public class BiDiFieldSensitiveIFDSSolverTest
 	{
@@ -66,7 +66,7 @@ namespace heros.fieldsens
 			backwardHelper = new FieldSensitiveTestHelper(debugger);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Parameters(name="{0}") public static java.util.Collection<Object[]> parameters()
 		public static ICollection<object[]> parameters()
 		{
@@ -76,7 +76,7 @@ namespace heros.fieldsens
 			return result;
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void happyPath()
 		public virtual void happyPath()
 		{
@@ -87,7 +87,7 @@ namespace heros.fieldsens
 			forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnsInBothDirections()
 		public virtual void unbalancedReturnsInBothDirections()
 		{
@@ -102,7 +102,7 @@ namespace heros.fieldsens
 			forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void unbalancedReturnsNonMatchingCallSites()
 		public virtual void unbalancedReturnsNonMatchingCallSites()
 		{
@@ -117,7 +117,7 @@ namespace heros.fieldsens
 			forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void returnsOnlyOneDirectionAndStops()
 		public virtual void returnsOnlyOneDirectionAndStops()
 		{
@@ -132,7 +132,7 @@ namespace heros.fieldsens
 			forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void reuseSummary()
 		public virtual void reuseSummary()
 		{
@@ -145,7 +145,7 @@ namespace heros.fieldsens
 			forwardHelper.runBiDiSolver(backwardHelper, exchange, "a");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void multipleSeedsPreventReusingSummary()
 		public virtual void multipleSeedsPreventReusingSummary()
 		{
@@ -158,7 +158,7 @@ namespace heros.fieldsens
 			forwardHelper.runBiDiSolver(backwardHelper, exchange, "a1", "a2");
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void dontResumeIfReturnFlowIsKilled()
 		public virtual void dontResumeIfReturnFlowIsKilled()
 		{

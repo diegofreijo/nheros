@@ -12,9 +12,9 @@
 /// </summary>
 namespace heros.fieldsens
 {
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static org.junit.Assert.assertTrue;
-//JAVA TO C# CONVERTER TODO TASK: This Java 'import static' statement cannot be converted to C#:
+
 //	import static org.mockito.Mockito.*;
 	using Delta = heros.fieldsens.AccessPath.Delta;
 	using DeltaConstraint = heros.fieldsens.structs.DeltaConstraint;
@@ -63,7 +63,7 @@ namespace heros.fieldsens
 		private InterestCallback<string, TestFact, Statement, TestMethod> callback;
 		private Resolver<string, TestFact, Statement, TestMethod> callEdgeResolver;
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Before public void before()
 		public virtual void before()
 		{
@@ -75,7 +75,7 @@ namespace heros.fieldsens
 			callEdgeResolver = mock(typeof(CallEdgeResolver));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void emptyIncomingFact()
 		public virtual void emptyIncomingFact()
 		{
@@ -84,7 +84,7 @@ namespace heros.fieldsens
 			assertTrue(sut.InterestGiven);
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void resolveViaIncomingFact()
 		public virtual void resolveViaIncomingFact()
 		{
@@ -93,7 +93,7 @@ namespace heros.fieldsens
 			verify(callback).interest(eq(analyzer), argThat(new ResolverArgumentMatcher(this, createAccessPath("a"))));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void registerCallbackAtIncomingResolver()
 		public virtual void registerCallbackAtIncomingResolver()
 		{
@@ -103,12 +103,12 @@ namespace heros.fieldsens
 			verify(resolver).resolve(eq(getDeltaConstraint("a")), any(typeof(InterestCallback)));
 		}
 
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+
 //ORIGINAL LINE: @Test public void resolveViaIncomingResolver()
 		public virtual void resolveViaIncomingResolver()
 		{
 			Resolver<string, TestFact, Statement, TestMethod> resolver = mock(typeof(Resolver));
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final heros.fieldsens.Resolver<String, heros.utilities.TestFact, heros.utilities.Statement, heros.utilities.TestMethod> nestedResolver = mock(heros.fieldsens.Resolver.class);
 			Resolver<string, TestFact, Statement, TestMethod> nestedResolver = mock(typeof(Resolver));
 			Mockito.doAnswer(new AnswerAnonymousInnerClass(this, nestedResolver))
@@ -132,7 +132,7 @@ namespace heros.fieldsens
 				this.nestedResolver = nestedResolver;
 			}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+
 //ORIGINAL LINE: @Override public Object answer(org.mockito.invocation.InvocationOnMock invocation) throws Throwable
 			public override object answer(InvocationOnMock invocation)
 			{

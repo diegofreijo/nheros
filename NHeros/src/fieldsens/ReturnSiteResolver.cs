@@ -53,7 +53,7 @@ namespace heros.fieldsens
 			return inc.usedAccessPathOfIncResolver.applyTo(inc.incAccessPath);
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public void addIncoming(final heros.fieldsens.structs.WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, heros.fieldsens.AccessPath.Delta<Field> callDelta)
 		public virtual void addIncoming(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, Delta<Field> callDelta)
 		{
@@ -112,7 +112,7 @@ namespace heros.fieldsens
 			return false;
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: private void resolveViaDelta(final heros.fieldsens.structs.ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		private void resolveViaDelta(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
@@ -161,7 +161,7 @@ namespace heros.fieldsens
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: private void resolveViaDeltaAndPotentiallyDelegateToCallSite(final heros.fieldsens.structs.ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		private void resolveViaDeltaAndPotentiallyDelegateToCallSite(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
@@ -171,7 +171,7 @@ namespace heros.fieldsens
 				return;
 			}
 
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final AccessPath<Field> currAccPath = retEdge.callDelta.applyTo(inc);
 			AccessPath<Field> currAccPath = retEdge.callDelta.applyTo(inc);
 			if (resolvedAccessPath.isPrefixOf(currAccPath) == PrefixTestResult.GUARANTEED_PREFIX)
@@ -185,7 +185,7 @@ namespace heros.fieldsens
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: protected void resolveViaCallSiteResolver(final heros.fieldsens.structs.ReturnEdge<Field, Fact, Stmt, Method> retEdge, AccessPath<Field> currAccPath)
 		protected internal virtual void resolveViaCallSiteResolver(ReturnEdge<Field, Fact, Stmt, Method> retEdge, AccessPath<Field> currAccPath)
 		{

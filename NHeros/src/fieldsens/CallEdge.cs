@@ -74,11 +74,11 @@ namespace heros.fieldsens
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: 'final' parameters are not available in .NET:
+
 //ORIGINAL LINE: public void registerInterestCallback(final PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer)
 		public virtual void registerInterestCallback(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer)
 		{
-//JAVA TO C# CONVERTER WARNING: The original Java variable was marked 'final':
+
 //ORIGINAL LINE: final heros.fieldsens.AccessPath.Delta<Field> delta = calleeSourceFact.getAccessPath().getDeltaTo(interestedAnalyzer.getAccessPath());
 			Delta<Field> delta = calleeSourceFact.AccessPath.getDeltaTo(interestedAnalyzer.AccessPath);
 
