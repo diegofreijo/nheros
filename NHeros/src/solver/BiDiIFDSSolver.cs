@@ -14,11 +14,6 @@
 /// </summary>
 namespace heros.solver
 {
-	using BinaryDomain = heros.solver.IFDSSolver.BinaryDomain;
-
-
-	using Maps = com.google.common.collect.Maps;
-
 	/// <summary>
 	/// This is a special IFDS solver that solves the analysis problem inside out, i.e., from further down the call stack to
 	/// further up the call stack. This can be useful, for instance, for taint analysis problems that track flows in two directions.

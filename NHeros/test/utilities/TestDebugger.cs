@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using heros.fieldsens;
+using NHeros.src.util;
+using heros.fieldsens.structs;
 
 /// <summary>
 ///*****************************************************************************
@@ -17,15 +20,6 @@ using System.IO;
 /// </summary>
 namespace heros.utilities
 {
-
-	using Sets = com.google.common.collect.Sets;
-
-	using Debugger = heros.fieldsens.Debugger;
-	using FlowFunction_Constraint = heros.fieldsens.FlowFunction_Constraint;
-	using PerAccessPathMethodAnalyzer = heros.fieldsens.PerAccessPathMethodAnalyzer;
-	using Resolver = heros.fieldsens.Resolver;
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
 	public class TestDebugger<Field, Fact, Stmt, Method> : Debugger<Field, Fact, Stmt, Method>
 	{
 
@@ -50,9 +44,6 @@ namespace heros.utilities
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see heros.alias.Debugger#setICFG(I)
-		 */
 		public virtual InterproceduralCFG<Stmt, Method> ICFG
 		{
 			set
@@ -61,14 +52,10 @@ namespace heros.utilities
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see heros.alias.Debugger#initialSeed(Stmt)
-		 */
 		public virtual void initialSeed(Stmt stmt)
 		{
-			stmt(stmt).keyValue("seed", "true");
-
-			includeSuccessors(stmt, Sets.newHashSet<Stmt> ());
+			Statements(stmt).keyValue("seed", "true");
+			includeSuccessors(stmt, new HashSet<Stmt>());
 		}
 
 		private void includeSuccessors(Stmt stmt, ISet<Stmt> visited)
@@ -78,11 +65,11 @@ namespace heros.utilities
 				return;
 			}
 
-			JsonDocument doc = stmt(stmt);
+			JsonDocument doc = Statements(stmt);
 			foreach (Stmt succ in icfg.getSuccsOf(stmt))
 			{
 				doc.array("successors").add(succ.ToString());
-				stmt(succ);
+				Statements(succ);
 				includeSuccessors(succ, visited);
 			}
 
@@ -93,14 +80,14 @@ namespace heros.utilities
 					doc.doc("calls").doc(m.ToString());
 					foreach (Stmt sp in icfg.getStartPointsOf(m))
 					{
-						stmt(sp).keyValue("startPoint", "true");
+						Statements(sp).keyValue("startPoint", "true");
 						includeSuccessors(sp, visited);
 					}
 				}
 				foreach (Stmt retSite in icfg.getReturnSitesOfCallAt(stmt))
 				{
 					doc.array("successors").add(retSite.ToString());
-					stmt(retSite);
+					Statements(retSite);
 					includeSuccessors(retSite, visited);
 				}
 			}
@@ -117,7 +104,7 @@ namespace heros.utilities
 			}
 		}
 
-		protected internal virtual JsonDocument stmt(Stmt stmt)
+		protected internal virtual JsonDocument Statements(Stmt stmt)
 		{
 			Method methodOf = icfg.getMethodOf(stmt);
 			return root.doc("methods").doc(methodOf.ToString()).doc(stmt.ToString());
@@ -125,19 +112,19 @@ namespace heros.utilities
 
 		public virtual void expectNormalFlow(Stmt unit, string expectedFlowFunctionsToString)
 		{
-			stmt(unit).keyValue("flow", expectedFlowFunctionsToString);
+			Statements(unit).keyValue("flow", expectedFlowFunctionsToString);
 		}
 
 		public virtual void expectCallFlow(Stmt callSite, Method destinationMethod, string expectedFlowFunctionsToString)
 		{
-			stmt(callSite).doc("calls").doc(destinationMethod.ToString()).keyValue("flow", expectedFlowFunctionsToString);
+			Statements(callSite).doc("calls").doc(destinationMethod.ToString()).keyValue("flow", expectedFlowFunctionsToString);
 		}
 
 		public virtual void expectReturnFlow(Stmt exitStmt, Stmt returnSite, string expectedFlowFunctionsToString)
 		{
-			if (returnSite != default(Stmt))
+			if (Utils.IsDefault(returnSite))
 			{
-				stmt(exitStmt).doc("returns").doc(returnSite.ToString()).keyValue("flow", expectedFlowFunctionsToString);
+				Statements(exitStmt).doc("returns").doc(returnSite.ToString()).keyValue("flow", expectedFlowFunctionsToString);
 			}
 		}
 

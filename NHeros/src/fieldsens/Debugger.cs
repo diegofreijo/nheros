@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using heros.fieldsens.structs;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2015 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,11 +13,8 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
-	public interface Debugger<Field, Fact, Stmt, Method>
+    public interface Debugger<Field, Fact, Stmt, Method>
 	{
-
 		InterproceduralCFG<Stmt, Method> ICFG {set;}
 		void initialSeed(Stmt stmt);
 		void edgeTo(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt);

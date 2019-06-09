@@ -15,13 +15,6 @@ using System.Threading;
 /// </summary>
 namespace heros.fieldsens
 {
-
-	using Synchronizer = heros.fieldsens.SourceStmtAnnotatedMethodAnalyzer.Synchronizer;
-
-	using HashMultimap = com.google.common.collect.HashMultimap;
-	using Sets = com.google.common.collect.Sets;
-
-
 	public class BiDiFieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> where I : heros.InterproceduralCFG<Stmt, Method>
 	{
 
