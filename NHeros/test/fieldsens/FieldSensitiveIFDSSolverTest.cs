@@ -45,9 +45,7 @@ namespace heros.fieldsens
 			helper = new FieldSensitiveTestHelper(debugger);
 		}
 
-
-//ORIGINAL LINE: @Rule public org.junit.rules.TestWatcher watcher = new org.junit.rules.TestWatcher()
-		public TestWatcher watcher = new TestWatcherAnonymousInnerClass();
+        public TestWatcher watcher = new TestWatcherAnonymousInnerClass();
 
 		private class TestWatcherAnonymousInnerClass : TestWatcher
 		{
@@ -55,12 +53,10 @@ namespace heros.fieldsens
 			{
 				outerInstance.debugger.writeJsonDebugFile("debug/" + description.MethodName + ".json");
 				Console.Error.WriteLine("---failed: " + description.MethodName + " ----");
-			};
+			}
 		}
 
-
-//ORIGINAL LINE: @Test public void fieldReadAndWrite()
-		public virtual void fieldReadAndWrite()
+public virtual void fieldReadAndWrite()
 		{
 			helper.method("bar", startPoints("a"), normalStmt("a", flow("0", "1")).succ("b"), normalStmt("b", flow("1", prependField("f"), "2")).succ("c"), normalStmt("c", flow("2", "2")).succ("d"), normalStmt("d", flow("2", readField("f"), "4")).succ("e"), normalStmt("e", kill("4")).succ("f"));
 

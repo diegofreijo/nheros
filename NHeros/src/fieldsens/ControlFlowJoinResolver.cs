@@ -1,4 +1,7 @@
-﻿/// <summary>
+﻿using heros.fieldsens.structs;
+using static heros.fieldsens.AccessPath<T>;
+
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2015 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,11 +15,6 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-	using DeltaConstraint = heros.fieldsens.structs.DeltaConstraint;
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
 	public class ControlFlowJoinResolver<Field, Fact, Stmt, Method> : ResolverTemplate<Field, Fact, Stmt, Method, WrappedFact<Field, Fact, Stmt, Method>>
 	{
 
@@ -25,7 +23,7 @@ namespace heros.fieldsens
 		private Fact sourceFact;
 		private FactMergeHandler factMergeHandler;
 
-		public ControlFlowJoinResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt joinStmt, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, joinStmt, null, new AccessPath<Field>(), debugger, null)
+		public ControlFlowJoinResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt joinStmt, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, joinStmt, default, new AccessPath<Field>(), debugger, null)
 		{
 			this.factMergeHandler = factMergeHandler;
 			propagated = false;
@@ -56,7 +54,7 @@ namespace heros.fieldsens
 				sourceFact = fact.Fact;
 				analyzer.processFlowFromJoinStmt(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(joinStmt, new WrappedFact<Field, Fact, Stmt, Method>(fact.Fact, new AccessPath<Field>(), this)));
 			}
-		};
+		}
 
 		private bool isNullOrCallEdgeResolver(Resolver<Field, Fact, Stmt, Method> resolver)
 		{
@@ -64,16 +62,14 @@ namespace heros.fieldsens
 			{
 				return true;
 			}
-			if (resolver is CallEdgeResolver)
+			if (resolver is CallEdgeResolver<Field, Fact, Stmt, Method>)
 			{
-				return !(resolver is ZeroCallEdgeResolver);
+				return !(resolver is ZeroCallEdgeResolver<Field, Fact, Stmt, Method>);
 			}
 			return false;
 		}
 
-
-//ORIGINAL LINE: @Override protected void processIncomingPotentialPrefix(final heros.fieldsens.structs.WrappedFact<Field, Fact, Stmt, Method> fact)
-		protected internal override void processIncomingPotentialPrefix(WrappedFact<Field, Fact, Stmt, Method> fact)
+    	protected internal override void processIncomingPotentialPrefix(WrappedFact<Field, Fact, Stmt, Method> fact)
 		{
 			if (isNullOrCallEdgeResolver(fact.Resolver))
 			{

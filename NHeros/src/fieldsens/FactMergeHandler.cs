@@ -14,7 +14,6 @@ namespace heros.fieldsens
 {
 	public interface FactMergeHandler<Fact>
 	{
-
 		/// <summary>
 		/// Called when propagating a Fact to a statement at which an equal Fact was already propagated to. </summary>
 		/// <param name="previousFact"> The Fact instance that was propagated to the statement first. </param>

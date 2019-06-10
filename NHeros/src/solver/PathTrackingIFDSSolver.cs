@@ -63,7 +63,7 @@ namespace heros.solver
 				base.propagate(sourceVal, target, targetVal, f, relatedCallSite, isUnbalancedReturn);
 			}
 
-		};
+		}
 
 
 		private class CacheEntry

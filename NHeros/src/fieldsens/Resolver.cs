@@ -14,19 +14,11 @@
 /// </summary>
 namespace heros.fieldsens
 {
-
-
-	using Lists = com.google.common.collect.Lists;
-	using Sets = com.google.common.collect.Sets;
-
 	public abstract class Resolver<Field, Fact, Stmt, Method>
 	{
-
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
-		private ISet<Resolver<Field, Fact, Stmt, Method>> interest_Conflict = Sets.newHashSet();
-		private IList<InterestCallback<Field, Fact, Stmt, Method>> interestCallbacks = new List();
+		private ISet<Resolver<Field, Fact, Stmt, Method>> interest_Conflict = new HashSet<Resolver<Field, Fact, Stmt, Method>>();
+		private IList<InterestCallback<Field, Fact, Stmt, Method>> interestCallbacks = new List<InterestCallback<Field, Fact, Stmt, Method>>();
 		protected internal PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer;
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
 		private bool canBeResolvedEmpty_Conflict = false;
 
 		public Resolver(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer)
@@ -44,7 +36,7 @@ namespace heros.fieldsens
 			}
 
 			log("Interest given by: " + resolver);
-			foreach (InterestCallback<Field, Fact, Stmt, Method> callback in Lists.newLinkedList(interestCallbacks))
+			foreach (var callback in interestCallbacks)
 			{
 				callback.interest(analyzer, resolver);
 			}
@@ -58,7 +50,7 @@ namespace heros.fieldsens
 			}
 
 			canBeResolvedEmpty_Conflict = true;
-			foreach (InterestCallback<Field, Fact, Stmt, Method> callback in Lists.newLinkedList(interestCallbacks))
+			foreach (InterestCallback<Field, Fact, Stmt, Method> callback in interestCallbacks)
 			{
 				callback.canBeResolvedEmpty();
 			}
@@ -76,7 +68,7 @@ namespace heros.fieldsens
 		{
 			if (interest_Conflict.Count > 0)
 			{
-				foreach (Resolver<Field, Fact, Stmt, Method> resolver in Lists.newLinkedList(interest_Conflict))
+				foreach (Resolver<Field, Fact, Stmt, Method> resolver in interest_Conflict)
 				{
 					callback.interest(analyzer, resolver);
 				}

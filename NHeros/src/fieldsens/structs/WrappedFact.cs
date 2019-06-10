@@ -16,13 +16,13 @@ using System.Diagnostics;
 /// </summary>
 namespace heros.fieldsens.structs
 {
-	public class WrappedFact<Field, Fact, Stmt, Method>
+	public class WrappedFact<Field, TFact, Stmt, Method>
 	{
-		private readonly Fact fact;
+		private readonly TFact fact;
 		private readonly AccessPath<Field> accessPath;
-		private readonly Resolver<Field, Fact, Stmt, Method> resolver;
+		private readonly Resolver<Field, TFact, Stmt, Method> resolver;
 
-		public WrappedFact(Fact fact, AccessPath<Field> accessPath, Resolver<Field, Fact, Stmt, Method> resolver)
+		public WrappedFact(TFact fact, AccessPath<Field> accessPath, Resolver<Field, TFact, Stmt, Method> resolver)
 		{
 			Debug.Assert(!Utils.IsDefault(fact));
 			Debug.Assert(accessPath != null);
@@ -33,28 +33,17 @@ namespace heros.fieldsens.structs
 			this.resolver = resolver;
 		}
 
-		public virtual Fact F
+        public virtual TFact Fact => fact;
+        public virtual AccessPath<Field> AccessPath => accessPath;
+        public virtual Resolver<Field, TFact, Stmt, Method> Resolver => resolver;
+
+        public virtual WrappedFact<Field, TFact, Stmt, Method> applyDelta(AccessPath<Field>.Delta<Field> delta)
 		{
-			get
-			{
-				return fact;
-			}
+			return new WrappedFact<Field, TFact, Stmt, Method>(fact, delta.applyTo(accessPath), resolver); //TODO keep resolver?
 		}
 
-		public virtual WrappedFact<Field, Fact, Stmt, Method> applyDelta(AccessPath<Field>.Delta<Field> delta)
-		{
-			return new WrappedFact<Field, Fact, Stmt, Method>(fact, delta.applyTo(accessPath), resolver); //TODO keep resolver?
-		}
 
-		public virtual AccessPath<Field> AccessPath
-		{
-			get
-			{
-				return accessPath;
-			}
-		}
-
-		public virtual WrappedFact<Field, Fact, Stmt, Method> applyConstraint(FlowFunction_Constraint<Field> constraint, Fact zeroValue)
+        public virtual WrappedFact<Field, TFact, Stmt, Method> applyConstraint(FlowFunction_Constraint<Field> constraint, TFact zeroValue)
 		{
 			if (fact.Equals(zeroValue))
 			{
@@ -62,7 +51,7 @@ namespace heros.fieldsens.structs
 			}
 			else
 			{
-				return new WrappedFact<Field, Fact, Stmt, Method>(fact, constraint.applyToAccessPath(accessPath), resolver);
+				return new WrappedFact<Field, TFact, Stmt, Method>(fact, constraint.applyToAccessPath(accessPath), resolver);
 			}
 		}
 
@@ -100,7 +89,7 @@ namespace heros.fieldsens.structs
 			{
 				return false;
 			}
-			var other = (WrappedFact<Field, Fact, Stmt, Method>) obj;
+			var other = (WrappedFact<Field, TFact, Stmt, Method>) obj;
 			if (accessPath == null)
 			{
 				if (other.accessPath != null)
@@ -137,15 +126,7 @@ namespace heros.fieldsens.structs
 			return true;
 		}
 
-		public virtual Resolver<Field, Fact, Stmt, Method> Resolver
-		{
-			get
-			{
-				return resolver;
-			}
-		}
 
-
-	}
+    }
 
 }

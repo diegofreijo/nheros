@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using static heros.fieldsens.SourceStmtAnnotatedMethodAnalyzer<Field, Fact, Stmt, Method>;
 
 /// <summary>
 ///*****************************************************************************
@@ -49,8 +50,8 @@ namespace heros.fieldsens
 		{
 			private readonly BiDiFieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> outerInstance;
 
-			private new heros.fieldsens.Debugger<Field, Fact, Stmt, Method> debugger;
-			private heros.fieldsens.BiDiFieldSensitiveIFDSSolver.SynchronizerImpl<Stmt> synchronizer;
+			private new Debugger<Field, Fact, Stmt, Method> debugger;
+			private fieldsens.BiDiFieldSensitiveIFDSSolver.SynchronizerImpl<Stmt> synchronizer;
 
 			public FieldSensitiveIFDSSolverAnonymousInnerClass(BiDiFieldSensitiveIFDSSolver<Field, Fact, Stmt, Method, I> outerInstance, heros.fieldsens.IFDSTabulationProblem<Stmt, Field, Fact, Method, I> problem, heros.fieldsens.FactMergeHandler factHandler, heros.fieldsens.Debugger<Field, Fact, Stmt, Method> debugger, heros.fieldsens.Scheduler scheduler, heros.fieldsens.BiDiFieldSensitiveIFDSSolver.SynchronizerImpl<Stmt> synchronizer) : base(problem, factHandler, debugger, scheduler)
 			{

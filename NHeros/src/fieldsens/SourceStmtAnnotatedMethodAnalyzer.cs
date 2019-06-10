@@ -1,4 +1,7 @@
-﻿using System.Threading;
+﻿using heros.fieldsens.structs;
+using heros.utilities;
+using NHeros.src.util;
+using System.Threading;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,25 +17,26 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-	using DefaultValueMap = heros.utilities.DefaultValueMap;
-
-
 	public class SourceStmtAnnotatedMethodAnalyzer<Field, Fact, Stmt, Method> : MethodAnalyzer<Field, Fact, Stmt, Method>
 	{
-
-		private Method method;
-		private DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> perSourceAnalyzer = new DefaultValueMapAnonymousInnerClass();
+		private readonly Method method;
+        private DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> perSourceAnalyzer;
 
 		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<Key<Fact, Stmt>, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>>
 		{
+            private SourceStmtAnnotatedMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance;
 
-			protected internal override PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> createItem(Key<Fact, Stmt> key)
+            public DefaultValueMapAnonymousInnerClass(SourceStmtAnnotatedMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance)
+            {
+                this.outerInstance = outerInstance;
+            }
+
+            protected internal override PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> createItem(Key<Fact, Stmt> key)
 			{
 				return new PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>(outerInstance.method, key.fact, outerInstance.context, outerInstance.debugger);
 			}
 		}
+
 		private Context<Field, Fact, Stmt, Method> context;
 		private Synchronizer<Stmt> synchronizer;
 		private Debugger<Field, Fact, Stmt, Method> debugger;
@@ -43,12 +47,13 @@ namespace heros.fieldsens
 			this.context = context;
 			this.synchronizer = synchronizer;
 			this.debugger = debugger;
-		}
+            this.perSourceAnalyzer = new DefaultValueMapAnonymousInnerClass(this);
+        }
 
 		public virtual void addIncomingEdge(CallEdge<Field, Fact, Stmt, Method> incEdge)
 		{
-			WrappedFact<Field, Fact, Stmt, Method> calleeSourceFact = incEdge.CalleeSourceFact;
-			Key<Fact, Stmt> key = new Key<Fact, Stmt>(calleeSourceFact.Fact, null);
+			var calleeSourceFact = incEdge.CalleeSourceFact;
+			Key<Fact, Stmt> key = new Key<Fact, Stmt>(calleeSourceFact.Fact, default);
 			PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer = perSourceAnalyzer.getOrCreate(key);
 			analyzer.addIncomingEdge(incEdge);
 		}
@@ -59,14 +64,12 @@ namespace heros.fieldsens
 			perSourceAnalyzer.getOrCreate(key).addInitialSeed(startPoint);
 		}
 
-
-//ORIGINAL LINE: @Override public void addUnbalancedReturnFlow(final heros.fieldsens.structs.WrappedFactAtStatement<Field, Fact, Stmt, Method> target, final Stmt callSite)
-		public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> target, Stmt callSite)
+        public virtual void addUnbalancedReturnFlow(WrappedFactAtStatement<Field, Fact, Stmt, Method> target, Stmt callSite)
 		{
 			synchronizer.synchronizeOnStmt(callSite, () =>
 			{
-			Key<Fact, Stmt> key = new Key<Fact, Stmt>(context.zeroValue, callSite);
-			perSourceAnalyzer.getOrCreate(key).scheduleUnbalancedReturnEdgeTo(target);
+			    Key<Fact, Stmt> key = new Key<Fact, Stmt>(context.zeroValue, callSite);
+			    perSourceAnalyzer.getOrCreate(key).scheduleUnbalancedReturnEdgeTo(target);
 			});
 		}
 
@@ -75,7 +78,7 @@ namespace heros.fieldsens
 			void synchronizeOnStmt(Stmt stmt, ThreadStart job);
 		}
 
-		private class Key<Fact, Stmt>
+        private class Key<Fact, Stmt>
 		{
 			internal Fact fact;
 			internal Stmt stmt;
@@ -90,8 +93,8 @@ namespace heros.fieldsens
 			{
 				const int prime = 31;
 				int result = 1;
-				result = prime * result + ((fact == default(Fact)) ? 0 : fact.GetHashCode());
-				result = prime * result + ((stmt == default(Stmt)) ? 0 : stmt.GetHashCode());
+				result = prime * result + (Utils.IsDefault(fact) ? 0 : fact.GetHashCode());
+				result = prime * result + (Utils.IsDefault(stmt) ? 0 : stmt.GetHashCode());
 				return result;
 			}
 
@@ -109,10 +112,11 @@ namespace heros.fieldsens
 				{
 					return false;
 				}
-				Key other = (Key) obj;
-				if (fact == default(Fact))
+
+				var other = obj as Key<Fact, Stmt>;
+				if (Utils.IsDefault(fact))
 				{
-					if (other.fact != default(Fact))
+					if (!Utils.IsDefault(other.fact))
 					{
 						return false;
 					}
@@ -121,10 +125,10 @@ namespace heros.fieldsens
 				{
 					return false;
 				}
-				if (stmt == default(Stmt))
-				{
-					if (other.stmt != default(Stmt))
-					{
+                if (Utils.IsDefault(stmt))
+                {
+                    if (!Utils.IsDefault(other.stmt))
+                    {
 						return false;
 					}
 				}

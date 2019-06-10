@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using heros.fieldsens.structs;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2015 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,11 +13,8 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
 	public interface MethodAnalyzer<Field, Fact, Stmt, Method>
 	{
-
 		void addIncomingEdge(CallEdge<Field, Fact, Stmt, Method> incEdge);
 
 		void addInitialSeed(Stmt startPoint, Fact val);

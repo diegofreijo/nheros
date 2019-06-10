@@ -107,9 +107,11 @@
     <Compile Include="src\solver\BiDiIFDSSolver.cs" />
     <Compile Include="src\solver\CountingThreadPoolExecutor.cs" />
     <Compile Include="src\solver\CountLatch.cs" />
+    <Compile Include="src\solver\DummyExecutor.cs" />
     <Compile Include="src\solver\FlowFunctionDotExport.cs" />
     <Compile Include="src\solver\IDESolver.cs" />
     <Compile Include="src\solver\IFDSSolver.cs" />
+    <Compile Include="src\solver\ITask.cs" />
     <Compile Include="src\solver\JoinHandlingNode.cs" />
     <Compile Include="src\solver\JoinHandlingNodesIFDSSolver.cs" />
     <Compile Include="src\solver\JumpFunctions.cs" />

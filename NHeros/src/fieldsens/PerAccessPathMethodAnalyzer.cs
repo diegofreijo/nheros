@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
+using heros.fieldsens.structs;
 
 /// <summary>
 ///*****************************************************************************
@@ -381,7 +382,7 @@ namespace heros.fieldsens
 
 		private void scheduleReturnEdge(CallEdge<Field, Fact, Stmt, Method> incEdge, WrappedFact<Field, Fact, Stmt, Method> fact, Stmt returnSite)
 		{
-			Delta<Field> delta = accessPath.getDeltaTo(incEdge.CalleeSourceFact.AccessPath);
+			var delta = accessPath.getDeltaTo(incEdge.CalleeSourceFact.AccessPath);
 			ReturnSiteResolver<Field, Fact, Stmt, Method> returnSiteResolver = incEdge.CallerAnalyzer.returnSiteResolvers.getOrCreate(new FactAtStatement<Fact, Stmt>(fact.Fact, returnSite));
 			returnSiteResolver.addIncoming(fact, incEdge.CalleeSourceFact.Resolver, delta);
 		}

@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using heros.fieldsens.structs;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2015 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,8 +13,6 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-
 	public class AccessPathHandler<Field, Fact, Stmt, Method>
 	{
 
@@ -143,9 +142,7 @@ namespace heros.fieldsens
 				this.field = field;
 			}
 
-
-//ORIGINAL LINE: @SuppressWarnings("unchecked") @Override public heros.fieldsens.FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> generate(Fact fact)
-			public override FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> generate(Fact fact)
+            public override FlowFunction_ConstrainedFact<Field, Fact, Stmt, Method> generate(Fact fact)
 			{
 				if (outerInstance.accessPath.isAccessInExclusions(field))
 				{

@@ -14,12 +14,6 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using IFDSSolver = heros.solver.IFDSSolver;
-	using Pair = heros.solver.Pair;
-
-
-
-
 	/// <summary>
 	/// A tabulation problem for solving in an <seealso cref="IFDSSolver"/> as described
 	/// by the Reps, Horwitz, Sagiv 1995 (RHS95) paper.
@@ -28,9 +22,8 @@ namespace heros.fieldsens
 	/// @param <D> The type of data-flow facts to be computed by the tabulation problem. </param>
 	/// @param <M> The type of objects used to represent methods. Typically <seealso cref="SootMethod"/>. </param>
 	/// @param <I> The type of inter-procedural control-flow graph being used. </param>
-	public interface IFDSTabulationProblem<N, FieldRef, D, M, I> : SolverConfiguration where I : heros.InterproceduralCFG<N,M>
-	{
-
+	public interface IFDSTabulationProblem<N, FieldRef, D, M, I> : SolverConfiguration where I : InterproceduralCFG<N, M>
+    {
 		/// <summary>
 		/// Returns a set of flow functions. Those functions are used to compute data-flow facts
 		/// along the various kinds of control flows.

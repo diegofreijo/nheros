@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using heros.fieldsens.structs;
+using System.Diagnostics;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,28 +15,20 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
-	using DeltaConstraint = heros.fieldsens.structs.DeltaConstraint;
-	using ReturnEdge = heros.fieldsens.structs.ReturnEdge;
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
 	public class ReturnSiteResolver<Field, Fact, Stmt, Method> : ResolverTemplate<Field, Fact, Stmt, Method, ReturnEdge<Field, Fact, Stmt, Method>>
 	{
-
 		private Stmt returnSite;
 		private bool propagated = false;
 		private Fact sourceFact;
-		private FactMergeHandler factMergeHandler;
+		private FactMergeHandler<Fact> factMergeHandler;
 
-		public ReturnSiteResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt returnSite, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, returnSite, null, debugger, new AccessPath<Field>(), null)
+		public ReturnSiteResolver(FactMergeHandler<Fact> factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt returnSite, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, returnSite, default, debugger, new AccessPath<Field>(), null)
 		{
 			this.factMergeHandler = factMergeHandler;
 			propagated = false;
 		}
 
-		private ReturnSiteResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt returnSite, Fact sourceFact, Debugger<Field, Fact, Stmt, Method> debugger, AccessPath<Field> resolvedAccPath, ReturnSiteResolver<Field, Fact, Stmt, Method> parent) : base(analyzer, resolvedAccPath, parent, debugger)
+		private ReturnSiteResolver(FactMergeHandler<Fact> factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt returnSite, Fact sourceFact, Debugger<Field, Fact, Stmt, Method> debugger, AccessPath<Field> resolvedAccPath, ReturnSiteResolver<Field, Fact, Stmt, Method> parent) : base(analyzer, resolvedAccPath, parent, debugger)
 		{
 			this.factMergeHandler = factMergeHandler;
 			this.returnSite = returnSite;
@@ -55,7 +48,7 @@ namespace heros.fieldsens
 
 
 //ORIGINAL LINE: public void addIncoming(final heros.fieldsens.structs.WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, heros.fieldsens.AccessPath.Delta<Field> callDelta)
-		public virtual void addIncoming(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, Delta<Field> callDelta)
+		public virtual void addIncoming(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath<Field>.Delta<Field> callDelta)
 		{
 
 			addIncoming(new ReturnEdge<Field, Fact, Stmt, Method>(fact, resolverAtCaller, callDelta));
@@ -73,13 +66,13 @@ namespace heros.fieldsens
 				sourceFact = retEdge.incFact;
 				analyzer.scheduleEdgeTo(new WrappedFactAtStatement<Field, Fact, Stmt, Method>(returnSite, new WrappedFact<Field, Fact, Stmt, Method>(retEdge.incFact, new AccessPath<Field>(), this)));
 			}
-		};
+		}
 
 		protected internal virtual void processIncomingPotentialPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
 			log("Incoming potential prefix:  " + retEdge);
 			resolveViaDelta(retEdge);
-		};
+		}
 
 		protected internal override void log(string message)
 		{
@@ -105,9 +98,9 @@ namespace heros.fieldsens
 			{
 				return true;
 			}
-			if (resolver is CallEdgeResolver)
+			if (resolver is CallEdgeResolver<Field, Fact, Stmt, Method>)
 			{
-				return !(resolver is ZeroCallEdgeResolver);
+				return !(resolver is ZeroCallEdgeResolver<Field, Fact, Stmt, Method>);
 			}
 			return false;
 		}
@@ -123,7 +116,7 @@ namespace heros.fieldsens
 			else
 			{
 				//resolve via incoming facts resolver
-				Delta<Field> delta = retEdge.usedAccessPathOfIncResolver.applyTo(retEdge.incAccessPath).getDeltaTo(resolvedAccessPath);
+				var delta = retEdge.usedAccessPathOfIncResolver.applyTo(retEdge.incAccessPath).getDeltaTo(resolvedAccessPath);
 				Debug.Assert(delta.accesses.Length <= 1);
 				retEdge.incResolver.resolve(new DeltaConstraint<Field>(delta), new InterestCallbackAnonymousInnerClass(this, retEdge));
 			}
@@ -144,7 +137,7 @@ namespace heros.fieldsens
 
 			public void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 			{
-				if (resolver is ZeroCallEdgeResolver)
+				if (resolver is ZeroCallEdgeResolver<Field, Fact, Stmt, Method>)
 				{
 					outerInstance.interest(((ZeroCallEdgeResolver<Field, Fact, Stmt, Method>) resolver).copyWithAnalyzer(outerInstance.analyzer));
 				}
@@ -174,12 +167,12 @@ namespace heros.fieldsens
 
 //ORIGINAL LINE: final AccessPath<Field> currAccPath = retEdge.callDelta.applyTo(inc);
 			AccessPath<Field> currAccPath = retEdge.callDelta.applyTo(inc);
-			if (resolvedAccessPath.isPrefixOf(currAccPath) == PrefixTestResult.GUARANTEED_PREFIX)
+			if (resolvedAccessPath.isPrefixOf(currAccPath) == AccessPath<Field>.PrefixTestResult.GUARANTEED_PREFIX)
 			{
 				incomingEdges.Add(retEdge.copyWithIncomingResolver(null, retEdge.usedAccessPathOfIncResolver));
 				interest(this);
 			}
-			else if (currAccPath.isPrefixOf(resolvedAccessPath).atLeast(PrefixTestResult.POTENTIAL_PREFIX))
+			else if (currAccPath.isPrefixOf(resolvedAccessPath).atLeast(AccessPath<Field>.PrefixTestResult.POTENTIAL_PREFIX))
 			{
 				resolveViaCallSiteResolver(retEdge, currAccPath);
 			}

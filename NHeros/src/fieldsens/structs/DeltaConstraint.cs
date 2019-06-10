@@ -12,19 +12,16 @@
 /// </summary>
 namespace heros.fieldsens.structs
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-
 	public class DeltaConstraint<FieldRef> : FlowFunction_Constraint<FieldRef>
 	{
-
-		private AccessPath.Delta<FieldRef> delta;
+		private AccessPath<FieldRef>.Delta<FieldRef> delta;
 
 		public DeltaConstraint(AccessPath<FieldRef> accPathAtCaller, AccessPath<FieldRef> accPathAtCallee)
 		{
 			delta = accPathAtCaller.getDeltaTo(accPathAtCallee);
 		}
 
-		public DeltaConstraint(AccessPath.Delta<FieldRef> delta)
+		public DeltaConstraint(AccessPath<FieldRef>.Delta<FieldRef> delta)
 		{
 			this.delta = delta;
 		}
@@ -66,7 +63,8 @@ namespace heros.fieldsens.structs
 			{
 				return false;
 			}
-			DeltaConstraint other = (DeltaConstraint) obj;
+
+			var other = obj as DeltaConstraint<FieldRef>;
 			if (delta == null)
 			{
 				if (other.delta != null)

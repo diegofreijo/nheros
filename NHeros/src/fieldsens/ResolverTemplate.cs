@@ -15,21 +15,12 @@ using System.Diagnostics;
 /// </summary>
 namespace heros.fieldsens
 {
-
-	using Lists = com.google.common.collect.Lists;
-	using Maps = com.google.common.collect.Maps;
-	using Sets = com.google.common.collect.Sets;
-
-	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
-
-
 	public abstract class ResolverTemplate<Field, Fact, Stmt, Method, Incoming> : Resolver<Field, Fact, Stmt, Method>
 	{
-
 		private bool recursionLock = false;
-		protected internal ISet<Incoming> incomingEdges = Sets.newHashSet();
+		protected internal ISet<Incoming> incomingEdges = new HashSet<Incoming>();
 		private ResolverTemplate<Field, Fact, Stmt, Method, Incoming> parent;
-		private IDictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>> nestedResolvers = new Dictionary();
+		private IDictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>> nestedResolvers = new Dictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>>();
 		private IDictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>> allResolversInExclHierarchy;
 		protected internal AccessPath<Field> resolvedAccessPath;
 		protected internal Debugger<Field, Fact, Stmt, Method> debugger;
@@ -41,7 +32,7 @@ namespace heros.fieldsens
 			this.debugger = debugger;
 			if (parent == null || resolvedAccessPath.Exclusions.Count == 0)
 			{
-				allResolversInExclHierarchy = new Dictionary();
+				allResolversInExclHierarchy = new Dictionary<AccessPath<Field>, ResolverTemplate<Field, Fact, Stmt, Method, Incoming>>();
 			}
 			else
 			{
@@ -80,7 +71,7 @@ namespace heros.fieldsens
 
 		public virtual void addIncoming(Incoming inc)
 		{
-			if (resolvedAccessPath.isPrefixOf(getAccessPathOf(inc)) == PrefixTestResult.GUARANTEED_PREFIX)
+			if (resolvedAccessPath.isPrefixOf(getAccessPathOf(inc)) == AccessPath<Field>.PrefixTestResult.GUARANTEED_PREFIX)
 			{
 				log("Incoming Edge: " + inc);
 				if (!incomingEdges.Add(inc))
@@ -90,14 +81,14 @@ namespace heros.fieldsens
 
 				interest(this);
 
-				foreach (ResolverTemplate<Field, Fact, Stmt, Method, Incoming> nestedResolver in Lists.newLinkedList(nestedResolvers.Values))
+				foreach (ResolverTemplate<Field, Fact, Stmt, Method, Incoming> nestedResolver in nestedResolvers.Values)
 				{
 					nestedResolver.addIncoming(inc);
 				}
 
 				processIncomingGuaranteedPrefix(inc);
 			}
-			else if (getAccessPathOf(inc).isPrefixOf(resolvedAccessPath).atLeast(PrefixTestResult.POTENTIAL_PREFIX))
+            else if (getAccessPathOf(inc).isPrefixOf(resolvedAccessPath).atLeast(AccessPath<Field>.PrefixTestResult.POTENTIAL_PREFIX))
 			{
 				processIncomingPotentialPrefix(inc);
 			}
@@ -142,7 +133,7 @@ namespace heros.fieldsens
 						allResolversInExclHierarchy[newAccPath] = nestedResolver;
 					}
 					nestedResolvers[newAccPath] = nestedResolver;
-					foreach (Incoming inc in Lists.newLinkedList(incomingEdges))
+					foreach (Incoming inc in incomingEdges)
 					{
 						nestedResolver.addIncoming(inc);
 					}

@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using NHeros.src.util;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2015 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,22 +13,19 @@
 /// </summary>
 namespace heros.fieldsens.structs
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-
-
-	public class WrappedFactAtStatement<Field, Fact, Stmt, Method>
+	public class WrappedFactAtStatement<Field, TFact, Stmt, Method>
 	{
 
-		private WrappedFact<Field, Fact, Stmt, Method> fact;
+		private WrappedFact<Field, TFact, Stmt, Method> fact;
 		private Stmt stmt;
 
-		public WrappedFactAtStatement(Stmt stmt, WrappedFact<Field, Fact, Stmt, Method> fact)
+		public WrappedFactAtStatement(Stmt stmt, WrappedFact<Field, TFact, Stmt, Method> fact)
 		{
 			this.stmt = stmt;
 			this.fact = fact;
 		}
 
-		public virtual WrappedFact<Field, Fact, Stmt, Method> WrappedFact
+		public virtual WrappedFact<Field, TFact, Stmt, Method> WrappedFact
 		{
 			get
 			{
@@ -35,7 +33,7 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual Fact Fact
+		public virtual TFact Fact
 		{
 			get
 			{
@@ -51,7 +49,7 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual Resolver<Field, Fact, Stmt, Method> Resolver
+		public virtual Resolver<Field, TFact, Stmt, Method> Resolver
 		{
 			get
 			{
@@ -67,15 +65,15 @@ namespace heros.fieldsens.structs
 			}
 		}
 
-		public virtual FactAtStatement<Fact, Stmt> AsFactAtStatement
+		public virtual FactAtStatement<TFact, Stmt> AsFactAtStatement
 		{
 			get
 			{
-				return new FactAtStatement<Fact, Stmt>(fact.Fact, stmt);
+				return new FactAtStatement<TFact, Stmt>(fact.Fact, stmt);
 			}
 		}
 
-		public virtual bool canDeltaBeApplied(AccessPath.Delta<Field> delta)
+		public virtual bool canDeltaBeApplied(AccessPath<Field>.Delta<Field> delta)
 		{
 			return delta.canBeAppliedTo(fact.AccessPath);
 		}
@@ -90,7 +88,7 @@ namespace heros.fieldsens.structs
 			const int prime = 31;
 			int result = 1;
 			result = prime * result + ((fact == null) ? 0 : fact.GetHashCode());
-			result = prime * result + ((stmt == default(Stmt)) ? 0 : stmt.GetHashCode());
+			result = prime * result + (Utils.IsDefault(stmt) ? 0 : stmt.GetHashCode());
 			return result;
 		}
 
@@ -108,7 +106,8 @@ namespace heros.fieldsens.structs
 			{
 				return false;
 			}
-			WrappedFactAtStatement other = (WrappedFactAtStatement) obj;
+
+            var other = obj as WrappedFactAtStatement<Field, TFact, Stmt, Method>;
 			if (fact == null)
 			{
 				if (other.fact != null)
@@ -120,10 +119,10 @@ namespace heros.fieldsens.structs
 			{
 				return false;
 			}
-			if (stmt == default(Stmt))
+			if (Utils.IsDefault(stmt))
 			{
-				if (other.stmt != default(Stmt))
-				{
+                if (!Utils.IsDefault(other.stmt))
+                {
 					return false;
 				}
 			}

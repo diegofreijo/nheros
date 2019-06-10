@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using heros.fieldsens.structs;
+using System.Diagnostics;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,12 +15,6 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
-	using DeltaConstraint = heros.fieldsens.structs.DeltaConstraint;
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
 	public class CallEdge<Field, Fact, Stmt, Method>
 	{
 
@@ -75,12 +70,9 @@ namespace heros.fieldsens
 		}
 
 
-//ORIGINAL LINE: public void registerInterestCallback(final PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer)
 		public virtual void registerInterestCallback(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer)
 		{
-
-//ORIGINAL LINE: final heros.fieldsens.AccessPath.Delta<Field> delta = calleeSourceFact.getAccessPath().getDeltaTo(interestedAnalyzer.getAccessPath());
-			Delta<Field> delta = calleeSourceFact.AccessPath.getDeltaTo(interestedAnalyzer.AccessPath);
+			var delta = calleeSourceFact.AccessPath.getDeltaTo(interestedAnalyzer.AccessPath);
 
 			if (!factAtCallSite.canDeltaBeApplied(delta))
 			{
@@ -94,10 +86,10 @@ namespace heros.fieldsens
 		{
 			private readonly CallEdge<Field, Fact, Stmt, Method> outerInstance;
 
-			private heros.fieldsens.PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer;
-			private Delta<Field> delta;
+			private PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer;
+			private AccessPath<Field>.Delta<Field> delta;
 
-			public InterestCallbackAnonymousInnerClass(CallEdge<Field, Fact, Stmt, Method> outerInstance, heros.fieldsens.PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer, Delta<Field> delta)
+			public InterestCallbackAnonymousInnerClass(CallEdge<Field, Fact, Stmt, Method> outerInstance, heros.fieldsens.PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> interestedAnalyzer, AccessPath<Field>.Delta<Field> delta)
 			{
 				this.outerInstance = outerInstance;
 				this.interestedAnalyzer = interestedAnalyzer;
@@ -107,12 +99,16 @@ namespace heros.fieldsens
 
 			public void interest(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Resolver<Field, Fact, Stmt, Method> resolver)
 			{
-				WrappedFact<Field, Fact, Stmt, Method> calleeSourceFactWithDelta = new WrappedFact<Field, Fact, Stmt, Method>(outerInstance.calleeSourceFact.Fact, delta.applyTo(outerInstance.calleeSourceFact.AccessPath), resolver);
-				Debug.Assert(interestedAnalyzer.AccessPath.isPrefixOf(calleeSourceFactWithDelta.AccessPath) == PrefixTestResult.GUARANTEED_PREFIX);
+				var calleeSourceFactWithDelta = new WrappedFact<Field, Fact, Stmt, Method>(
+                    outerInstance.calleeSourceFact.Fact, 
+                    delta.applyTo(outerInstance.calleeSourceFact.AccessPath), 
+                    resolver
+                );
+				//Debug.Assert(interestedAnalyzer.AccessPath.isPrefixOf(calleeSourceFactWithDelta.AccessPath) == PrefixTestResult.GUARANTEED_PREFIX);
 
 				CallEdge<Field, Fact, Stmt, Method> newCallEdge = new CallEdge<Field, Fact, Stmt, Method>(analyzer, new WrappedFactAtStatement<Field, Fact, Stmt, Method>(outerInstance.factAtCallSite.Statement, new WrappedFact<Field, Fact, Stmt, Method>(outerInstance.factAtCallSite.WrappedFact.Fact, delta.applyTo(outerInstance.factAtCallSite.WrappedFact.AccessPath), resolver)), calleeSourceFactWithDelta);
 
-				if (resolver is ZeroCallEdgeResolver)
+				if (resolver is ZeroCallEdgeResolver<Field, Fact, Stmt, Method>)
 				{
 					interestedAnalyzer.CallEdgeResolver.incomingEdges.Add(newCallEdge);
 					interestedAnalyzer.CallEdgeResolver.interest(((ZeroCallEdgeResolver<Field, Fact, Stmt, Method>) resolver).copyWithAnalyzer(interestedAnalyzer));
@@ -159,7 +155,7 @@ namespace heros.fieldsens
 			{
 				return false;
 			}
-			CallEdge other = (CallEdge) obj;
+			var other = obj as CallEdge<Field, Fact, Stmt, Method>;
 			if (calleeSourceFact == null)
 			{
 				if (other.calleeSourceFact != null)

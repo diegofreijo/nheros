@@ -12,19 +12,17 @@
 /// </summary>
 namespace heros.fieldsens
 {
-
 	public abstract class Context<Field, Fact, Stmt, Method>
 	{
-
 		public readonly InterproceduralCFG<Stmt, Method> icfg;
 		public readonly Scheduler scheduler;
 		public readonly Fact zeroValue;
 		public readonly bool followReturnsPastSeeds;
-		public readonly FactMergeHandler factHandler;
+		public readonly FactMergeHandler<Fact> factHandler;
 		public readonly ZeroHandler<Field> zeroHandler;
 		public readonly FlowFunctions<Stmt, Field, Fact, Method> flowFunctions;
 
-		internal Context<T1>(IFDSTabulationProblem<T1> tabulationProblem, Scheduler scheduler, FactMergeHandler factHandler) where T1 : heros.InterproceduralCFG<Stmt, Method>
+		internal Context(IFDSTabulationProblem<InterproceduralCFG<Stmt, Method>> tabulationProblem, Scheduler scheduler, FactMergeHandler<Fact> factHandler) 
 		{
 			this.icfg = tabulationProblem.interproceduralCFG();
 			this.flowFunctions = tabulationProblem.flowFunctions();

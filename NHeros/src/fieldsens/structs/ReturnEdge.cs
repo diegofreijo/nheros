@@ -12,24 +12,21 @@
 /// </summary>
 namespace heros.fieldsens.structs
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
-
 	public class ReturnEdge<Field, Fact, Stmt, Method>
 	{
 
 		public readonly Fact incFact;
 		public readonly Resolver<Field, Fact, Stmt, Method> resolverAtCaller;
-		public readonly AccessPath.Delta<Field> callDelta;
+		public readonly AccessPath<Field>.Delta<Field> callDelta;
 		public readonly AccessPath<Field> incAccessPath;
 		public readonly Resolver<Field, Fact, Stmt, Method> incResolver;
-		public readonly AccessPath.Delta<Field> usedAccessPathOfIncResolver;
+		public readonly AccessPath<Field>.Delta<Field> usedAccessPathOfIncResolver;
 
-		public ReturnEdge(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath.Delta<Field> callDelta) : this(fact.Fact, fact.AccessPath, fact.Resolver, resolverAtCaller, callDelta, AccessPath.Delta.empty<Field>())
+		public ReturnEdge(WrappedFact<Field, Fact, Stmt, Method> fact, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath<Field>.Delta<Field> callDelta) : this(fact.Fact, fact.AccessPath, fact.Resolver, resolverAtCaller, callDelta, AccessPath<Field>.Delta<Field>.empty<Field>())
 		{
 		}
 
-		private ReturnEdge(Fact incFact, AccessPath<Field> incAccessPath, Resolver<Field, Fact, Stmt, Method> incResolver, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath.Delta<Field> callDelta, AccessPath.Delta<Field> usedAccessPathOfIncResolver)
+		private ReturnEdge(Fact incFact, AccessPath<Field> incAccessPath, Resolver<Field, Fact, Stmt, Method> incResolver, Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath<Field>.Delta<Field> callDelta, AccessPath<Field>.Delta<Field> usedAccessPathOfIncResolver)
 		{
 			this.incFact = incFact;
 			this.incAccessPath = incAccessPath;
@@ -39,12 +36,12 @@ namespace heros.fieldsens.structs
 			this.usedAccessPathOfIncResolver = usedAccessPathOfIncResolver;
 		}
 
-		public virtual ReturnEdge<Field, Fact, Stmt, Method> copyWithIncomingResolver(Resolver<Field, Fact, Stmt, Method> incResolver, AccessPath.Delta<Field> usedAccessPathOfIncResolver)
+		public virtual ReturnEdge<Field, Fact, Stmt, Method> copyWithIncomingResolver(Resolver<Field, Fact, Stmt, Method> incResolver, AccessPath<Field> .Delta<Field> usedAccessPathOfIncResolver)
 		{
 			return new ReturnEdge<Field, Fact, Stmt, Method>(incFact, incAccessPath, incResolver, resolverAtCaller, callDelta, usedAccessPathOfIncResolver);
 		}
 
-		public virtual ReturnEdge<Field, Fact, Stmt, Method> copyWithResolverAtCaller(Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath.Delta<Field> usedAccessPathOfIncResolver)
+		public virtual ReturnEdge<Field, Fact, Stmt, Method> copyWithResolverAtCaller(Resolver<Field, Fact, Stmt, Method> resolverAtCaller, AccessPath<Field>.Delta<Field> usedAccessPathOfIncResolver)
 		{
 			return new ReturnEdge<Field, Fact, Stmt, Method>(incFact, incAccessPath, null, resolverAtCaller, callDelta, usedAccessPathOfIncResolver);
 		}
