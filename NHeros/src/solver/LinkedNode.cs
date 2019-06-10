@@ -28,6 +28,6 @@ namespace heros.solver
 		/// </summary>
 		void addNeighbor(D originalAbstraction);
 
-		D CallingContext {set;}
+        D CallingContext { set; }
 	}
 }

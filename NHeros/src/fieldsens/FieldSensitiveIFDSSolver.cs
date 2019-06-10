@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using heros.utilities;
+using NHeros.src.util;
+using System.Collections.Generic;
 
 /// <summary>
 ///*****************************************************************************
@@ -15,9 +17,9 @@
 
 namespace heros.fieldsens
 {
-	public class FieldSensitiveIFDSSolver<FieldRef, D, N, M, I> where I : heros.InterproceduralCFG<N, M>
-	{
-		protected internal static readonly Logger logger = LoggerFactory.getLogger(typeof(FieldSensitiveIFDSSolver));
+	public class FieldSensitiveIFDSSolver<FieldRef, D, N, M, I> where I : InterproceduralCFG<N, M>
+    {
+		//protected internal static readonly Logger logger = LoggerFactory.getLogger(typeof(FieldSensitiveIFDSSolver));
 
 		private DefaultValueMap<M, MethodAnalyzer<FieldRef, D, N, M>> methodAnalyzers = new DefaultValueMapAnonymousInnerClass();
 
@@ -38,7 +40,7 @@ namespace heros.fieldsens
 		{
 			this.tabulationProblem = tabulationProblem;
 			this.scheduler = scheduler;
-			this.debugger = debugger == null ? new Debugger_NullDebugger<FieldRef, D, N, M>() : debugger;
+			this.debugger = (debugger == null) ? new Debugger_NullDebugger<FieldRef, D, N, M>() : debugger;
 			this.debugger.ICFG = tabulationProblem.interproceduralCFG();
 			context = initContext(tabulationProblem, factHandler);
 			submitInitialSeeds();
@@ -53,7 +55,8 @@ namespace heros.fieldsens
 		{
 			private readonly FieldSensitiveIFDSSolver<FieldRef, D, N, M, I> outerInstance;
 
-			public ContextAnonymousInnerClass(FieldSensitiveIFDSSolver<FieldRef, D, N, M, I> outerInstance, heros.fieldsens.IFDSTabulationProblem<N, FieldRef, D, M, I> tabulationProblem, heros.fieldsens.Scheduler scheduler, heros.fieldsens.FactMergeHandler<D> factHandler) : base(tabulationProblem, scheduler, factHandler)
+			public ContextAnonymousInnerClass(FieldSensitiveIFDSSolver<FieldRef, D, N, M, I> outerInstance, IFDSTabulationProblem<N, FieldRef, D, M, I> tabulationProblem, Scheduler scheduler, FactMergeHandler<D> factHandler) 
+                : base(tabulationProblem, scheduler, factHandler)
 			{
 				this.outerInstance = outerInstance;
 			}

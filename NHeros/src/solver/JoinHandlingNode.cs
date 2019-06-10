@@ -12,18 +12,13 @@
 /// </summary>
 namespace heros.solver
 {
-
-
-	public interface JoinHandlingNode<T>
+    public interface JoinHandlingNode<T>
 	{
-
-		/// 
 		/// <param name="joiningNode"> the node abstraction that was propagated to the same target after {@code this} node. </param>
 		/// <returns> true if the join could be handled and no further propagation of the {@code joiningNode} is necessary, otherwise false meaning 
 		/// the node should be propagated by the solver. </returns>
 		bool handleJoin(T joiningNode);
 
-		/// 
 		/// <returns> a JoinKey object used to identify which node abstractions require manual join handling. 
 		/// For nodes with {@code equal} JoinKey instances <seealso cref="handleJoin(JoinHandlingNode)"/> will be called. </returns>
 		JoinHandlingNode_JoinKey createJoinKey();
@@ -46,7 +41,7 @@ namespace heros.solver
 		{
 			const int prime = 31;
 			int result = 1;
-			result = prime * result + Arrays.GetHashCode(elements);
+			result = prime * result + elements.GetHashCode();
 			return result;
 		}
 
@@ -65,7 +60,7 @@ namespace heros.solver
 				return false;
 			}
 			JoinHandlingNode_JoinKey other = (JoinHandlingNode_JoinKey) obj;
-			if (!Arrays.Equals(elements, other.elements))
+			if (elements.Equals(other.elements))
 			{
 				return false;
 			}

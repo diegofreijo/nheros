@@ -14,20 +14,14 @@
 /// </summary>
 namespace heros.flowfunc
 {
-
-
-
-	/// <summary>
-	/// The empty function, i.e. a function which returns an empty set for all points
-	/// in the definition space.
-	/// </summary>
-	/// @param <D> The type of data-flow facts to be computed by the tabulation problem. </param>
-	public class KillAll<D> : FlowFunction<D>
+    /// <summary>
+    /// The empty function, i.e. a function which returns an empty set for all points
+    /// in the definition space.
+    /// </summary>
+    /// @param <D> The type of data-flow facts to be computed by the tabulation problem. </param>
+    public class KillAll<D> : FlowFunction<D>
 	{
-
-
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") private final static KillAll instance = new KillAll();
-		private static readonly KillAll instance = new KillAll();
+        private static readonly KillAll<D> instance = new KillAll<D>();
 
 		private KillAll()
 		{
@@ -35,16 +29,12 @@ namespace heros.flowfunc
 
 		public virtual ISet<D> computeTargets(D source)
 		{
-			return emptySet();
+            return new HashSet<D>();
 		}
 
-
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public static <D> KillAll<D> v()
-		public static KillAll<D> v<D>()
+		public static KillAll<D> v()
 		{
 			return instance;
-		}
-
+        }
 	}
-
 }

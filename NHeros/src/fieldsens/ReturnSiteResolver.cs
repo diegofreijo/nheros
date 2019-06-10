@@ -41,7 +41,7 @@ namespace heros.fieldsens
 			return "<" + resolvedAccessPath + ":" + returnSite + " in " + analyzer.Method + ">";
 		}
 
-		protected internal virtual AccessPath<Field> getAccessPathOf(ReturnEdge<Field, Fact, Stmt, Method> inc)
+		protected internal override AccessPath<Field> getAccessPathOf(ReturnEdge<Field, Fact, Stmt, Method> inc)
 		{
 			return inc.usedAccessPathOfIncResolver.applyTo(inc.incAccessPath);
 		}
@@ -54,7 +54,7 @@ namespace heros.fieldsens
 			addIncoming(new ReturnEdge<Field, Fact, Stmt, Method>(fact, resolverAtCaller, callDelta));
 		}
 
-		protected internal virtual void processIncomingGuaranteedPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
+		protected internal override void processIncomingGuaranteedPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
 			if (propagated)
 			{
@@ -68,7 +68,7 @@ namespace heros.fieldsens
 			}
 		}
 
-		protected internal virtual void processIncomingPotentialPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
+		protected internal override void processIncomingPotentialPrefix(ReturnEdge<Field, Fact, Stmt, Method> retEdge)
 		{
 			log("Incoming potential prefix:  " + retEdge);
 			resolveViaDelta(retEdge);

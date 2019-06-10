@@ -24,12 +24,13 @@ namespace heros.fieldsens
 	{
 		//private static readonly Logger logger = LoggerFactory.getLogger(typeof(PerAccessPathMethodAnalyzer));
 
-		private Fact sourceFact;
+		private readonly Fact sourceFact;
 		private readonly AccessPath<Field> accessPath;
-		private IDictionary<WrappedFactAtStatement<Field, Fact, Stmt, Method>, WrappedFactAtStatement<Field, Fact, Stmt, Method>> reachableStatements = new Dictionary();
+		private readonly IDictionary<WrappedFactAtStatement<Field, Fact, Stmt, Method>, WrappedFactAtStatement<Field, Fact, Stmt, Method>> reachableStatements = 
+            new Dictionary<WrappedFactAtStatement<Field, Fact, Stmt, Method>, WrappedFactAtStatement<Field, Fact, Stmt, Method>>();
 		private IList<WrappedFactAtStatement<Field, Fact, Stmt, Method>> summaries = new List<WrappedFactAtStatement<Field, Fact, Stmt, Method>>();
 		private Context<Field, Fact, Stmt, Method> context;
-		private Method method;
+		private readonly Method method;
 		private DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<Field, Fact, Stmt, Method>> returnSiteResolvers = new DefaultValueMapAnonymousInnerClass();
 
 		private class DefaultValueMapAnonymousInnerClass : DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<Field, Fact, Stmt, Method>>
@@ -364,7 +365,7 @@ namespace heros.fieldsens
 		public virtual void scheduleUnbalancedReturnEdgeTo(WrappedFactAtStatement<Field, Fact, Stmt, Method> fact)
 		{
 			ReturnSiteResolver<Field, Fact, Stmt, Method> resolver = returnSiteResolvers.getOrCreate(fact.AsFactAtStatement);
-			resolver.addIncoming(new WrappedFact<Field, Fact, Stmt, Method>(fact.WrappedFact.Fact, fact.WrappedFact.AccessPath, fact.WrappedFact.Resolver), null, Delta.empty<Field>());
+			resolver.addIncoming(new WrappedFact<Field, Fact, Stmt, Method>(fact.WrappedFact.Fact, fact.WrappedFact.AccessPath, fact.WrappedFact.Resolver), null, AccessPath<Field>.Delta<Field>.empty<Field>());
 		}
 
 		private void scheduleReturnEdge(CallEdge<Field, Fact, Stmt, Method> incEdge, WrappedFact<Field, Fact, Stmt, Method> fact, Stmt returnSite)
@@ -382,15 +383,9 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual bool ZeroSource
-		{
-			get
-			{
-				return sourceFact.Equals(context.zeroValue);
-			}
-		}
+        public virtual bool ZeroSource => sourceFact.Equals(context.zeroValue);
 
-		private class Job : ThreadStart
+        private class Job : ThreadStart
 		{
 			private readonly PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance;
             internal WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt;

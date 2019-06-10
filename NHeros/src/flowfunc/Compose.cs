@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,17 +15,11 @@
 /// </summary>
 namespace heros.flowfunc
 {
-
-
-	using Sets = com.google.common.collect.Sets;
-
-
 	/// <summary>
 	/// Represents the ordered composition of a set of flow functions.
 	/// </summary>
 	public class Compose<D> : FlowFunction<D>
 	{
-
 		private readonly FlowFunction<D>[] funcs;
 
 		private Compose(params FlowFunction<D>[] funcs)
@@ -34,14 +29,13 @@ namespace heros.flowfunc
 
 		public virtual ISet<D> computeTargets(D source)
 		{
-			ISet<D> curr = Sets.newHashSet();
-			curr.Add(source);
-			foreach (FlowFunction<D> func in funcs)
+            ISet<D> curr = new HashSet<D> { source };
+            foreach (FlowFunction<D> func in funcs)
 			{
-				ISet<D> next = Sets.newHashSet();
+				ISet<D> next = new HashSet<D>();
 				foreach (D d in curr)
 				{
-					next.addAll(func.computeTargets(d));
+					next.UnionWith(func.computeTargets(d));
 				}
 				curr = next;
 			}
@@ -55,7 +49,7 @@ namespace heros.flowfunc
 			IList<FlowFunction<D>> list = new List<FlowFunction<D>>();
 			foreach (FlowFunction<D> f in funcs)
 			{
-				if (f != Identity.v())
+				if (f != Identity<D>.v())
 				{
 					list.Add(f);
 				}
@@ -66,9 +60,9 @@ namespace heros.flowfunc
 			}
 			else if (list.Count == 0)
 			{
-				return Identity.v();
+				return Identity<D>.v();
 			}
-			return new Compose(list.ToArray());
+			return new Compose<D>(list.ToArray());
 		}
 
 	}

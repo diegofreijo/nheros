@@ -86,8 +86,7 @@ namespace heros.solver
 				return false;
 			}
 
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") PathEdge other = (PathEdge) obj;
-			PathEdge other = (PathEdge) obj;
+			var other = obj as PathEdge<N,D>;
 			if (Utils.IsDefault(dSource))
 			{
 				if (!Utils.IsDefault(other.dSource))

@@ -1,5 +1,5 @@
 ﻿using heros.fieldsens.structs;
-using static heros.fieldsens.AccessPath<T>;
+using heros.fieldsens;
 
 /// <summary>
 ///*****************************************************************************
@@ -17,19 +17,18 @@ namespace heros.fieldsens
 {
 	public class ControlFlowJoinResolver<Field, Fact, Stmt, Method> : ResolverTemplate<Field, Fact, Stmt, Method, WrappedFact<Field, Fact, Stmt, Method>>
 	{
-
 		private Stmt joinStmt;
 		private bool propagated = false;
 		private Fact sourceFact;
-		private FactMergeHandler factMergeHandler;
+		private FactMergeHandler<Fact> factMergeHandler;
 
-		public ControlFlowJoinResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt joinStmt, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, joinStmt, default, new AccessPath<Field>(), debugger, null)
+		public ControlFlowJoinResolver(FactMergeHandler<Fact> factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt joinStmt, Debugger<Field, Fact, Stmt, Method> debugger) : this(factMergeHandler, analyzer, joinStmt, default, new AccessPath<Field>(), debugger, null)
 		{
 			this.factMergeHandler = factMergeHandler;
 			propagated = false;
 		}
 
-		private ControlFlowJoinResolver(FactMergeHandler factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt joinStmt, Fact sourceFact, AccessPath<Field> resolvedAccPath, Debugger<Field, Fact, Stmt, Method> debugger, ControlFlowJoinResolver<Field, Fact, Stmt, Method> parent) : base(analyzer, resolvedAccPath, parent, debugger)
+		private ControlFlowJoinResolver(FactMergeHandler<Fact> factMergeHandler, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> analyzer, Stmt joinStmt, Fact sourceFact, AccessPath<Field> resolvedAccPath, Debugger<Field, Fact, Stmt, Method> debugger, ControlFlowJoinResolver<Field, Fact, Stmt, Method> parent) : base(analyzer, resolvedAccPath, parent, debugger)
 		{
 			this.factMergeHandler = factMergeHandler;
 			this.joinStmt = joinStmt;
@@ -42,7 +41,7 @@ namespace heros.fieldsens
 			return inc.AccessPath;
 		}
 
-		protected internal virtual void processIncomingGuaranteedPrefix(WrappedFact<Field, Fact, Stmt, Method> fact)
+		protected internal override void processIncomingGuaranteedPrefix(WrappedFact<Field, Fact, Stmt, Method> fact)
 		{
 			if (propagated)
 			{
@@ -78,7 +77,7 @@ namespace heros.fieldsens
 			else
 			{
 				@lock();
-				Delta<Field> delta = fact.AccessPath.getDeltaTo(resolvedAccessPath);
+                AccessPath<Field>.Delta<Field> delta = fact.AccessPath.getDeltaTo(resolvedAccessPath);
 				fact.Resolver.resolve(new DeltaConstraint<Field>(delta), new InterestCallbackAnonymousInnerClass(this));
 				unlock();
 			}

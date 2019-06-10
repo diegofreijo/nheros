@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHeros.src.util;
+using System;
 using System.Collections.Generic;
 
 /// <summary>
@@ -15,9 +16,6 @@ using System.Collections.Generic;
 /// </summary>
 namespace heros.solver
 {
-
-	using Maps = com.google.common.collect.Maps;
-
 	/// <summary>
 	/// An <seealso cref="IFDSSolver"/> that tracks paths for reporting. To do so, it requires that data-flow abstractions implement the LinkedNode interface.
 	/// The solver implements a cache of data-flow facts for each statement and source value. If for the same statement and source value the same
@@ -27,16 +25,17 @@ namespace heros.solver
 	/// @author Eric Bodden </summary>
 	/// @deprecated Use <seealso cref="JoinHandlingNodesIFDSSolver"/> instead. 
 	[Obsolete("Use <seealso cref=\"JoinHandlingNodesIFDSSolver\"/> instead.")]
-	public class PathTrackingIFDSSolver<N, D, M, I> : IFDSSolver<N, D, M, I> where D : LinkedNode<D> where I : heros.InterproceduralCFG<N, M>
+	public class PathTrackingIFDSSolver<N, D, M, I> : IFDSSolver<N, D, M, I>
+        where D : LinkedNode<D> where I : heros.InterproceduralCFG<N, M>
 	{
 
 		public PathTrackingIFDSSolver(IFDSTabulationProblem<N, D, M, I> ifdsProblem) : base(ifdsProblem)
 		{
 		}
 
-		protected internal readonly IDictionary<CacheEntry, LinkedNode<D>> cache = new Dictionary();
+		readonly IDictionary<CacheEntry, LinkedNode<D>> cache = new Dictionary<CacheEntry, LinkedNode<D>>();
 
-		protected internal override void propagate(D sourceVal, N target, D targetVal, EdgeFunction<IFDSSolver.BinaryDomain> f, N relatedCallSite, bool isUnbalancedReturn)
+		protected internal override void propagate(D sourceVal, N target, D targetVal, EdgeFunction<IFDSSolver<N, D, M, I>.BinaryDomain> f, N relatedCallSite, bool isUnbalancedReturn)
 		{
 			CacheEntry currentCacheEntry = new CacheEntry(this, target, sourceVal, targetVal);
 
@@ -46,10 +45,11 @@ namespace heros.solver
 				if (cache.ContainsKey(currentCacheEntry))
 				{
 					LinkedNode<D> existingTargetVal = cache[currentCacheEntry];
-					if (existingTargetVal != targetVal)
-					{
-						existingTargetVal.addNeighbor(targetVal);
-					}
+                    throw new NotImplementedException("I don't know how to solve this comparison between LinkedNode and D");
+					//if (existingTargetVal != targetVal)
+					//{
+					//	existingTargetVal.addNeighbor(targetVal);
+					//}
 				}
 				else
 				{

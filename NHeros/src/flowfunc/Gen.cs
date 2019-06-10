@@ -14,11 +14,6 @@
 /// </summary>
 namespace heros.flowfunc
 {
-
-//	import static heros.TwoElementSet.twoElementSet;
-
-
-
 	/// <summary>
 	/// Function that creates a new value (e.g. returns a set containing a fixed value when given
 	/// a specific parameter), but acts like the identity function for all other parameters.
@@ -40,11 +35,11 @@ namespace heros.flowfunc
 		{
 			if (source.Equals(zeroValue))
 			{
-				return twoElementSet(source, genValue);
+				return new HashSet<D>() { source, genValue };
 			}
 			else
 			{
-				return singleton(source);
+				return new HashSet<D>() { source };
 			}
 		}
 

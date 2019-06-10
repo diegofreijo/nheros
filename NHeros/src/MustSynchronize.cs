@@ -12,19 +12,16 @@
 /// </summary>
 namespace heros
 {
-
 	/// <summary>
 	///	Semantic annotation stating that the annotated field must be synchronized.
 	///  This annotation is meant as a structured comment only, and has no immediate effect. 
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: There is no attribute target in .NET corresponding to FIELD:
-//ORIGINAL LINE: @Target(FIELD) public class MustSynchronize extends System.Attribute
-	[AttributeUsage(<missing>, AllowMultiple = false, Inherited = false)]
+	//[AttributeUsage(<missing>, AllowMultiple = false, Inherited = false)]
 	public class MustSynchronize : System.Attribute
 	{
 		internal string value;
 
-		public MustSynchronize(String value = "")
+		public MustSynchronize(string value = "")
 		{
 			this.value = value;
 		}

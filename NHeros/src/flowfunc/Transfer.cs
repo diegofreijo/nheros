@@ -14,15 +14,8 @@
 /// </summary>
 namespace heros.flowfunc
 {
-
-//	import static heros.TwoElementSet.twoElementSet;
-
-
-
-
 	public class Transfer<D> : FlowFunction<D>
 	{
-
 		private readonly D toValue;
 		private readonly D fromValue;
 
@@ -36,15 +29,15 @@ namespace heros.flowfunc
 		{
 			if (source.Equals(fromValue))
 			{
-				return twoElementSet(source, toValue);
+				return new HashSet<D>() { source, toValue };
 			}
 			else if (source.Equals(toValue))
 			{
-				return Collections.emptySet();
+                return new HashSet<D>();
 			}
 			else
 			{
-				return Collections.singleton(source);
+                return new HashSet<D>() { source };
 			}
 		}
 
