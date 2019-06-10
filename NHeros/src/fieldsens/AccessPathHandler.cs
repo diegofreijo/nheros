@@ -116,8 +116,6 @@ namespace heros.fieldsens
 			}
 		}
 
-
-//ORIGINAL LINE: public ResultBuilder<Field, Fact, Stmt, Method> overwrite(final Field field)
 		public virtual ResultBuilder<Field, Fact, Stmt, Method> overwrite(Field field)
 		{
 			if (mayBeEmpty())

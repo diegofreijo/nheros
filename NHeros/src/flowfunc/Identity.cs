@@ -14,15 +14,9 @@
 /// </summary>
 namespace heros.flowfunc
 {
-
-
-
 	public class Identity<D> : FlowFunction<D>
 	{
-
-
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") private final static Identity instance = new Identity();
-		private static readonly Identity instance = new Identity();
+        private static readonly Identity<D> instance = new Identity<D>();
 
 		private Identity()
 		{
@@ -30,16 +24,12 @@ namespace heros.flowfunc
 
 		public virtual ISet<D> computeTargets(D source)
 		{
-			return singleton(source);
+			return new HashSet<D>(source);
 		}
 
-
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public static <D> Identity<D> v()
-		public static Identity<D> v<D>()
+		public static Identity<D> v()
 		{
 			return instance;
 		}
-
 	}
-
 }

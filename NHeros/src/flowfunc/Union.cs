@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,17 +15,11 @@
 /// </summary>
 namespace heros.flowfunc
 {
-
-//	import static com.google.common.collect.Sets.newHashSet;
-
-
-
 	/// <summary>
 	/// Represents the union of a set of flow functions.
 	/// </summary>
 	public class Union<D> : FlowFunction<D>
 	{
-
 		private readonly FlowFunction<D>[] funcs;
 
 		private Union(params FlowFunction<D>[] funcs)
@@ -34,22 +29,20 @@ namespace heros.flowfunc
 
 		public virtual ISet<D> computeTargets(D source)
 		{
-			ISet<D> res = newHashSet();
+			ISet<D> res = new HashSet<D>();
 			foreach (FlowFunction<D> func in funcs)
 			{
-				res.addAll(func.computeTargets(source));
+				res.UnionWith(func.computeTargets(source));
 			}
 			return res;
 		}
 
-
-//ORIGINAL LINE: @SuppressWarnings({ "rawtypes", "unchecked" }) public static <D> heros.FlowFunction<D> union(heros.FlowFunction<D>... funcs)
-		public static FlowFunction<D> union<D>(params FlowFunction<D>[] funcs)
+        public static FlowFunction<D> union<D>(params FlowFunction<D>[] funcs)
 		{
 			IList<FlowFunction<D>> list = new List<FlowFunction<D>>();
 			foreach (FlowFunction<D> f in funcs)
 			{
-				if (f != Identity.v())
+				if (f != Identity<D>.v())
 				{
 					list.Add(f);
 				}
@@ -60,9 +53,9 @@ namespace heros.flowfunc
 			}
 			else if (list.Count == 0)
 			{
-				return Identity.v();
+				return Identity<D>.v();
 			}
-			return new Union(list.ToArray());
+			return new Union<D>(list.ToArray());
 		}
 
 	}

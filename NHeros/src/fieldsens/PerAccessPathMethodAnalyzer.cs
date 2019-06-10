@@ -2,6 +2,9 @@
 using System.Threading;
 using System.Diagnostics;
 using heros.fieldsens.structs;
+using heros.utilities;
+using NHeros.src.util;
+using System.Linq;
 
 /// <summary>
 ///*****************************************************************************
@@ -17,29 +20,14 @@ using heros.fieldsens.structs;
 /// </summary>
 namespace heros.fieldsens
 {
-	using Delta = heros.fieldsens.AccessPath.Delta;
-	using PrefixTestResult = heros.fieldsens.AccessPath.PrefixTestResult;
-	using FactAtStatement = heros.fieldsens.structs.FactAtStatement;
-	using WrappedFact = heros.fieldsens.structs.WrappedFact;
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-	using DefaultValueMap = heros.utilities.DefaultValueMap;
-
-
-	using Logger = org.slf4j.Logger;
-	using LoggerFactory = org.slf4j.LoggerFactory;
-
-	using Lists = com.google.common.collect.Lists;
-	using Maps = com.google.common.collect.Maps;
-	using Sets = com.google.common.collect.Sets;
-
 	public class PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>
 	{
+		//private static readonly Logger logger = LoggerFactory.getLogger(typeof(PerAccessPathMethodAnalyzer));
 
-		private static readonly Logger logger = LoggerFactory.getLogger(typeof(PerAccessPathMethodAnalyzer));
 		private Fact sourceFact;
 		private readonly AccessPath<Field> accessPath;
 		private IDictionary<WrappedFactAtStatement<Field, Fact, Stmt, Method>, WrappedFactAtStatement<Field, Fact, Stmt, Method>> reachableStatements = new Dictionary();
-		private IList<WrappedFactAtStatement<Field, Fact, Stmt, Method>> summaries = new List();
+		private IList<WrappedFactAtStatement<Field, Fact, Stmt, Method>> summaries = new List<WrappedFactAtStatement<Field, Fact, Stmt, Method>>();
 		private Context<Field, Fact, Stmt, Method> context;
 		private Method method;
 		private DefaultValueMap<FactAtStatement<Fact, Stmt>, ReturnSiteResolver<Field, Fact, Stmt, Method>> returnSiteResolvers = new DefaultValueMapAnonymousInnerClass();
@@ -71,15 +59,17 @@ namespace heros.fieldsens
 		private PerAccessPathMethodAnalyzer(Method method, Fact sourceFact, Context<Field, Fact, Stmt, Method> context, Debugger<Field, Fact, Stmt, Method> debugger, AccessPath<Field> accPath, PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> parent)
 		{
 			this.debugger = debugger;
-			if (method == default(Method))
+			if (Utils.IsDefault(method))
 			{
 				throw new System.ArgumentException("Method must be not null");
 			}
+
 			this.parent = parent;
 			this.method = method;
 			this.sourceFact = sourceFact;
 			this.accessPath = accPath;
 			this.context = context;
+
 			if (parent == null)
 			{
 				this.callEdgeResolver = ZeroSource ? new ZeroCallEdgeResolver<Field, Fact, Stmt, Method>(this, context.zeroHandler, debugger) : new CallEdgeResolver<Field, Fact, Stmt, Method>(this, debugger);
@@ -162,7 +152,7 @@ namespace heros.fieldsens
 
 		internal virtual void log(string message)
 		{
-			logger.trace("[{}; {}{}: " + message + "]", method, sourceFact, accessPath);
+			//logger.trace("[{}; {}{}: " + message + "]", method, sourceFact, accessPath);
 		}
 
 		public override string ToString()
@@ -191,10 +181,11 @@ namespace heros.fieldsens
 		internal virtual void processExit(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
 			log("New Summary: " + factAtStmt);
-			if (!summaries.Add(factAtStmt))
-			{
-				throw new AssertionError();
-			}
+            //if (!summaries.Add(factAtStmt))
+            //{
+            //    throw new AssertionError();
+            //}
+            summaries.Add(factAtStmt);
 
 			callEdgeResolver.applySummaries(factAtStmt);
 
@@ -270,21 +261,17 @@ namespace heros.fieldsens
 			int numberOfPredecessors = context.icfg.getPredsOf(stmt).Count;
 			if ((numberOfPredecessors > 1 && !context.icfg.isExitStmt(stmt)) || (context.icfg.isStartPoint(stmt) && numberOfPredecessors > 0))
 			{
-				ISet<Stmt> visited = Sets.newHashSet();
-				IList<Stmt> worklist = new List();
-				((IList<Stmt>)worklist).AddRange(context.icfg.getPredsOf(stmt));
-				while (worklist.Count > 0)
+                ISet<Stmt> visited = new HashSet<Stmt>();
+                IEnumerable<Stmt> worklist = new List<Stmt>(context.icfg.getPredsOf(stmt));
+				while (worklist.Count() > 0)
 				{
-					Stmt current = worklist.RemoveAt(0);
-					if (current.Equals(stmt))
-					{
+                    Stmt current = worklist.First();
+                    worklist = worklist.Skip(1);
+                    if (current.Equals(stmt))
 						return true;
-					}
 					if (!visited.Add(current))
-					{
 						continue;
-					}
-					((IList<Stmt>)worklist).AddRange(context.icfg.getPredsOf(current));
+					worklist = worklist.Concat(context.icfg.getPredsOf(current));
 				}
 			}
 			return false;
@@ -406,9 +393,7 @@ namespace heros.fieldsens
 		private class Job : ThreadStart
 		{
 			private readonly PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance;
-
-
-			internal WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt;
+            internal WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt;
 
 			public Job(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> outerInstance, WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 			{
@@ -444,103 +429,90 @@ namespace heros.fieldsens
 			}
 		}
 
-		public virtual CallEdgeResolver<Field, Fact, Stmt, Method> CallEdgeResolver
-		{
-			get
-			{
-				return callEdgeResolver;
-			}
-		}
+        public virtual CallEdgeResolver<Field, Fact, Stmt, Method> CallEdgeResolver => callEdgeResolver;
+        public virtual Method Method => method;
 
-		public virtual Method Method
-		{
-			get
-			{
-				return method;
-			}
-		}
+        //	public void debugReachables() {
+        //		JsonDocument root = new JsonDocument();
+        //		
+        //		for(WrappedFactAtStatement<Field, Fact, Stmt, Method> fact : reachableStatements.keySet()) {
+        //			JsonDocument doc = root.doc(fact.getStatement().toString()).doc(fact.getFact().toString()).doc(fact.getResolver().toString()).doc(String.valueOf(fact.hashCode()));
+        //			doc.keyValue("fact", String.valueOf(fact.getFact().hashCode()));
+        //			doc.keyValue("resolver", String.valueOf(fact.getResolver().hashCode()));
+        //			doc.keyValue("resolver-analyzer", String.valueOf(fact.getResolver().analyzer.hashCode()));
+        //			doc.keyValue("resolver-class", String.valueOf(fact.getResolver().getClass().toString()));
+        //		}
+        //		try {
+        //			FileWriter writer = new FileWriter("debug/reachables.json");
+        //			StringBuilder builder = new StringBuilder();
+        //			builder.append("var root=");
+        //			root.write(builder, 0);
+        //			writer.write(builder.toString());
+        //			writer.close();
+        //		} catch (IOException e) {
+        //			e.printStackTrace();
+        //		}
+        //	}
 
-	//	public void debugReachables() {
-	//		JsonDocument root = new JsonDocument();
-	//		
-	//		for(WrappedFactAtStatement<Field, Fact, Stmt, Method> fact : reachableStatements.keySet()) {
-	//			JsonDocument doc = root.doc(fact.getStatement().toString()).doc(fact.getFact().toString()).doc(fact.getResolver().toString()).doc(String.valueOf(fact.hashCode()));
-	//			doc.keyValue("fact", String.valueOf(fact.getFact().hashCode()));
-	//			doc.keyValue("resolver", String.valueOf(fact.getResolver().hashCode()));
-	//			doc.keyValue("resolver-analyzer", String.valueOf(fact.getResolver().analyzer.hashCode()));
-	//			doc.keyValue("resolver-class", String.valueOf(fact.getResolver().getClass().toString()));
-	//		}
-	//		try {
-	//			FileWriter writer = new FileWriter("debug/reachables.json");
-	//			StringBuilder builder = new StringBuilder();
-	//			builder.append("var root=");
-	//			root.write(builder, 0);
-	//			writer.write(builder.toString());
-	//			writer.close();
-	//		} catch (IOException e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
-
-	//	public void debugInterest() {
-	//		JsonDocument root = new JsonDocument();
-	//		
-	//		List<PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> worklist = new List();
-	//		worklist.add(this);
-	//		Set<PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> visited = Sets.newHashSet();
-	//		
-	//		while(!worklist.isEmpty()) {
-	//			PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> current = worklist.remove(0);
-	//			if(!visited.add(current))
-	//				continue;
-	//			
-	//			JsonDocument currentMethodDoc = root.doc(current.method.toString()+ "___"+current.sourceFact);
-	//			JsonDocument currentDoc = currentMethodDoc.doc("accPath").doc("_"+current.accessPath.toString());
-	//			
-	//			for(CallEdge<Field, Fact, Stmt, Method> incEdge : current.getCallEdgeResolver().incomingEdges) {
-	//				currentDoc.doc("incoming").doc(incEdge.getCallerAnalyzer().method+"___"+incEdge.getCallerAnalyzer().sourceFact).doc("_"+incEdge.getCallerAnalyzer().accessPath.toString());
-	//				worklist.add(incEdge.getCallerAnalyzer());
-	//			}
-	//		}
-	//		
-	//		try {
-	//			FileWriter writer = new FileWriter("debug/incoming.json");
-	//			StringBuilder builder = new StringBuilder();
-	//			builder.append("var root=");
-	//			root.write(builder, 0);
-	//			writer.write(builder.toString());
-	//			writer.close();
-	//		} catch (IOException e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
-	//	
-	//	public void debugNestings() {
-	//		PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> current = this;
-	//		while(current.parent != null)
-	//			current = current.parent;
-	//		
-	//		JsonDocument root = new JsonDocument();
-	//		debugNestings(current, root);
-	//		
-	//		try {
-	//			FileWriter writer = new FileWriter("debug/nestings.json");
-	//			StringBuilder builder = new StringBuilder();
-	//			builder.append("var root=");
-	//			root.write(builder, 0);
-	//			writer.write(builder.toString());
-	//			writer.close();
-	//		} catch (IOException e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
-	//
-	//	private void debugNestings(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> current, JsonDocument parentDoc) {
-	//		JsonDocument currentDoc = parentDoc.doc(current.accessPath.toString());
-	//		for(ResolverTemplate<Field, Fact, Stmt, Method, CallEdge<Field, Fact, Stmt, Method>> nestedAnalyzer : current.getCallEdgeResolver().nestedResolvers.values()) {
-	//			debugNestings(nestedAnalyzer.analyzer, currentDoc);
-	//		}
-	//	}
-	}
+        //	public void debugInterest() {
+        //		JsonDocument root = new JsonDocument();
+        //		
+        //		List<PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> worklist = new List();
+        //		worklist.add(this);
+        //		Set<PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method>> visited = Sets.newHashSet();
+        //		
+        //		while(!worklist.isEmpty()) {
+        //			PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> current = worklist.remove(0);
+        //			if(!visited.add(current))
+        //				continue;
+        //			
+        //			JsonDocument currentMethodDoc = root.doc(current.method.toString()+ "___"+current.sourceFact);
+        //			JsonDocument currentDoc = currentMethodDoc.doc("accPath").doc("_"+current.accessPath.toString());
+        //			
+        //			for(CallEdge<Field, Fact, Stmt, Method> incEdge : current.getCallEdgeResolver().incomingEdges) {
+        //				currentDoc.doc("incoming").doc(incEdge.getCallerAnalyzer().method+"___"+incEdge.getCallerAnalyzer().sourceFact).doc("_"+incEdge.getCallerAnalyzer().accessPath.toString());
+        //				worklist.add(incEdge.getCallerAnalyzer());
+        //			}
+        //		}
+        //		
+        //		try {
+        //			FileWriter writer = new FileWriter("debug/incoming.json");
+        //			StringBuilder builder = new StringBuilder();
+        //			builder.append("var root=");
+        //			root.write(builder, 0);
+        //			writer.write(builder.toString());
+        //			writer.close();
+        //		} catch (IOException e) {
+        //			e.printStackTrace();
+        //		}
+        //	}
+        //	
+        //	public void debugNestings() {
+        //		PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> current = this;
+        //		while(current.parent != null)
+        //			current = current.parent;
+        //		
+        //		JsonDocument root = new JsonDocument();
+        //		debugNestings(current, root);
+        //		
+        //		try {
+        //			FileWriter writer = new FileWriter("debug/nestings.json");
+        //			StringBuilder builder = new StringBuilder();
+        //			builder.append("var root=");
+        //			root.write(builder, 0);
+        //			writer.write(builder.toString());
+        //			writer.close();
+        //		} catch (IOException e) {
+        //			e.printStackTrace();
+        //		}
+        //	}
+        //
+        //	private void debugNestings(PerAccessPathMethodAnalyzer<Field, Fact, Stmt, Method> current, JsonDocument parentDoc) {
+        //		JsonDocument currentDoc = parentDoc.doc(current.accessPath.toString());
+        //		for(ResolverTemplate<Field, Fact, Stmt, Method, CallEdge<Field, Fact, Stmt, Method>> nestedAnalyzer : current.getCallEdgeResolver().nestedResolvers.values()) {
+        //			debugNestings(nestedAnalyzer.analyzer, currentDoc);
+        //		}
+        //	}
+    }
 
 }

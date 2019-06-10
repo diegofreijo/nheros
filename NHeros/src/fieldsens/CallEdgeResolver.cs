@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿using heros.fieldsens.structs;
+/// <summary>
 ///*****************************************************************************
 /// Copyright (c) 2015 Johannes Lerch.
 /// All rights reserved. This program and the accompanying materials
@@ -12,11 +13,6 @@
 /// </summary>
 namespace heros.fieldsens
 {
-	using WrappedFactAtStatement = heros.fieldsens.structs.WrappedFactAtStatement;
-
-	using Lists = com.google.common.collect.Lists;
-
-
 	internal class CallEdgeResolver<Field, Fact, Stmt, Method> : ResolverTemplate<Field, Fact, Stmt, Method, CallEdge<Field, Fact, Stmt, Method>>
 	{
 
@@ -52,7 +48,7 @@ namespace heros.fieldsens
 
 		public virtual void applySummaries(WrappedFactAtStatement<Field, Fact, Stmt, Method> factAtStmt)
 		{
-			foreach (CallEdge<Field, Fact, Stmt, Method> incEdge in Lists.newLinkedList(incomingEdges))
+			foreach (CallEdge<Field, Fact, Stmt, Method> incEdge in incomingEdges)
 			{
 				analyzer.applySummary(incEdge, factAtStmt);
 			}

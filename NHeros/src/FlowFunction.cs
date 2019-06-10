@@ -14,7 +14,6 @@
 /// </summary>
 namespace heros
 {
-
 	/// <summary>
 	/// A flow function computes which of the finitely many D-type values are reachable
 	/// from the current source values. Typically there will be one such function
@@ -34,7 +33,6 @@ namespace heros
 	/// @param <D> The type of data-flow facts to be computed by the tabulation problem. </param>
 	public interface FlowFunction<D>
 	{
-
 		/// <summary>
 		/// Returns the target values reachable from the source.
 		/// </summary>
