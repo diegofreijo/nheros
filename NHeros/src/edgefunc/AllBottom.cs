@@ -12,8 +12,6 @@
 /// </summary>
 namespace heros.edgefunc
 {
-
-
 	public class AllBottom<V> : EdgeFunction<V>
 	{
 

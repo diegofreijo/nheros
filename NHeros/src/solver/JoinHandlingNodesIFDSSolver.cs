@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using NHeros.src.util;
+using System.Collections.Generic;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,9 +15,6 @@
 /// </summary>
 namespace heros.solver
 {
-
-	using Maps = com.google.common.collect.Maps;
-
 	/// <summary>
 	/// An <seealso cref="IFDSSolver"/> that tracks paths for reporting. To do so, it requires that data-flow abstractions implement the LinkedNode interface.
 	/// The solver implements a cache of data-flow facts for each statement and source value. If for the same statement and source value the same
@@ -25,16 +23,17 @@ namespace heros.solver
 	/// 
 	/// @author Johannes Lerch
 	/// </summary>
-	public class JoinHandlingNodesIFDSSolver<N, D, M, I> : IFDSSolver<N, D, M, I> where D : JoinHandlingNode<D> where I : heros.InterproceduralCFG<N, M>
+	public class JoinHandlingNodesIFDSSolver<N, D, M, I> : IFDSSolver<N, D, M, I> 
+        where D : JoinHandlingNode<D> where I : heros.InterproceduralCFG<N, M>
 	{
 
 		public JoinHandlingNodesIFDSSolver(IFDSTabulationProblem<N, D, M, I> ifdsProblem) : base(ifdsProblem)
 		{
 		}
 
-		protected internal readonly IDictionary<CacheEntry, JoinHandlingNode<D>> cache = new Dictionary();
+		private readonly IDictionary<CacheEntry, JoinHandlingNode<D>> cache = new Dictionary<CacheEntry, JoinHandlingNode<D>>();
 
-		protected internal override void propagate(D sourceVal, N target, D targetVal, EdgeFunction<IFDSSolver.BinaryDomain> f, N relatedCallSite, bool isUnbalancedReturn)
+		protected internal override void propagate(D sourceVal, N target, D targetVal, EdgeFunction<BinaryDomain> f, N relatedCallSite, bool isUnbalancedReturn)
 		{
 			CacheEntry currentCacheEntry = new CacheEntry(this, target, sourceVal.createJoinKey(), targetVal.createJoinKey());
 
@@ -61,7 +60,7 @@ namespace heros.solver
 				base.propagate(sourceVal, target, targetVal, f, relatedCallSite, isUnbalancedReturn);
 			}
 
-		};
+		}
 
 
 		private class CacheEntry

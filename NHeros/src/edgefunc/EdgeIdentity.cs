@@ -18,16 +18,18 @@ namespace heros.edgefunc
 	/// @param <V> The type of values to be computed along flow edges. </param>
 	public class EdgeIdentity<V> : EdgeFunction<V>
 	{
+        private static readonly EdgeIdentity<V> instance = new EdgeIdentity<V>();
 
-
-//ORIGINAL LINE: @SuppressWarnings("rawtypes") private final static EdgeIdentity instance = new EdgeIdentity();
-		private static readonly EdgeIdentity instance = new EdgeIdentity();
-
-		private EdgeIdentity()
+        //use v() instead
+        private EdgeIdentity()
 		{
-		} //use v() instead
+		} 
+        public static EdgeIdentity<V> v()
+        {
+            return instance;
+        }
 
-		public virtual V computeTarget(V source)
+        public virtual V computeTarget(V source)
 		{
 			return source;
 		}
@@ -59,13 +61,6 @@ namespace heros.edgefunc
 		{
 			//singleton
 			return other == this;
-		}
-
-
-//ORIGINAL LINE: @SuppressWarnings("unchecked") public static <A> EdgeIdentity<A> v()
-		public static EdgeIdentity<A> v<A>()
-		{
-			return instance;
 		}
 
 		public override string ToString()

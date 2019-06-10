@@ -125,6 +125,7 @@
     <Compile Include="src\utilities\DefaultValueMap.cs" />
     <Compile Include="src\utilities\JsonArray.cs" />
     <Compile Include="src\utilities\JsonDocument.cs" />
+    <Compile Include="src\util\HashTable.cs" />
     <Compile Include="src\util\LoadingCache.cs" />
     <Compile Include="src\util\Multimap.cs" />
     <Compile Include="src\util\Multiset.cs" />

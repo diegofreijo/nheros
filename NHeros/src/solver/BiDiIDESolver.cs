@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
+using NHeros.src.util;
 
 /// <summary>
 ///*****************************************************************************
@@ -17,11 +18,6 @@ using System.Diagnostics;
 /// </summary>
 namespace heros.solver
 {
-	using BinaryDomain = heros.solver.IFDSSolver.BinaryDomain;
-
-
-	using Maps = com.google.common.collect.Maps;
-
 	/// <summary>
 	/// This is a special IFDS solver that solves the analysis problem inside out, i.e., from further down the call stack to
 	/// further up the call stack. This can be useful, for instance, for taint analysis problems that track flows in two directions.
@@ -46,7 +42,7 @@ namespace heros.solver
 
 		private readonly IDETabulationProblem<N, AbstractionWithSourceStmt, M, V, I> forwardProblem;
 		private readonly IDETabulationProblem<N, AbstractionWithSourceStmt, M, V, I> backwardProblem;
-		private readonly CountingThreadPoolExecutor sharedExecutor;
+		//private readonly CountingThreadPoolExecutor sharedExecutor;
 		protected internal SingleDirectionSolver fwSolver;
 		protected internal SingleDirectionSolver bwSolver;
 
@@ -61,7 +57,7 @@ namespace heros.solver
 			}
 			this.forwardProblem = new AugmentedTabulationProblem(this, forwardProblem);
 			this.backwardProblem = new AugmentedTabulationProblem(this, backwardProblem);
-			this.sharedExecutor = new CountingThreadPoolExecutor(1, Math.Max(1,forwardProblem.numThreads()), 30, TimeUnit.SECONDS, new LinkedBlockingQueue<ThreadStart>());
+			//this.sharedExecutor = new CountingThreadPoolExecutor(1, Math.Max(1,forwardProblem.numThreads()), 30, TimeUnit.SECONDS, new LinkedBlockingQueue<ThreadStart>());
 		}
 
 		public virtual void solve()
@@ -108,8 +104,10 @@ namespace heros.solver
 		}
 
 		/// <summary>
-		///  Data structure used to identify which edges can be unpaused by a <seealso cref="SingleDirectionSolver"/>. Each <seealso cref="SingleDirectionSolver"/> stores 
-		///  its leaks using this structure. A leak always requires a flow from some <seealso cref="sourceStmt"/> (this is either the statement used as initial seed
+		///  Data structure used to identify which edges can be unpaused by a <seealso cref="SingleDirectionSolver"/>. 
+        ///  Each <seealso cref="SingleDirectionSolver"/> stores 
+		///  its leaks using this structure. A leak always requires a flow from some 
+        ///  <seealso cref="sourceStmt"/> (this is either the statement used as initial seed
 		///  or a call site of an unbalanced return) to a return site. This return site is always different for the forward and backward solvers,
 		///  but, the related call site of these return sites must be the same, if two entangled flows exist. 
 		///  Moreover, this structure represents the pair of such a <seealso cref="sourceStmt"/> and the <seealso cref="relatedCallSite"/>.
@@ -147,11 +145,11 @@ namespace heros.solver
 				{
 					return false;
 				}
-				if (!(obj is LeakKey))
+				if (!(obj is LeakKey<N>))
 				{
 					return false;
 				}
-				LeakKey other = (LeakKey) obj;
+				LeakKey<N> other = (LeakKey<N>) obj;
 				if (Utils.IsDefault(relatedCallSite))
 				{
 					if (!Utils.IsDefault(other.relatedCallSite))
@@ -187,10 +185,13 @@ namespace heros.solver
 
 			internal readonly string debugName;
 			internal SingleDirectionSolver otherSolver;
-			internal ISet<LeakKey<N>> leakedSources = Collections.newSetFromMap(Maps.newConcurrentMap<LeakKey<N>, bool>());
-			internal ConcurrentMap<LeakKey<N>, ISet<PausedEdge>> pausedPathEdges = Maps.newConcurrentMap();
+            ISet<LeakKey<N>> leakedSources = new HashSet<LeakKey<N>>(); // Collections.newSetFromMap(Maps.newConcurrentMap<LeakKey<N>, bool>());
+            IDictionary<LeakKey<N>, ISet<PausedEdge>> pausedPathEdges = new Dictionary<LeakKey<N>, ISet<PausedEdge>>(); // Maps.newConcurrentMap();
 
-			public SingleDirectionSolver(BiDiIDESolver<N, D, M, V, I> outerInstance, IDETabulationProblem<N, AbstractionWithSourceStmt, M, V, I> ifdsProblem, string debugName) : base(ifdsProblem)
+            public SingleDirectionSolver(BiDiIDESolver<N, D, M, V, I> outerInstance, 
+                IDETabulationProblem<N, AbstractionWithSourceStmt, M, V, I> ifdsProblem, 
+                string debugName) 
+                : base(ifdsProblem)
 			{
 				this.outerInstance = outerInstance;
 				this.debugName = debugName;

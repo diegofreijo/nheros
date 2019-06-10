@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using heros.edgefunc;
+using System.Collections.Generic;
 
 /// <summary>
 ///*****************************************************************************
@@ -14,15 +15,6 @@
 /// </summary>
 namespace heros.solver
 {
-
-//	import static heros.solver.IFDSSolver.BinaryDomain.BOTTOM;
-
-//	import static heros.solver.IFDSSolver.BinaryDomain.TOP;
-	using AllBottom = heros.edgefunc.AllBottom;
-	using AllTop = heros.edgefunc.AllTop;
-	using EdgeIdentity = heros.edgefunc.EdgeIdentity;
-
-
 	/// <summary>
 	/// A solver for an <seealso cref="IFDSTabulationProblem"/>. This solver in effect uses the <seealso cref="IDESolver"/>
 	/// to solve the problem, as any IFDS problem can be intepreted as a special case of an IDE problem.
@@ -34,8 +26,9 @@ namespace heros.solver
 	/// @param <M> The type of objects used to represent methods. Typically <seealso cref="SootMethod"/>. </param>
 	/// @param <I> The type of inter-procedural control-flow graph being used. </param>
 	/// <seealso cref= IFDSTabulationProblem </seealso>
-	public class IFDSSolver<N, D, M, I> : IDESolver<N, D, M, IFDSSolver.BinaryDomain, I> where I : heros.InterproceduralCFG<N, M>
-	{
+	public class IFDSSolver<N, D, M, I> : IDESolver<N, D, M, IFDSSolver<N, D, M, I>.BinaryDomain, I> 
+        where I : InterproceduralCFG<N, M>
+    {
 
 		protected internal enum BinaryDomain
 		{
@@ -43,22 +36,18 @@ namespace heros.solver
 			BOTTOM
 		}
 
-		private static readonly EdgeFunction<BinaryDomain> ALL_BOTTOM = new AllBottom<BinaryDomain>(BOTTOM);
+		private static readonly EdgeFunction<BinaryDomain> ALL_BOTTOM = new AllBottom<BinaryDomain>(BinaryDomain.BOTTOM);
 
 		/// <summary>
 		/// Creates a solver for the given problem. The solver must then be started by calling
 		/// <seealso cref="solve()"/>.
 		/// </summary>
-
-//ORIGINAL LINE: public IFDSSolver(final heros.IFDSTabulationProblem<N,D,M,I> ifdsProblem)
-		public IFDSSolver(IFDSTabulationProblem<N, D, M, I> ifdsProblem) : base(createIDETabulationProblem(ifdsProblem))
+        public IFDSSolver(IFDSTabulationProblem<N, D, M, I> ifdsProblem) : base(createIDETabulationProblem(ifdsProblem))
 		{
 		}
 
-
-//ORIGINAL LINE: static <N, D, M, I extends heros.InterproceduralCFG<N, M>> heros.IDETabulationProblem<N, D, M, BinaryDomain, I> createIDETabulationProblem(final heros.IFDSTabulationProblem<N, D, M, I> ifdsProblem)
-		internal static IDETabulationProblem<N, D, M, BinaryDomain, I> createIDETabulationProblem<N, D, M, I>(IFDSTabulationProblem<N, D, M, I> ifdsProblem) where I : heros.InterproceduralCFG<N, M>
-		{
+        internal static IDETabulationProblem<N, D, M, BinaryDomain, I> createIDETabulationProblem(IFDSTabulationProblem<N, D, M, I> ifdsProblem) 
+        {
 			return new IDETabulationProblemAnonymousInnerClass(ifdsProblem);
 		}
 
@@ -94,7 +83,7 @@ namespace heros.solver
 
 			public EdgeFunctions<N, D, M, BinaryDomain> edgeFunctions()
 			{
-				return new IFDSEdgeFunctions();
+				return new IFDSEdgeFunctions(this);
 			}
 
 			public JoinLattice<BinaryDomain> joinLattice()
@@ -124,20 +113,20 @@ namespace heros.solver
 
 				public BinaryDomain join(BinaryDomain left, BinaryDomain right)
 				{
-					if (left == TOP && right == TOP)
+					if (left == BinaryDomain.TOP && right == BinaryDomain.TOP)
 					{
-						return TOP;
+						return BinaryDomain.TOP;
 					}
 					else
 					{
-						return BOTTOM;
+						return BinaryDomain.BOTTOM;
 					}
 				}
 			}
 
 			public EdgeFunction<BinaryDomain> allTopFunction()
 			{
-				return new AllTop<BinaryDomain>(TOP);
+				return new AllTop<BinaryDomain>(BinaryDomain.TOP);
 			}
 
 			public bool followReturnsPastSeeds()
@@ -162,48 +151,47 @@ namespace heros.solver
 
 			internal class IFDSEdgeFunctions : EdgeFunctions<N, D, M, BinaryDomain>
 			{
-				private readonly IFDSSolver.IDETabulationProblemAnonymousInnerClass outerInstance;
+				private readonly IDETabulationProblemAnonymousInnerClass outerInstance;
 
-				public IFDSEdgeFunctions(IFDSSolver.IDETabulationProblemAnonymousInnerClass outerInstance)
+				public IFDSEdgeFunctions(IDETabulationProblemAnonymousInnerClass outerInstance)
 				{
 					this.outerInstance = outerInstance;
 				}
 
-
 				public virtual EdgeFunction<BinaryDomain> getNormalEdgeFunction(N src, D srcNode, N tgt, D tgtNode)
 				{
-					if (srcNode == outerInstance.ifdsProblem.zeroValue())
+					if (srcNode.Equals(outerInstance.ifdsProblem.zeroValue()))
 					{
 						return ALL_BOTTOM;
 					}
-					return EdgeIdentity.v();
+					return EdgeIdentity<BinaryDomain>.v();
 				}
 
 				public virtual EdgeFunction<BinaryDomain> getCallEdgeFunction(N callStmt, D srcNode, M destinationMethod, D destNode)
 				{
-					if (srcNode == outerInstance.ifdsProblem.zeroValue())
+					if (srcNode.Equals(outerInstance.ifdsProblem.zeroValue()))
 					{
 						return ALL_BOTTOM;
 					}
-					return EdgeIdentity.v();
+					return EdgeIdentity<BinaryDomain>.v();
 				}
 
 				public virtual EdgeFunction<BinaryDomain> getReturnEdgeFunction(N callSite, M calleeMethod, N exitStmt, D exitNode, N returnSite, D retNode)
 				{
-					if (exitNode == outerInstance.ifdsProblem.zeroValue())
+					if (exitNode.Equals(outerInstance.ifdsProblem.zeroValue()))
 					{
 						return ALL_BOTTOM;
 					}
-					return EdgeIdentity.v();
+					return EdgeIdentity<BinaryDomain>.v();
 				}
 
 				public virtual EdgeFunction<BinaryDomain> getCallToReturnEdgeFunction(N callStmt, D callNode, N returnSite, D returnSideNode)
 				{
-					if (callNode == outerInstance.ifdsProblem.zeroValue())
+					if (callNode.Equals(outerInstance.ifdsProblem.zeroValue()))
 					{
 						return ALL_BOTTOM;
 					}
-					return EdgeIdentity.v();
+					return EdgeIdentity<BinaryDomain>.v();
 				}
 			}
 
@@ -217,7 +205,7 @@ namespace heros.solver
 		/// <summary>
 		/// Returns the set of facts that hold at the given statement.
 		/// </summary>
-		public virtual ISet<D> ifdsResultsAt(N statement)
+		public virtual ICollection<D> ifdsResultsAt(N statement)
 		{
 			return resultsAt(statement).Keys;
 		}

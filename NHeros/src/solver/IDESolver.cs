@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
 using heros.edgefunc;
+using NHeros.src.util;
+using NHeros.src.solver;
+using System.Linq;
 
 /// <summary>
 ///*****************************************************************************
@@ -36,24 +39,27 @@ namespace heros.solver
 	/// @param <M> The type of objects used to represent methods. </param>
 	/// @param <V> The type of values to be computed along flow edges. </param>
 	/// @param <I> The type of inter-procedural control-flow graph being used. </param>
-	public class IDESolver<N, D, M, V, I> where I : heros.InterproceduralCFG<N, M>
-	{
-		public static CacheBuilder<object, object> DEFAULT_CACHE_BUILDER = CacheBuilder.newBuilder().concurrencyLevel(Runtime.Runtime.availableProcessors()).initialCapacity(10000).softValues();
+	public class IDESolver<N, D, M, V, I> where I : InterproceduralCFG<N, M>
+    {
+		//public static CacheBuilder<object, object> DEFAULT_CACHE_BUILDER = 
+  //          CacheBuilder.newBuilder()
+  //              .concurrencyLevel(Runtime.Runtime.availableProcessors())
+  //              .initialCapacity(10000).softValues();
 
-		protected internal static readonly Logger logger = LoggerFactory.getLogger(typeof(IDESolver));
+        //protected internal static readonly Logger logger = LoggerFactory.getLogger(typeof(IDESolver));
+
+        [SynchronizedBy("consistent lock on field")]
+        protected internal Table<N, N, IDictionary<D, ISet<D>>> computedIntraPEdges = new Table<N, N, IDictionary<D, ISet<D>>>();
 
 		[SynchronizedBy("consistent lock on field")]
-		protected internal IDictionary<Pair<N, N>, IDictionary<D, ISet<D>>> computedIntraPEdges = HashBasedTable.create();
+		protected internal Table<N, N, IDictionary<D, ISet<D>>> computedInterPEdges = new Table<N, N, IDictionary<D, ISet<D>>>();
 
-		[SynchronizedBy("consistent lock on field")]
-		protected internal IDictionary<Pair<N, N>, IDictionary<D, ISet<D>>> computedInterPEdges = HashBasedTable.create();
+        //enable with -Dorg.slf4j.simpleLogger.defaultLogLevel=trace
+        //public static bool DEBUG = logger.DebugEnabled;
 
-		//enable with -Dorg.slf4j.simpleLogger.defaultLogLevel=trace
-		public static bool DEBUG = logger.DebugEnabled;
+        protected internal DummyExecutor executor;
 
-		protected internal CountingThreadPoolExecutor executor;
-
-		[DontSynchronize("only used by single thread")]
+        [DontSynchronize("only used by single thread")]
 		protected internal int numThreads;
 
 		[SynchronizedBy("thread safe data structure, consistent locking when used")]
@@ -62,17 +68,15 @@ namespace heros.solver
 		[SynchronizedBy("thread safe data structure, only modified internally")]
 		protected internal readonly I icfg;
 
-		//stores summaries that were queried before they were computed
-		//see CC 2010 paper by Naeem, Lhotak and Rodriguez
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
-		[SynchronizedBy("consistent lock on 'incoming'")]
-		protected internal readonly Table<N, D, Table<N, D, EdgeFunction<V>>> endSummary_Conflict = HashBasedTable.create();
+        //stores summaries that were queried before they were computed
+        //see CC 2010 paper by Naeem, Lhotak and Rodriguez
+        [SynchronizedBy("consistent lock on 'incoming'")]
+        protected internal readonly Table<N, D, Table<N, D, EdgeFunction<V>>> endSummary_Conflict = new Table<N, D, Table<N, D, EdgeFunction<V>>>();
 
-		//edges going along calls
-		//see CC 2010 paper by Naeem, Lhotak and Rodriguez
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
-		[SynchronizedBy("consistent lock on field")]
-		protected internal readonly Table<N, D, IDictionary<N, ISet<D>>> incoming_Conflict = HashBasedTable.create();
+        //edges going along calls
+        //see CC 2010 paper by Naeem, Lhotak and Rodriguez
+        [SynchronizedBy("consistent lock on field")]
+        protected internal readonly Table<N, D, IDictionary<N, ISet<D>>> incoming_Conflict = new Table<N, D, IDictionary<N, ISet<D>>>();
 
 		//stores the return sites (inside callers) to which we have unbalanced returns
 		//if followReturnPastSeeds is enabled
@@ -94,9 +98,8 @@ namespace heros.solver
 		[DontSynchronize("stateless")]
 		protected internal readonly EdgeFunction<V> allTop;
 
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
-		[SynchronizedBy("consistent lock on field")]
-		protected internal readonly Table<N, D, V> val_Conflict = HashBasedTable.create();
+        [SynchronizedBy("consistent lock on field")]
+        protected internal readonly Table<N, D, V> val_Conflict = new Table<N, D, V>();
 
 		[DontSynchronize("benign races")]
 		public long flowFunctionApplicationCount;
@@ -125,7 +128,6 @@ namespace heros.solver
 		[DontSynchronize("readOnly")]
 		protected internal readonly bool followReturnsPastSeeds;
 
-//JAVA TO C# CONVERTER NOTE: Fields cannot have the same name as methods:
 		[DontSynchronize("readOnly")]
 		protected internal readonly bool computeValues_Conflict;
 
@@ -135,62 +137,65 @@ namespace heros.solver
 		/// Creates a solver for the given problem, which caches flow functions and edge functions.
 		/// The solver must then be started by calling <seealso cref="solve()"/>.
 		/// </summary>
-		public IDESolver(IDETabulationProblem<N, D, M, V, I> tabulationProblem) : this(tabulationProblem, DEFAULT_CACHE_BUILDER, DEFAULT_CACHE_BUILDER)
-		{
-		}
+		//public IDESolver(IDETabulationProblem<N, D, M, V, I> tabulationProblem) : this(tabulationProblem, DEFAULT_CACHE_BUILDER, DEFAULT_CACHE_BUILDER)
+		//{
+		//}
 
 		/// <summary>
 		/// Creates a solver for the given problem, constructing caches with the given <seealso cref="CacheBuilder"/>. The solver must then be started by calling
 		/// <seealso cref="solve()"/>. </summary>
 		/// <param name="flowFunctionCacheBuilder"> A valid <seealso cref="CacheBuilder"/> or <code>null</code> if no caching is to be used for flow functions. </param>
 		/// <param name="edgeFunctionCacheBuilder"> A valid <seealso cref="CacheBuilder"/> or <code>null</code> if no caching is to be used for edge functions. </param>
-		public IDESolver(IDETabulationProblem<N, D, M, V, I> tabulationProblem, CacheBuilder flowFunctionCacheBuilder, CacheBuilder edgeFunctionCacheBuilder)
+		public IDESolver(IDETabulationProblem<N, D, M, V, I> tabulationProblem) //, CacheBuilder flowFunctionCacheBuilder, CacheBuilder edgeFunctionCacheBuilder)
 		{
-			if (logger.DebugEnabled)
-			{
-				if (flowFunctionCacheBuilder != null)
-				{
-					flowFunctionCacheBuilder = flowFunctionCacheBuilder.recordStats();
-				}
-				if (edgeFunctionCacheBuilder != null)
-				{
-					edgeFunctionCacheBuilder = edgeFunctionCacheBuilder.recordStats();
-				}
-			}
+			//if (logger.DebugEnabled)
+			//{
+			//	if (flowFunctionCacheBuilder != null)
+			//	{
+			//		flowFunctionCacheBuilder = flowFunctionCacheBuilder.recordStats();
+			//	}
+			//	if (edgeFunctionCacheBuilder != null)
+			//	{
+			//		edgeFunctionCacheBuilder = edgeFunctionCacheBuilder.recordStats();
+			//	}
+			//}
 			this.zeroValue = tabulationProblem.zeroValue();
 			this.icfg = tabulationProblem.interproceduralCFG();
 			FlowFunctions<N, D, M> flowFunctions = tabulationProblem.autoAddZero() ? new ZeroedFlowFunctions<N, D, M>(tabulationProblem.flowFunctions(), tabulationProblem.zeroValue()) : tabulationProblem.flowFunctions();
 			EdgeFunctions<N, D, M, V> edgeFunctions = tabulationProblem.edgeFunctions();
-			if (flowFunctionCacheBuilder != null)
-			{
-				ffCache = new FlowFunctionCache<N, D, M>(flowFunctions, flowFunctionCacheBuilder);
-				flowFunctions = ffCache;
-			}
-			else
-			{
+
+   //         if (flowFunctionCacheBuilder != null)
+			//{
+			//	ffCache = new FlowFunctionCache<N, D, M>(flowFunctions, flowFunctionCacheBuilder);
+			//	flowFunctions = ffCache;
+			//}
+			//else
+			//{
 				ffCache = null;
-			}
-			if (edgeFunctionCacheBuilder != null)
-			{
-				efCache = new EdgeFunctionCache<N, D, M, V>(edgeFunctions, edgeFunctionCacheBuilder);
-				edgeFunctions = efCache;
-			}
-			else
-			{
+			//}
+
+			//if (edgeFunctionCacheBuilder != null)
+			//{
+			//	efCache = new EdgeFunctionCache<N, D, M, V>(edgeFunctions, edgeFunctionCacheBuilder);
+			//	edgeFunctions = efCache;
+			//}
+			//else
+			//{
 				efCache = null;
-			}
+			//}
+
 			this.flowFunctions = flowFunctions;
 			this.edgeFunctions = edgeFunctions;
 			this.initialSeeds = tabulationProblem.initialSeeds();
-			this.unbalancedRetSites = Collections.newSetFromMap(new ConcurrentDictionary<N, bool>());
+            this.unbalancedRetSites = new HashSet<N>(); // Collections.newSetFromMap(new ConcurrentDictionary<N, bool>());
 			this.valueLattice = tabulationProblem.joinLattice();
 			this.allTop = tabulationProblem.allTopFunction();
 			this.jumpFn = new JumpFunctions<N, D, V>(allTop);
 			this.followReturnsPastSeeds = tabulationProblem.followReturnsPastSeeds();
 			this.numThreads = Math.Max(1,tabulationProblem.numThreads());
 			this.computeValues_Conflict = tabulationProblem.computeValues();
-			this.executor = Executor;
-			this.recordEdges = tabulationProblem.recordEdges();
+            this.executor = Executor;
+            this.recordEdges = tabulationProblem.recordEdges();
 		}
 
 		/// <summary>
@@ -214,9 +219,9 @@ namespace heros.solver
 				N startPoint = seed.Key;
 				foreach (D val in seed.Value)
 				{
-					propagate(zeroValue, startPoint, val, EdgeIdentity.v<V>(), null, false);
+					propagate(zeroValue, startPoint, val, EdgeIdentity<V>.v(), default, false);
 				}
-				jumpFn.addFunction(zeroValue, startPoint, zeroValue, EdgeIdentity.v<V>());
+				jumpFn.addFunction(zeroValue, startPoint, zeroValue, EdgeIdentity<V>.v());
 			}
 		}
 
@@ -226,26 +231,21 @@ namespace heros.solver
 		/// </summary>
 		protected internal virtual void awaitCompletionComputeValuesAndShutdown()
 		{
-			{
+			long before = DateTimeHelper.CurrentUnixTimeMillis();
+			//run executor and await termination of tasks
+			runExecutorAndAwaitCompletion();
+			durationFlowFunctionConstruction = DateTimeHelper.CurrentUnixTimeMillis() - before;
 
-//ORIGINAL LINE: final long before = System.currentTimeMillis();
-				long before = DateTimeHelper.CurrentUnixTimeMillis();
-				//run executor and await termination of tasks
-				runExecutorAndAwaitCompletion();
-				durationFlowFunctionConstruction = DateTimeHelper.CurrentUnixTimeMillis() - before;
-			}
 			if (computeValues_Conflict)
 			{
-
-//ORIGINAL LINE: final long before = System.currentTimeMillis();
-				long before = DateTimeHelper.CurrentUnixTimeMillis();
+				before = DateTimeHelper.CurrentUnixTimeMillis();
 				computeValues();
 				durationFlowFunctionApplication = DateTimeHelper.CurrentUnixTimeMillis() - before;
 			}
-			if (logger.DebugEnabled)
-			{
-				printStats();
-			}
+			//if (logger.DebugEnabled)
+			//{
+			//	printStats();
+			//}
 
 			//ask executor to shut down;
 			//this will cause new submissions to the executor to be rejected,
@@ -353,7 +353,7 @@ namespace heros.solver
 			D d1 = edge.factAtSource();
 			N n = edge.Target; // a call node; line 14...
 
-			logger.trace("Processing call to {}", n);
+			//logger.trace("Processing call to {}", n);
 
 			D d2 = edge.factAtTarget();
 			EdgeFunction<V> f = jumpFunction(edge);
@@ -377,23 +377,23 @@ namespace heros.solver
 					foreach (D d3 in res)
 					{
 						//create initial self-loop
-						propagate(d3, sP, d3, EdgeIdentity.v<V>(), n, false); //line 15
+						propagate(d3, sP, d3, EdgeIdentity<V>.v(), n, false); //line 15
 
-						//register the fact that <sp,d3> has an incoming edge from <n,d2>
-						ISet<Table.Cell<N, D, EdgeFunction<V>>> endSumm;
+                        //register the fact that <sp,d3> has an incoming edge from <n,d2>
+                        ISet<Table<N, D, EdgeFunction<V>>.Cell> endSumm;
 						lock (incoming_Conflict)
 						{
 							//line 15.1 of Naeem/Lhotak/Rodriguez
 							addIncoming(sP,d3,n,d2);
 							//line 15.2, copy to avoid concurrent modification exceptions by other threads
-							endSumm = new HashSet<Table.Cell<N, D, EdgeFunction<V>>>(endSummary(sP, d3));
+							endSumm = new HashSet<Table<N, D, EdgeFunction<V>>.Cell>(endSummary(sP, d3));
 						}
 
 						//still line 15.2 of Naeem/Lhotak/Rodriguez
 						//for each already-queried exit value <eP,d4> reachable from <sP,d3>,
 						//create new caller-side jump functions to the return sites
 						//because we have observed a potentially new incoming edge into <sP,d3>
-						foreach (Table.Cell<N, D, EdgeFunction<V>> entry in endSumm)
+						foreach (var entry in endSumm)
 						{
 							N eP = entry.RowKey;
 							D d4 = entry.ColumnKey;
@@ -404,7 +404,7 @@ namespace heros.solver
 								//compute return-flow function
 								FlowFunction<D> retFunction = flowFunctions.getReturnFlowFunction(n, sCalledProcN, eP, retSiteN);
 								flowFunctionConstructionCount++;
-								ISet<D> returnedFacts = computeReturnFlowFunction(retFunction, d3, d4, n, Collections.singleton(d2));
+								ISet<D> returnedFacts = computeReturnFlowFunction(retFunction, d3, d4, n, new HashSet<D>() { d2 });
 								saveEdges(eP, retSiteN, d4, returnedFacts, true);
 								//for each target value of the function
 								foreach (D d5 in returnedFacts)
@@ -554,7 +554,7 @@ namespace heros.solver
 						{
 							FlowFunction<D> retFunction = flowFunctions.getReturnFlowFunction(c, methodThatNeedsSummary,n,retSiteC);
 							flowFunctionConstructionCount++;
-							ISet<D> targets = computeReturnFlowFunction(retFunction, d1, d2, c, Collections.singleton(zeroValue));
+							ISet<D> targets = computeReturnFlowFunction(retFunction, d1, d2, c, new HashSet<D>() { zeroValue });
 							saveEdges(n, retSiteC, d2, targets, true);
 							foreach (D d5 in targets)
 							{
@@ -594,15 +594,13 @@ namespace heros.solver
 		/// <param name="d5">
 		///            Fact that originally should be propagated to the caller. </param>
 		/// <returns> Fact that will be propagated to the caller. </returns>
-
-//ORIGINAL LINE: @SuppressWarnings("unchecked") protected D restoreContextOnReturnedFact(N callSite, D d4, D d5)
 		protected internal virtual D restoreContextOnReturnedFact(N callSite, D d4, D d5)
 		{
-			if (d5 is LinkedNode)
+			if (d5 is LinkedNode<D>)
 			{
 				((LinkedNode<D>) d5).CallingContext = d4;
 			}
-			if (d5 is JoinHandlingNode)
+			if (d5 is JoinHandlingNode<D>)
 			{
 				((JoinHandlingNode<D>) d5).CallingContext = d4;
 			}
@@ -629,14 +627,8 @@ namespace heros.solver
 		/// <param name="edge"> </param>
 		private void processNormalFlow(PathEdge<N, D> edge)
 		{
-
-//ORIGINAL LINE: final D d1 = edge.factAtSource();
 			D d1 = edge.factAtSource();
-
-//ORIGINAL LINE: final N n = edge.getTarget();
 			N n = edge.Target;
-
-//ORIGINAL LINE: final D d2 = edge.factAtTarget();
 			D d2 = edge.factAtTarget();
 
 			EdgeFunction<V> f = jumpFunction(edge);
@@ -649,7 +641,7 @@ namespace heros.solver
 				foreach (D d3 in res)
 				{
 					EdgeFunction<V> fprime = f.composeWith(edgeFunctions.getNormalEdgeFunction(n, d2, m, d3));
-					propagate(d1, m, d3, fprime, null, false);
+					propagate(d1, m, d3, fprime, default, false);
 				}
 			}
 		}
@@ -702,9 +694,9 @@ namespace heros.solver
 				PathEdge<N, D> edge = new PathEdge<N, D>(sourceVal, target, targetVal);
 				scheduleEdgeProcessing(edge);
 
-				if (targetVal != zeroValue)
+				if (targetVal.Equals(zeroValue))
 				{
-					logger.trace("{} - EDGE: <{},{}> -> <{},{}> - {}", DebugName, icfg.getMethodOf(target), sourceVal, target, targetVal, fPrime);
+					//logger.trace("{} - EDGE: <{},{}> -> <{},{}> - {}", DebugName, icfg.getMethodOf(target), sourceVal, target, targetVal, fPrime);
 				}
 			}
 		}
@@ -715,7 +707,7 @@ namespace heros.solver
 		private void computeValues()
 		{
 			//Phase II(i)
-			logger.debug("Computing the final values for the edge functions");
+			//logger.debug("Computing the final values for the edge functions");
 			//add caller seeds to initial seeds in an unbalanced problem
 			IDictionary<N, ISet<D>> allSeeds = new Dictionary<N, ISet<D>>(initialSeeds);
 			foreach (N unbalancedRetSite in unbalancedRetSites)
@@ -739,13 +731,13 @@ namespace heros.solver
 					scheduleValueProcessing(new ValuePropagationTask(this, superGraphNode));
 				}
 			}
-			logger.debug("Computed the final values of the edge functions");
+			//logger.debug("Computed the final values of the edge functions");
 			//await termination of tasks
 			try
 			{
 				executor.awaitCompletion();
 			}
-			catch (InterruptedException e)
+			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
 				Console.Write(e.StackTrace);
@@ -754,9 +746,7 @@ namespace heros.solver
 			//Phase II(ii)
 			//we create an array of all nodes and then dispatch fractions of this array to multiple threads
 			ISet<N> allNonCallStartNodes = icfg.allNonCallStartNodes();
-
-//ORIGINAL LINE: @SuppressWarnings("unchecked") N[] nonCallStartNodesArray = (N[]) new Object[allNonCallStartNodes.size()];
-			N[] nonCallStartNodesArray = (N[]) new object[allNonCallStartNodes.Count];
+			N[] nonCallStartNodesArray = new N[allNonCallStartNodes.Count];
 			int i = 0;
 			foreach (N n in allNonCallStartNodes)
 			{
@@ -774,7 +764,7 @@ namespace heros.solver
 			{
 				executor.awaitCompletion();
 			}
-			catch (InterruptedException e)
+			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
 				Console.Write(e.StackTrace);
@@ -863,7 +853,7 @@ namespace heros.solver
 			// TOP is the implicit default value which we do not need to store.
 			lock (val_Conflict)
 			{
-				if (l == valueLattice.topElement()) // do not store top values
+				if (l.Equals(valueLattice.topElement())) // do not store top values
 				{
 					val_Conflict.remove(nHashN, nHashD);
 				}
@@ -872,7 +862,8 @@ namespace heros.solver
 					val_Conflict.put(nHashN, nHashD,l);
 				}
 			}
-			logger.debug("VALUE: {} {} {} {}", icfg.getMethodOf(nHashN), nHashN, nHashD, l);
+
+			//logger.debug("VALUE: {} {} {} {}", icfg.getMethodOf(nHashN), nHashN, nHashD, l);
 		}
 
 		private EdgeFunction<V> jumpFunction(PathEdge<N, D> edge)
@@ -888,24 +879,24 @@ namespace heros.solver
 			}
 		}
 
-		protected internal virtual ISet<Table.Cell<N, D, EdgeFunction<V>>> endSummary(N sP, D d3)
+		protected internal virtual IEnumerable<Table<N, D, EdgeFunction<V>>.Cell> endSummary(N sP, D d3)
 		{
-			Table<N, D, EdgeFunction<V>> map = endSummary_Conflict.get(sP, d3);
-			if (map == null)
-			{
-				return Collections.emptySet();
-			}
-			return map.cellSet();
-		}
+            Table<N, D, EdgeFunction<V>> map = endSummary_Conflict.get(sP, d3);
+            if (map == null)
+                return new HashSet<Table<N, D, EdgeFunction<V>>.Cell>();
+            else
+                return map.cellSet();
+        }
 
 		private void addEndSummary(N sP, D d1, N eP, D d2, EdgeFunction<V> f)
 		{
 			Table<N, D, EdgeFunction<V>> summaries = endSummary_Conflict.get(sP, d1);
 			if (summaries == null)
 			{
-				summaries = HashBasedTable.create();
+				summaries = new Table<N, D, EdgeFunction<V>>();
 				endSummary_Conflict.put(sP, d1, summaries);
 			}
+
 			//note: at this point we don't need to join with a potential previous f
 			//because f is a jump function, which is already properly joined
 			//within propagate(..)
@@ -919,7 +910,7 @@ namespace heros.solver
 				IDictionary<N, ISet<D>> map = incoming_Conflict.get(sP, d1);
 				if (map == null)
 				{
-					return Collections.emptyMap();
+					return new Dictionary<N, ISet<D>>();
 				}
 				return map;
 			}
@@ -962,35 +953,21 @@ namespace heros.solver
 		/// </summary>
 		public virtual IDictionary<D, V> resultsAt(N stmt)
 		{
-			//filter out the artificial zero-value
-			//no need to synchronize here as all threads are known to have terminated
-			return Maps.filterKeys(val_Conflict.row(stmt), new PredicateAnonymousInnerClass(this));
-		}
-
-		private class PredicateAnonymousInnerClass : Predicate<D>
-		{
-			private readonly IDESolver<N, D, M, V, I> outerInstance;
-
-			public PredicateAnonymousInnerClass(IDESolver<N, D, M, V, I> outerInstance)
-			{
-				this.outerInstance = outerInstance;
-			}
-
-
-			public bool apply(D val)
-			{
-				return val != outerInstance.zeroValue;
-			}
+            //filter out the artificial zero-value
+            //no need to synchronize here as all threads are known to have terminated
+            return val_Conflict.row(stmt)
+                .Where(kvp => !kvp.Value.Equals(this.zeroValue))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 		}
 
 		/// <summary>
 		/// Factory method for this solver's thread-pool executor.
 		/// </summary>
-		protected internal virtual CountingThreadPoolExecutor Executor
+		protected internal virtual DummyExecutor Executor
 		{
 			get
 			{
-				return new CountingThreadPoolExecutor(1, this.numThreads, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<ThreadStart>());
+				return new DummyExecutor(1, numThreads, 30, new Queue<ThreadStart>());
 			}
 		}
 
@@ -1008,58 +985,58 @@ namespace heros.solver
 
 		public virtual void printStats()
 		{
-			if (logger.DebugEnabled)
-			{
-				if (ffCache != null)
-				{
-					ffCache.printStats();
-				}
-				if (efCache != null)
-				{
-					efCache.printStats();
-				}
-			}
-			else
-			{
-				logger.info("No statistics were collected, as DEBUG is disabled.");
-			}
+			//if (logger.DebugEnabled)
+			//{
+			//	if (ffCache != null)
+			//	{
+			//		ffCache.printStats();
+			//	}
+			//	if (efCache != null)
+			//	{
+			//		efCache.printStats();
+			//	}
+			//}
+			//else
+			//{
+			//	logger.info("No statistics were collected, as DEBUG is disabled.");
+			//}
 		}
 
-		private class PathEdgeProcessingTask : ThreadStart
-		{
-			private readonly IDESolver<N, D, M, V, I> outerInstance;
+        private class PathEdgeProcessingTask : ITask
+        {
+            private readonly IDESolver<N, D, M, V, I> outerInstance;
 
-			internal readonly PathEdge<N, D> edge;
+            internal readonly PathEdge<N, D> edge;
 
-			public PathEdgeProcessingTask(IDESolver<N, D, M, V, I> outerInstance, PathEdge<N, D> edge)
-			{
-				this.outerInstance = outerInstance;
-				this.edge = edge;
-			}
+            public PathEdgeProcessingTask(IDESolver<N, D, M, V, I> outerInstance, PathEdge<N, D> edge)
+            {
+                this.outerInstance = outerInstance;
+                this.edge = edge;
+            }
 
-			public virtual void run()
-			{
-				if (outerInstance.icfg.isCallStmt(edge.Target))
-				{
-					outerInstance.processCall(edge);
-				}
-				else
-				{
-					//note that some statements, such as "throw" may be
-					//both an exit statement and a "normal" statement
-					if (outerInstance.icfg.isExitStmt(edge.Target))
-					{
-						outerInstance.processExit(edge);
-					}
-					if (!outerInstance.icfg.getSuccsOf(edge.Target).Empty)
-					{
-						outerInstance.processNormalFlow(edge);
-					}
-				}
-			}
-		}
+            public virtual void run()
+            {
+                if (outerInstance.icfg.isCallStmt(edge.Target))
+                {
+                    outerInstance.processCall(edge);
+                }
+                else
+                {
+                    //note that some statements, such as "throw" may be
+                    //both an exit statement and a "normal" statement
+                    if (outerInstance.icfg.isExitStmt(edge.Target))
+                    {
+                        outerInstance.processExit(edge);
+                    }
+                    if (outerInstance.icfg.getSuccsOf(edge.Target).Count > 0)
+                    {
+                        outerInstance.processNormalFlow(edge);
+                    }
+                }
+            }
+        }
 
-		private class ValuePropagationTask : ThreadStart
+        private class ValuePropagationTask : ITask
 		{
 			private readonly IDESolver<N, D, M, V, I> outerInstance;
 
@@ -1085,7 +1062,7 @@ namespace heros.solver
 			}
 		}
 
-		private class ValueComputationTask : ThreadStart
+		private class ValueComputationTask : ITask
 		{
 			private readonly IDESolver<N, D, M, V, I> outerInstance;
 
@@ -1101,15 +1078,14 @@ namespace heros.solver
 
 			public virtual void run()
 			{
-				int sectionSize = (int) Math.Floor(values.Length / outerInstance.numThreads) + outerInstance.numThreads;
+				int sectionSize = (int) Math.Floor((decimal)values.Length / (decimal)outerInstance.numThreads) + outerInstance.numThreads;
 				for (int i = sectionSize * num; i < Math.Min(sectionSize * (num + 1),values.Length); i++)
 				{
 					N n = values[i];
 					foreach (N sP in outerInstance.icfg.getStartPointsOf(outerInstance.icfg.getMethodOf(n)))
 					{
-						ISet<Table.Cell<D, D, EdgeFunction<V>>> lookupByTarget;
-						lookupByTarget = outerInstance.jumpFn.lookupByTarget(n);
-						foreach (Table.Cell<D, D, EdgeFunction<V>> sourceValTargetValAndFunction in lookupByTarget)
+						var lookupByTarget = outerInstance.jumpFn.lookupByTarget(n);
+						foreach (var sourceValTargetValAndFunction in lookupByTarget)
 						{
 							D dPrime = sourceValTargetValAndFunction.RowKey;
 							D d = sourceValTargetValAndFunction.ColumnKey;
